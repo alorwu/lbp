@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lbp/screens/privacy_policy.dart';
+import 'package:lbp/utils/MyPreferences.dart';
 import 'package:preferences/preference_page.dart';
 import 'package:preferences/preference_title.dart';
 import 'package:preferences/preferences.dart';
@@ -106,7 +107,7 @@ class MapScreenState extends State<SettingsScreen> {
                   this.time = newValue;
                 });
                 saveSelectedTime(newValue);
-                var res = await saveNotificationTimeOnBackend(newValue.substring(0, 2));
+                var res = await MyPreferences.saveNotificationTimeOnBackend(newValue.substring(0, 2), appId);
                 if (res.statusCode == 200) {
                   this.showSnackBar(context, newValue);
                 }
@@ -256,18 +257,18 @@ class MapScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  Future<http.Response> saveNotificationTimeOnBackend(String time)  async {
-    return http.put(
-      '${environment['remote_url']}/api/users/${this.appId}',
-      // 'http://10.0.2.2:8080/api/users/${this.appId}',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({
-        'segment': time
-      }),
-    );
-  }
+  // Future<http.Response> saveNotificationTimeOnBackend(String time)  async {
+  //   return http.put(
+  //     '${environment['remote_url']}/api/users/${this.appId}',
+  //     // 'http://10.0.2.2:8080/api/users/${this.appId}',
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode({
+  //       'segment': time
+  //     }),
+  //   );
+  // }
 
   void saveSelectedTime(String time) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

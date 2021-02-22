@@ -1,2 +1,2 @@
-String ANIMATED_SPLASH = '/SplashScreen',
+const String ANIMATED_SPLASH = '/SplashScreen',
     HOME = '/MyHomePage';

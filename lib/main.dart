@@ -1,68 +1,66 @@
+
 import 'package:flutter/material.dart';
 import 'package:lbp/screens/home.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:lbp/env/.env.dart';
+import 'package:lbp/screens/onBoarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'db/database.dart';
-import 'model/notifications.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MyApp());
-  initPlatformState();
-}
+  Widget _defaultHome = new OnBoarding();
 
-Future<void> initPlatformState() async {
-  OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
-    OSiOSSettings.autoPrompt: false,
-    OSiOSSettings.promptBeforeOpeningPushUrl: true
-  });
-
-  OneSignal.shared
-      .setInFocusDisplayType(OSNotificationDisplayType.notification);
-
-  OneSignal.shared.setNotificationReceivedHandler((notification) {
-    refactorNotification(notification);
-  });
-
-  OneSignal.shared.setNotificationOpenedHandler((openedResult) {});
-
-}
-
-Future<void> refactorNotification(OSNotification notification) async {
-  var newNotification = Notifications(
-    null,
-    notification.payload.notificationId,
-    notification.payload.title,
-    "Click to open",
-    // notification.payload.body,
-    false,
-    DateTime.now().millisecondsSinceEpoch.toString()
-  );
-  
-  final database =
-  await $FloorAppDatabase.databaseBuilder('database.db').build();
-  final notificationDao = database.notificationDao;
-  var response = await notificationDao.findByNotificationId(newNotification.notificationId);
-  if (response == null) {
-    await notificationDao.insertNotification(newNotification);
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var firstTime = prefs.getBool("first_time");
+  if (firstTime == false) {
+    _defaultHome = MyHomePage();
   }
+
+  runApp(new MaterialApp(
+    title: 'SloPain',
+    theme: ThemeData(
+      primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
+    debugShowCheckedModeBanner: false,
+    home: _defaultHome,
+    routes: <String, WidgetBuilder>{
+      'home': (BuildContext context) => new MyHomePage(),
+      'onboarding': (BuildContext context) => new OnBoarding(),
+    },
+  ));
+  // runApp(MyApp(_defaultHome));
 }
 
-class MyApp extends StatelessWidget {
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sleep Better with LBP',
-      theme: ThemeData(
-        primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: new MyHomePage(),
-      // routes: <String, WidgetBuilder>{
-      //   HOME: (BuildContext context) => new MyHomePage(),
-      // },
-    );
-  }
-}
+
+// Future<void> initDb() async {
+//   final migration1to2 = Migration(1, 2, (database) async {
+//     await database.execute("ALTER TABLE notifications ADD COLUMN date_entered TEXT");
+//   });
+//
+//   final database = await $FloorAppDatabase
+//       .databaseBuilder('database.db')
+//       .addMigrations([migration1to2])
+//       .build();
+// }
+
+
+// class MyApp extends StatelessWidget {
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'SloPain',
+//       theme: ThemeData(
+//         primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
+//         visualDensity: VisualDensity.adaptivePlatformDensity,
+//       ),
+//       home: MyHomePage(),
+//       routes: <String, WidgetBuilder>{
+//         'home': (BuildContext context) => new OnBoarding(),
+//         // 'onboarding': (BuildContext context) => new OnBoarding(),
+//       },
+//     );
+//   }
+// }

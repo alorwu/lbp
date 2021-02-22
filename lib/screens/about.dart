@@ -22,16 +22,23 @@ class AboutScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                        "Sleep is a vital biological function essential for the overall health. Ppoor sleep poses a potent risk factor for physical and psychological ailments including obesity, dementia, diabetes, and chronic pain. "
-                            "Low back pain impacts one’s functional capacity and has been recognized globally as the most significant condition with respect to the number of years lived with disability. "
-                            "\n\nResearch suggests a poor night’s sleep can contribute to an increased pain the next day and low back pain during the day can affect the quality of sleep at night. "
-                            "Evidence however suggests that sleep can have a controlling influence on the intensity of pain."),
+                        "Do you have low back pain and trouble sleeping? The Sleep Better with Back Pain app is part of international research that will ultimately help you and people just like you to sleep better."),
                   ),
                   Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                          "In this study, we want to investigate the relationship between low back pain and sleep. By using this application, you'll be helping us better understand this relationship while "
-                              "offering you an opportunity to better understand the ailment you're suffering with and its interconnectedness to sleep.")),
+                          "There is power in the consolidation of ideas: your ideas. This app collects data on your sleep and back pain via daily and monthly surveys. You can also donate ideas on how to sleep better and rate and discover ideas by other app users!"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                        "Additionally, if you have an Oura ring, you may join an Oura team managed by the researchers to provide us with more detailed sleep data."),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                        "At the end of the study, your data are combined with others and analyzed to learn more about low back pain and find the best ways to help you sleep better."),
+                  ),
                 ],
               ),
             ),
