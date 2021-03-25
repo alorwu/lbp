@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +8,10 @@ import 'package:lbp/model/monthly/PSQIQuestion.dart';
 import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
 import 'package:lbp/model/notifications.dart';
 import 'package:lbp/utils/MyPreferences.dart';
+import 'package:progress_indicator_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../env/.env.dart';
+import '../../env/.env.dart';
 
 class MonthlyQuestionnairePage extends StatefulWidget {
   final Notifications notification;
@@ -38,16 +38,18 @@ class MonthlyQuestionnairePage extends StatefulWidget {
 class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
   PSQIQuestionnaire questionnaire = PSQIQuestionnaire();
   Notifications _notification;
-  List<String> answers = List();
+  // List<String> answers = List();
   GSheets gSheets;
+  final _formKey = GlobalKey<FormState>();
+
 
   @override
   initState() {
     super.initState();
     gSheets = GSheets(environment['credentials']);
-    answers.length = questionnaire
-        .getPSQIQuestions()
-        .length;
+    // answers.length = questionnaire
+    //     .getPSQIQuestions()
+    //     .length;
   }
 
 
@@ -58,35 +60,43 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         elevation: 0,
-        title: Text("Monthly sleep survey"),
+        title: Text("Monthly Sleep Survey"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Expanded(
-            child: buildQuestionsPage(),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: FlatButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+      body: Builder(
+        builder: (context) => Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: buildQuestionsPage(),
                 ),
-                textColor: Colors.white,
-                color: Colors.green.shade500,
-                onPressed: () async {
-                  sendData(_notification);
-                  setState(() {
-                    // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-                  });
-                },
-                child: Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white, fontSize: 20.0),
-                )),
+                Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: ProgressButton(
+                        borderRadius: BorderRadius.circular(8.0),
+                      color: Colors.blue,
+                      onPressed: (AnimationController animationController) async {
+                        if (_formKey.currentState.validate()) {
+                          await MyPreferences.saveLastMonthlySleepSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                          sendData(_notification, animationController);
+                          // setState(() {
+                          //   // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+                          // });
+                        }
+                      },
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white, fontSize: 20.0),
+                      )),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -94,14 +104,14 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
   Widget buildQuestionsPage() {
     var entries = questionnaire.getPSQIQuestions();
     return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
       padding: EdgeInsets.all(10.0),
       itemCount: entries.length,
       shrinkWrap: true,
       itemBuilder: (BuildContext context, int index) {
         return Card(
-          elevation: 5,
-          margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-          color: Colors.amber[200],
+          elevation: 3,
+          margin: EdgeInsets.fromLTRB(0, 10, 0, 5),
           child: Padding(
             padding: EdgeInsets.all(10.0),
             child: Column(
@@ -146,22 +156,22 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
     List<String> time;
     switch(question.subtitle) {
       case 'BED TIME':
-        time = ["",
+        time = [
           '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
           '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
           '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
         break;
       case 'NUMBER OF MINUTES':
-        time = ["", "1-15", '16-30', '30-60', '60+'];
+        time = ["1-15", '16-30', '30-60', '60+'];
         break;
       case 'GETTING UP TIME':
-        time = ["",
+        time = [
           '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
           '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
           '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
         break;
       case 'HOURS OF SLEEP PER NIGHT':
-        time = ["", "1 hour", "2 hours", "3 hours", "4 hours",
+        time = ["1 hour", "2 hours", "3 hours", "4 hours",
           "5 hours", "6 hours", "7 hours", "8 hours", "9 hours", "10 hours",
           "11 hours", "12 hours", "13 hours", "14 hours", "15 hours", "16 hours",
           "17 hours", "18 hours", "19 hours", "20 hours", "21 hours", "22 hours",
@@ -169,28 +179,39 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
         break;
       default:
     }
-    return DropdownButton<String>(
-      value: question.data,
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        hintText: "Choose one",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
       iconSize: 24,
       elevation: 16,
-      underline: Container(
-        height: 2,
-        color: Colors.black54,
-      ),
+      // underline: Container(
+      //   height: 2,
+      //   color: Colors.black54,
+      // ),
       onChanged: (String newValue) {
         // var val = time.indexOf(newValue);
         setState(() {
           question.data = newValue;
-          answers[index] = newValue;
+          // answers[index] = newValue;
         });
       },
       items: time.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(value, overflow: TextOverflow.clip),
         );
       }).toList(),
+      validator: (value) {
+        if (value == null) {
+          return "Please select one";
+        }
+        return null;
+      },
+      value: question.data,
     );
+
   }
 
 
@@ -208,11 +229,18 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
         Center(
           child: Container(
             margin: EdgeInsets.all(12),
-            child: TextField(
+            child: TextFormField(
+              focusNode: new FocusNode(),
+              decoration: InputDecoration(
+                hintText: "Enter text here",
+                hintStyle: TextStyle(color: Colors.grey),
+                // labelText: 'How old are you (in years)?',
+                // border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.text,
               onChanged: (String value) {
                 setState(() {
-                  answers[index] = value;
+                  // answers[index] = value;
                   question.data = value;
                 });
               },
@@ -235,22 +263,24 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
             style: TextStyle(fontSize: 18.0),
           ),
         ),
-        DropdownButton<String>(
-          value: question.data,
+        DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            hintText: "Choose one",
+            hintStyle: TextStyle(color: Colors.grey),
+          ),
           iconSize: 24,
           elevation: 16,
-          underline: Container(
-            height: 2,
-            color: Colors.black54,
-          ),
+          // underline: Container(
+          //   height: 2,
+          //   color: Colors.black54,
+          // ),
           onChanged: (String newValue) {
             setState(() {
               question.data = newValue;
-              answers[index] = newValue;
+              // answers[index] = newValue;
             });
           },
           items: <String>[
-            "",
             question.notInPastMonth,
             question.lessThanOnceAWeek,
             question.onceOrTwiceAWeek,
@@ -258,28 +288,61 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: Text(value, overflow: TextOverflow.clip),
             );
           }).toList(),
+          validator: (value) {
+            if (question.number.startsWith("10") && question.number.length > 2) {
+              return null;
+            }
+            if (value == null) {
+              return "Please select one";
+            }
+            return null;
+          },
+          value: question.data,
         ),
+        SizedBox(height: 5.0),
       ],
     );
   }
 
-  sendData(Notifications notification) async {
+  sendData(Notifications notification, AnimationController animationController) async {
+    animationController.forward();
+
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     var sheet = ss.worksheetByTitle('monthly_sleep_survey');
     sheet ??= await ss.addWorksheet('monthly_sleep_survey');
 
-    List<String> values = List();
+    List<String> values = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
     questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
     values.add(DateTime.now().toString());
     values.add(id);
 
-    await sheet.values.appendRow(values);
-    answers.clear();
-    Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+    var result = await sheet.values.appendRow(values);
+    // answers.clear();
+    // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "Your entry has been saved.",
+            style: TextStyle(color: Colors.white)),
+      )).closed
+          .then((value) {
+        animationController.stop();
+        Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "Unable to save data. Check your internet connection and try again.",
+            style: TextStyle(color: Colors.red)),
+      )).closed
+          .then((value) {
+        animationController.stop();
+      });
+    }
   }
 }

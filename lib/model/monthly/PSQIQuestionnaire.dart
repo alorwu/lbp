@@ -14,7 +14,7 @@ class PSQIQuestionnaire {
         subtitle: 'BED TIME',
         status: false,
         type: 'text',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '2',
@@ -22,7 +22,7 @@ class PSQIQuestionnaire {
         subtitle: 'NUMBER OF MINUTES',
         status: false,
         type: 'text',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '3',
@@ -30,7 +30,7 @@ class PSQIQuestionnaire {
         subtitle: 'GETTING UP TIME',
         status: false,
         type: 'text',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '4',
@@ -38,7 +38,7 @@ class PSQIQuestionnaire {
         subtitle: 'HOURS OF SLEEP PER NIGHT',
         status: false,
         type: 'text',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5a',
@@ -50,7 +50,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5b',
@@ -62,7 +62,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5c',
@@ -74,7 +74,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5d',
@@ -86,7 +86,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5e',
@@ -98,7 +98,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5f',
@@ -110,7 +110,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5g',
@@ -122,7 +122,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5h',
@@ -134,7 +134,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5i',
@@ -146,11 +146,11 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5j-i',
-        question: 'Other reason(s), please describe:',
+        question: 'Besides the above, have you had trouble sleeping due to other reason(s)? Please describe below:',
         subtitle: '',
         status: false,
         type: 'freeformlikert',
@@ -158,11 +158,11 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '5j-ii',
-        question: 'How often during the past month have you had trouble sleeping because of this?',
+        question: 'How often during the past month have you had trouble sleeping because of these other reasons?',
         subtitle: '',
         status: false,
         type: 'likert',
@@ -170,7 +170,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '6',
@@ -182,7 +182,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Fairly good',
         onceOrTwiceAWeek: 'Fairly bad',
         threeOrMoreAWee3k: 'Very bad',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '7',
@@ -194,7 +194,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '8',
@@ -206,7 +206,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '9',
@@ -218,7 +218,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Only a very slight problem',
         onceOrTwiceAWeek: 'Somewhat of a problem',
         threeOrMoreAWee3k: 'A very big problem',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10',
@@ -230,7 +230,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Partner/room mate in other room',
         onceOrTwiceAWeek: 'Partner in same room, but not same bed',
         threeOrMoreAWee3k: 'Partner in same bed',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10a',
@@ -242,7 +242,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10b',
@@ -254,7 +254,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10c',
@@ -266,7 +266,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10d',
@@ -278,7 +278,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10e-i',
@@ -290,7 +290,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
     PSQIQuestion(
         number: '10e-ii',
@@ -302,7 +302,7 @@ class PSQIQuestionnaire {
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
         threeOrMoreAWee3k: 'Three or more times a week',
-        data: ''
+        data: null
     ),
   ];
 

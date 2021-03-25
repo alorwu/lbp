@@ -9,8 +9,10 @@ import 'package:lbp/model/notifications.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:progress_indicator_button/progress_button.dart';
 
-import '../env/.env.dart';
+
+import '../../env/.env.dart';
 
 class QuestionnairePage extends StatefulWidget {
   final Notifications notification;
@@ -137,25 +139,40 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(10.0),
-              child: FlatButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  textColor: Colors.white,
-                  color: Colors.green.shade500,
-                  onPressed: () async {
+              child: ProgressButton(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.blue,
+                  onPressed: (AnimationController controller) async {
+                    // if (_formKey.currentState.validate()) {
+                    //   sendData(_notification, controller);
+                    //   setState(() {
+                    //   // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+                    //   });
+                    // }
                     await MyPreferences.saveDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
                     answers.add(notes);
-                    sendData(_notification);
-                    setState(() {
-                      completed = false;
-                      Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-                    });
+                    sendData(_notification, controller);
                   },
+                // FlatButton(
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(8.0),
+                //   ),
+                //   textColor: Colors.white,
+                //   color: Colors.green.shade500,
+                //   onPressed: () async {
+                //     await MyPreferences.saveDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                //     answers.add(notes);
+                //     sendData(_notification);
+                //     // setState(() {
+                //     //   completed = false;
+                //     //   Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+                //     // });
+                //   },
                   child: Text(
                     'Submit',
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  )),
+                  ),
+              ),
             ),
           ),
         ],
@@ -359,7 +376,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         );
       });
 
-  sendData(Notifications notification) async {
+  sendData(Notifications notification, AnimationController animationController) async {
+    animationController.forward();
+
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     var sheet = ss.worksheetByTitle('survey');
     sheet ??= await ss.addWorksheet('survey');
@@ -367,7 +386,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
 
-    List<String> values = List();
+    List<String> values = [];
     values.add(DateTime.now().millisecondsSinceEpoch.toString());
     values.add(id);
     values.add(answers[0]);
@@ -377,8 +396,29 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     values.add(answers[4]);
     values.add(answers[5]);
     values.add(answers[6]);
-    await sheet.values.appendRow(values);
-    answers.clear();
+    var result = await sheet.values.appendRow(values);
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "Your entry has been saved.",
+            style: TextStyle(color: Colors.white)),
+      )).closed
+          .then((value) {
+        answers.clear();
+        animationController.stop();
+        Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "Unable to save data. Check your internet connection and try again.",
+            style: TextStyle(color: Colors.red)),
+      )).closed
+          .then((value) {
+        animationController.stop();
+      });
+    }
+
   }
 
 }

@@ -1,20 +1,16 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:lbp/screens/privacy_policy.dart';
+import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:preferences/preference_page.dart';
 import 'package:preferences/preference_title.dart';
 import 'package:preferences/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:lbp/env/.env.dart';
 
 import 'about.dart';
 import 'donate_data.dart';
@@ -64,7 +60,7 @@ class MapScreenState extends State<SettingsScreen> {
       )
   );
 
-  Widget donateDate() => Container(
+  Widget donateData() => Container(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,8 +68,8 @@ class MapScreenState extends State<SettingsScreen> {
         Padding(
           padding: EdgeInsets.only(top: 5.0),
           child: ListTile(
-            title: Text("Donate your Oura data"),
-            subtitle: Text("Contribute your Oura data to our ongoing research on low back pain and sleep quality", style: TextStyle(fontSize: 12.0)),
+            title: Text("How to donate your Oura data"),
+            subtitle: Text("Contribute your Oura data to our ongoing research. Click to see how.", style: TextStyle(fontSize: 12.0)),
             // leading: Icon(Icons.arrow_right_alt_outlined),
             trailing: Icon(Icons.chevron_right),
             onTap: () async {
@@ -135,41 +131,11 @@ class MapScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.only(top: 5.0),
           child: ListTile(
             title: Text("About this app"),
-            subtitle: Text("Get to know what this sleep & low back pain app is all about", style: TextStyle(fontSize: 12.0)),
+            subtitle: Text("Get to know what this Sleep Better with Back Pain app is all about", style: TextStyle(fontSize: 12.0)),
             // leading: Icon(Icons.people_rounded),
             trailing: Icon(Icons.chevron_right),
             onTap: () async {
               Navigator.push(context, MaterialPageRoute(builder: (context) => AboutScreen()));
-            },
-          ),
-        ),
-      ],
-    ),
-  );
-
-  Widget onBoarding() => Container(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 5.0),
-          child: ListTile(
-            title: Text("Click to take initial survey"),
-            subtitle: Text("Provide some information about yourself to get the best use of this app", style: TextStyle(fontSize: 12.0)),
-            // leading: Icon(Icons.app_registration),
-            trailing: Icon(Icons.chevron_right),
-            onTap: () async {
-              if (await canLaunch(url)) {
-                await launch(
-                    url+appId,
-                    forceWebView: true,
-                    forceSafariVC: true,
-                    enableJavaScript: true
-                );
-              } else {
-                throw 'Could not launch url';
-              }
             },
           ),
         ),
@@ -221,12 +187,10 @@ class MapScreenState extends State<SettingsScreen> {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
                   child: PreferencePage([
-                    PreferenceTitle("Initial survey"),
-                    onBoarding(),
                     PreferenceTitle("Notification time"),
                     notificationTime(context),
                     PreferenceTitle("Donate data"),
-                    donateDate(),
+                    donateData(),
                     PreferenceTitle("About app"),
                     aboutUs(),
                     PreferenceTitle("Other studies"),

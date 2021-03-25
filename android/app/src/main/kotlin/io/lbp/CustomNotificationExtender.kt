@@ -1,13 +1,5 @@
 package io.lbp
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
-import com.onesignal.NotificationExtenderService
-import com.onesignal.OSNotificationReceivedResult
-
 object MyData {
     const val TABLE_NAME = "notifications"
     const val NOTIFICATION_ID = "notification_id"

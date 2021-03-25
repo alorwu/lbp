@@ -1,9 +1,10 @@
 import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lbp/env/.env.dart';
 import 'package:lbp/model/notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:lbp/env/.env.dart';
 
 
 
@@ -48,10 +49,10 @@ class MyPreferences {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dateTaken = prefs.getString("notification_taken_date");
     var today = DateFormat("yyyy-MM-dd").format(DateTime.now());
-    if (dateTaken != null && dateTaken == today) {
-      // Show "well done! You completed today's survey"
-      return null;
-    } else {
+    // if (dateTaken != null && dateTaken == today) {
+    //   // Show "well done! You completed today's survey"
+    //   return null;
+    // } else {
       // Show task and display "Time to take the survey."
       return new Notifications(
           "bbb-bbb-bbb-bbb",
@@ -60,29 +61,30 @@ class MyPreferences {
           false,
         "daily"
       );
-    }
+    // }
   }
 
+  /// Save date survey was taken (daily survey) -- for showing icons
   static saveDateTaken(String date) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('notification_taken_date', date);
   }
 
-  static Future<Notifications> insertOnBoardingTask() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var takenOnboarding = prefs.getBool("onboarding");
-    if (takenOnboarding != true) {
-      return Notifications(
-          "aaa-aaa-aaa-aaa",
-          "Get started here",
-          "Let's get to know you",
-          false,
-        "daily"
-      );
-    } else {
-      return null;
-    }
-  }
+  // static Future<Notifications> insertOnBoardingTask() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var takenOnboarding = prefs.getBool("onboarding");
+  //   if (takenOnboarding != true) {
+  //     return Notifications(
+  //         "aaa-aaa-aaa-aaa",
+  //         "Get started here",
+  //         "Let's get to know you",
+  //         false,
+  //       "daily"
+  //     );
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   static updateOnboarding(bool status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,9 +92,10 @@ class MyPreferences {
   }
 
 
+  /// Display monthly sleep survey
   static Future<Notifications> displayMonthlySleepNotification() async {
       var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
-      if (1 <= today && today <= 7) {
+      if (1 <= today && today <= 31) {
         return new Notifications(
             "ccc-ccc-ccc-ccc",
             "Monthly sleep survey",
@@ -104,12 +107,13 @@ class MyPreferences {
       return null;
   }
 
+  /// Display monthly pain survey
   static Future<Notifications> displayMonthlyPromis10() async {
     var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
-    if (1 <= today && today <= 7) {
+    if (1 <= today && today <= 31) {
       return new Notifications(
           "ddd-ddd-ddd-ddd",
-          "Monthly pain survey",
+          "Monthly quality of life survey",
           "Click to open",
           false,
           "monthly-pain"
@@ -118,9 +122,33 @@ class MyPreferences {
     return null;
   }
 
-  static saveMonthlyDateTaken(String date) async {
+  // static saveMonthlyDateTaken(String date) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setString('monthly_notification_taken_date', date);
+  // }
+
+  /// Save date monthly sleep survey was taken
+  static saveLastMonthlySleepSurveyDate(String date) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('monthly_notification_taken_date', date);
+    prefs.setString('monthly_sleep_survey_taken_date', date);
+  }
+
+  /// Save date monthly pain survey was taken
+  static saveLastMonthlyPainSurveyDate(String date) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('monthly_pain_survey_taken_date', date);
+  }
+
+  /// Get date monthly sleep survey was last taken
+  static fetchLastMonthlySleepSurveyDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("monthly_sleep_survey_taken_date");
+  }
+
+  /// Get date monthly pain survey was last taken
+  static fetchLastMonthlyPainSurveyDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("monthly_pain_survey_taken_date");
   }
 }
 

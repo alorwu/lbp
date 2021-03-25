@@ -1,10 +1,3 @@
-//
-//  NotificationService.swift
-//  OneSignalNotificationServiceExtension
-//
-//  Created by Andy Alorwu on 31.10.2020.
-//
-
 import UserNotifications
 
 import OneSignal
@@ -34,4 +27,5 @@ class NotificationService: UNNotificationServiceExtension {
             contentHandler(bestAttemptContent)
         }
     }
+    
 }

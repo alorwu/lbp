@@ -12,6 +12,6 @@ final environment = {
        "token_uri": "https://oauth2.googleapis.com/token",
        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/lpb-service-account%40lbp-study.iam.gserviceaccount.com"
- },
+  },
  'remote_url': 'https://low-back-pain.herokuapp.com'
 };

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +7,16 @@ import 'package:footer/footer.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lbp/model/notifications.dart';
-import 'package:lbp/screens/questionnaire_screen.dart';
-import 'package:lbp/screens/setttings_screen.dart';
+import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
+import 'package:lbp/screens/settings/setttings_screen.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../env/.env.dart';
-import 'monthly_pain_questionnaire_screen.dart';
-import 'monthly_questionnaire_screen.dart';
+import 'questionnaires/monthly_promise10_questionnaire_screen.dart';
+import 'questionnaires/monthly_sleep_questionnaire_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -28,12 +27,15 @@ class _MyHomePageState extends State<MyHomePage> {
   var url =
       'https://docs.google.com/forms/d/e/1FAIpQLSfoQPG89pO_YrFOBUXzglEmGKv9AbdtWCdLInW3ZQ1-juLV2g/viewform?usp=pp_url&entry.244517143=';
 
-  List<Notifications> notificationsList = List();
+  List<Notifications> notificationsList = [];
   String appId;
   String oneSignalPlayerId;
   Notifications onBoarding;
   Notifications survey;
   String notificationTakenDate;
+
+  String monthlyPromis10LastDateTaken;
+  String monthlySleepLastDateTaken;
 
   var notification = Notifications(
     "bbb-bbb-bbb-bbb",
@@ -94,13 +96,13 @@ class _MyHomePageState extends State<MyHomePage> {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         return true;
       } else {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("No internet connection"),
         ));
         return false;
       }
     } on SocketException catch (_) {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Check your internet connection"),
       ));
       return false;
@@ -181,12 +183,30 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(color: Colors.white, fontSize: 12.0),
             ),
           ),
+          (notification.type == "monthly-pain") ?
+            Expanded(
+              flex: 4,
+              child: Text(
+                monthlyPromis10LastDateTaken != null ?
+                "Last completed: $monthlyPromis10LastDateTaken" : "",
+                style: TextStyle(color: Colors.grey, fontSize: 10.0),
+                textAlign: TextAlign.end,
+              ),
+            ) : Container(),
+          (notification.type == "monthly-sleep") ?
+          Expanded(
+            flex: 4,
+            child: Text(
+              monthlySleepLastDateTaken != null ?
+              "Last completed: $monthlySleepLastDateTaken" : "",
+              style: TextStyle(color: Colors.grey, fontSize: 10.0),
+              textAlign: TextAlign.end,
+            ),
+          ) : Container(),
         ],
+
       ),
-      trailing: notification.notificationId == "aaa-aaa-aaa-aaa"
-          ? Icon(Icons.alarm, color: Colors.white, size: 30.0)
-          : Icon(Icons.keyboard_arrow_right,
-          color: Colors.white, size: 30.0),
+      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
       onTap: () async {
         if(notification.type == "daily") {
           Navigator.push(
@@ -396,8 +416,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<List<Notifications>> getSurveys() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var notificationTaken = prefs.getString("notification_taken_date");
+    var sleepSurveyDate = prefs.getString("monthly_sleep_survey_taken_date");
+    var promis10Date = prefs.getString("monthly_pain_survey_taken_date");
+
     setState(() {
       notificationTakenDate = notificationTaken;
+      monthlyPromis10LastDateTaken = promis10Date;
+      monthlySleepLastDateTaken = sleepSurveyDate;
     });
 
     var survey = await MyPreferences.displayTodayNotification();

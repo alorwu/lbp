@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:lbp/env/.env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:lbp/env/.env.dart';
 
 class DonateDataScreen extends StatefulWidget {
   @override
@@ -72,14 +71,15 @@ class DonateDataState extends State<DonateDataScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         SizedBox(height: 10.0),
-                        Text("Donate your sleep data",
+                        Text("To share your Oura sleep data with the researchers, please connect through the Oura Cloud Service with your Oura account. \n\nWe will need your Oura account email to be able to"
+                            " connect your sleep data. \n\nProvide your Oura account email here first.",
                             style: TextStyle(
                                 fontSize: 16.0, fontWeight: FontWeight.w400)),
                         SizedBox(height: 5.0),
                         TextFormField(
                           // initialValue: email != null ? email.toString() : "",
                           decoration: InputDecoration(
-                            labelText: "Oura account email",
+                            // labelText: "Tap to enter email",
                             labelStyle: TextStyle(color: Colors.blue),
                             hintText: "example@mail.com",
                           ),
@@ -93,18 +93,25 @@ class DonateDataState extends State<DonateDataScreen> {
                           width: double.infinity,
                           height: 10.0,
                         ),
-                        RaisedButton(
-                          color: Colors.blue,
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all<Color>(Colors.white) ,
+                              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0)
+                                  )
+                              )
+                          ),
                           child: Text(
-                            "Save email",
+                            "Click here to start",
                           ),
-                          textColor: Colors.white,
                           onPressed: () {
-                            saveEmail(context, emailController.text);
+                            if (_key.currentState.validate()) {
+                              saveEmail(context, emailController.text);
+                              launchLbpSleep();
+                            }
                           },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
                         ),
                       ],
                     ),
@@ -114,38 +121,38 @@ class DonateDataState extends State<DonateDataScreen> {
               ),
             ),
             SizedBox(height: 10.0),
-            Card(
-              elevation: 5.0,
-              margin: EdgeInsets.all(10.0),
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text("Click below to link your Oura account",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 16.0)),
-                    SizedBox(height: 10.0),
-                    RaisedButton(
-                      child: Text("Click here"),
-                      color: Colors.blue,
-                      elevation: 5.0,
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0)
-                      ),
-                      onPressed: () {
-                        if (email == null) {
-                          showAlertDialog(context);
-                        } else {
-                          launchLbpSleep();
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // Card(
+            //   elevation: 5.0,
+            //   margin: EdgeInsets.all(10.0),
+            //   child: Padding(
+            //     padding: EdgeInsets.all(20.0),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.stretch,
+            //       children: <Widget>[
+            //         Text("Click here to share your Oura sleep data through the Oura Cloud service",
+            //             style: TextStyle(
+            //                 fontWeight: FontWeight.w400, fontSize: 16.0)),
+            //         SizedBox(height: 10.0),
+            //         RaisedButton(
+            //           child: Text("Read more"),
+            //           color: Colors.blue,
+            //           elevation: 5.0,
+            //           textColor: Colors.white,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(8.0)
+            //           ),
+            //           onPressed: () {
+            //             if (email == null) {
+            //               showAlertDialog(context);
+            //             } else {
+            //               launchLbpSleep();
+            //             }
+            //           },
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -155,7 +162,7 @@ class DonateDataState extends State<DonateDataScreen> {
 
   void launchLbpSleep() {
     launch(
-        "https://crowdcomputing.net/sleep-lbp",
+        "https://crowdcomputing.net/sleep-lbp/join-oura",
         forceWebView: true,
         forceSafariVC: true,
         enableJavaScript: true

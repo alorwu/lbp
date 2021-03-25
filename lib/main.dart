@@ -3,10 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:lbp/screens/home.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // FirebaseCrashlytics.instance.crash();
 
   Widget _defaultHome = new OnBoarding();
 
@@ -17,7 +24,7 @@ void main() async {
   }
 
   runApp(new MaterialApp(
-    title: 'SloPain',
+    title: 'Sleep Better with Back Pain',
     theme: ThemeData(
       primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
       visualDensity: VisualDensity.adaptivePlatformDensity,
