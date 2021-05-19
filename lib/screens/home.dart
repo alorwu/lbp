@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     initializeVariables();
     initPlatformState();
     getId();
+    pingServer();
   }
 
   Future<void> initializeVariables() async {
@@ -174,6 +175,15 @@ class _MyHomePageState extends State<MyHomePage> {
       startTime();
     }
     return playerId;
+  }
+
+  Future<void> pingServer() async {
+    return http.get(
+        '${environment['remote_url']}/api/users/${this.appId}',
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
   }
 
   @override
