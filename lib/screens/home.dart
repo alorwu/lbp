@@ -48,8 +48,22 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    initializeVariables();
     initPlatformState();
     getId();
+  }
+
+  Future<void> initializeVariables() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var notificationTaken = prefs.getString("notification_taken_date");
+    var sleepSurveyDate = prefs.getString("monthly_sleep_survey_taken_date");
+    var promis10Date = prefs.getString("monthly_pain_survey_taken_date");
+
+    setState(() {
+      notificationTakenDate = notificationTaken;
+      monthlyPromis10LastDateTaken = promis10Date;
+      monthlySleepLastDateTaken = sleepSurveyDate;
+    });
   }
 
   Future<void> initPlatformState() async {
@@ -165,6 +179,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
+    String numOfDays(String surveyDate) {
+      if (surveyDate == null || surveyDate.isEmpty) {
+        return "Not completed yet. Click to open.";
+      } else {
+        return "Last completed: $surveyDate (${DateTime.now().difference(DateTime.parse(surveyDate)).inDays} days ago)";
+      }
+    }
+
     ListTile makeListTile(Notifications notification) => ListTile(
       contentPadding: EdgeInsets.fromLTRB(15.0, 0, 5.0, 0),
       title: Text(
@@ -176,31 +198,28 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       subtitle: Row(
         children: <Widget>[
+          (notification.type == "daily") ?
           Expanded(
             flex: 4,
             child: Text(
               notification.description,
               style: TextStyle(color: Colors.white, fontSize: 12.0),
             ),
-          ),
+          ) : Container(),
           (notification.type == "monthly-pain") ?
             Expanded(
               flex: 4,
               child: Text(
-                monthlyPromis10LastDateTaken != null ?
-                "Last completed: $monthlyPromis10LastDateTaken" : "",
-                style: TextStyle(color: Colors.grey, fontSize: 10.0),
-                textAlign: TextAlign.end,
+                numOfDays(monthlyPromis10LastDateTaken),
+                style: TextStyle(color: Colors.white, fontSize: 12.0),
               ),
             ) : Container(),
           (notification.type == "monthly-sleep") ?
           Expanded(
             flex: 4,
             child: Text(
-              monthlySleepLastDateTaken != null ?
-              "Last completed: $monthlySleepLastDateTaken" : "",
-              style: TextStyle(color: Colors.grey, fontSize: 10.0),
-              textAlign: TextAlign.end,
+              numOfDays(monthlySleepLastDateTaken),
+              style: TextStyle(color: Colors.white, fontSize: 12.0),
             ),
           ) : Container(),
         ],
@@ -316,7 +335,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset('images/sadd.png', height: 180.0, width: 180.0),
+          Image.asset('images/sadd.png', height: 140.0, width: 140.0),
           Padding(
             padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
             child: Text(
@@ -334,7 +353,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset('images/smiley.png', height: 180.0, width: 180.0),
+          Image.asset('images/smiley.png', height: 140.0, width: 140.0),
           Padding(
             padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
             child: Text(

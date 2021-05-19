@@ -294,33 +294,50 @@ class _MonthlyPainQuestionnairePageState extends State<MonthlyPainQuestionnaireP
     var sheet = ss.worksheetByTitle('monthly_pain_survey');
     sheet ??= await ss.addWorksheet('monthly_pain_survey');
 
-    List<String> values = [];
+    List values = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
     questionnaire.getPromisQuestions().forEach((e) => values.add(e.data));
     values.add(DateTime.now().toString());
     values.add(id);
 
-    var result = await sheet.values.appendRow(values);
-    if (result) {
+    try {
+      var result = await sheet.values.appendRow(values);
+      if (result) {
+        ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+          content: Text(
+              "Your entry has been saved.",
+              style: TextStyle(color: Colors.white)),
+        ))
+            .closed
+            .then((value) {
+          animationController.stop();
+          Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+        });
+      } else {
+        ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+          content: Text(
+              "Unable to save data. Check your internet connection and try again.",
+              style: TextStyle(color: Colors.red)),
+        ))
+            .closed
+            .then((value) {
+          animationController.stop();
+          animationController.reset();
+        });
+      }
+    } catch(exp) {
+      animationController.stop();
+      animationController.reset();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-            "Your entry has been saved.",
-            style: TextStyle(color: Colors.white)),
-      )).closed
-          .then((value) {
-        animationController.stop();
-        Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "Unable to save data. Check your internet connection and try again.",
+            "An error occurred. Please try again.",
             style: TextStyle(color: Colors.red)),
-      )).closed
-          .then((value) {
-        animationController.stop();
-      });
+      ));
     }
   }
 }

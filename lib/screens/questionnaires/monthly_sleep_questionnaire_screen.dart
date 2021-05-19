@@ -77,7 +77,7 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
                 Padding(
                   padding: EdgeInsets.all(10.0),
                   child: ProgressButton(
-                        borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8.0),
                       color: Colors.blue,
                       onPressed: (AnimationController animationController) async {
                         if (_formKey.currentState.validate()) {
@@ -265,7 +265,7 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
         ),
         DropdownButtonFormField<String>(
           decoration: InputDecoration(
-            hintText: "Choose one",
+            hintText: question.number == "5j-ii" || (question.number.startsWith("10") && question.number.length > 2) ? "Optional" : "Choose one",
             hintStyle: TextStyle(color: Colors.grey),
           ),
           iconSize: 24,
@@ -292,7 +292,7 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
             );
           }).toList(),
           validator: (value) {
-            if (question.number.startsWith("10") && question.number.length > 2) {
+            if (question.number == "5j-ii" || (question.number.startsWith("10") && question.number.length > 2)) {
               return null;
             }
             if (value == null) {
@@ -314,35 +314,52 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
     var sheet = ss.worksheetByTitle('monthly_sleep_survey');
     sheet ??= await ss.addWorksheet('monthly_sleep_survey');
 
-    List<String> values = [];
+    List values = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
     questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
     values.add(DateTime.now().toString());
     values.add(id);
 
-    var result = await sheet.values.appendRow(values);
-    // answers.clear();
-    // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-    if (result) {
+    try {
+      var result = await sheet.values.appendRow(values);
+      // answers.clear();
+      // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+      if (result) {
+        ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+          content: Text(
+              "Your entry has been saved.",
+              style: TextStyle(color: Colors.white)),
+        ))
+            .closed
+            .then((value) {
+          animationController.stop();
+          Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+        });
+      } else {
+        ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+          content: Text(
+              "Unable to save data. Check your internet connection and try again.",
+              style: TextStyle(color: Colors.red)),
+        ))
+            .closed
+            .then((value) {
+          animationController.stop();
+          animationController.reset();
+        });
+      }
+    } catch(exp) {
+      animationController.stop();
+      animationController.reset();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-            "Your entry has been saved.",
-            style: TextStyle(color: Colors.white)),
-      )).closed
-          .then((value) {
-        animationController.stop();
-        Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "Unable to save data. Check your internet connection and try again.",
+            "An error occurred. Please try again.",
             style: TextStyle(color: Colors.red)),
-      )).closed
-          .then((value) {
-        animationController.stop();
-      });
+      ));
     }
   }
 }

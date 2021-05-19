@@ -640,8 +640,8 @@ class OnBoardingState extends State<OnBoarding> {
     // final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     final ss = await gSheets.spreadsheet(
         '1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
-    var sheet = ss.worksheetByTitle('user_info');
-    sheet ??= await ss.addWorksheet('user_info');
+    var sheet = ss.worksheetByTitle('user_info_test');
+    sheet ??= await ss.addWorksheet('user_info_test');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
@@ -661,6 +661,7 @@ class OnBoardingState extends State<OnBoarding> {
     values.add(durationController.value.text);
     values.add(clinicalDiagnosisRadio);
     values.add(lbpTreatment);
+    values.add(DateTime.now().toString());
     print(values);
     try {
       var result = await sheet.values.appendRow(values);
@@ -692,10 +693,17 @@ class OnBoardingState extends State<OnBoarding> {
             .closed
             .then((value) {
           animationController.stop();
+          animationController.reset();
         });
       }
-    } catch(ex) {
-      print(ex);
+    } catch(exp) {
+      animationController.stop();
+      animationController.reset();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "An error occurred. Please try again.",
+            style: TextStyle(color: Colors.red)),
+      ));
     }
   }
 

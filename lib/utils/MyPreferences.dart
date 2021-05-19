@@ -6,8 +6,6 @@ import 'package:lbp/env/.env.dart';
 import 'package:lbp/model/notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 class MyPreferences {
   static saveNotificationTime(String time) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

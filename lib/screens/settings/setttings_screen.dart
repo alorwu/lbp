@@ -69,7 +69,7 @@ class MapScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.only(top: 5.0),
           child: ListTile(
             title: Text("How to donate your Oura data"),
-            subtitle: Text("Contribute your Oura data to our ongoing research. Click to see how.", style: TextStyle(fontSize: 12.0)),
+            subtitle: Text("Contribute your Oura data to our ongoing research. Click here to see how (approx. 1-3 minutes).", style: TextStyle(fontSize: 12.0)),
             // leading: Icon(Icons.arrow_right_alt_outlined),
             trailing: Icon(Icons.chevron_right),
             onTap: () async {

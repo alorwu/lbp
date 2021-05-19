@@ -49,7 +49,7 @@ class DonateDataState extends State<DonateDataScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Donate data"),
+        title: Text("Donate Oura data"),
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(
@@ -82,6 +82,7 @@ class DonateDataState extends State<DonateDataScreen> {
                             // labelText: "Tap to enter email",
                             labelStyle: TextStyle(color: Colors.blue),
                             hintText: "example@mail.com",
+
                           ),
                           keyboardType: TextInputType.emailAddress,
                           autocorrect: false,
@@ -214,7 +215,7 @@ class DonateDataState extends State<DonateDataScreen> {
   }
 
   void showSnackBar(BuildContext context) {
-    final scaffold = Scaffold.of(context);
+    final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(SnackBar(
       content: Text("Email saved"),
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),

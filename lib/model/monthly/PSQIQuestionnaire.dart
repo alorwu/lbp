@@ -150,7 +150,7 @@ class PSQIQuestionnaire {
     ),
     PSQIQuestion(
         number: '5j-i',
-        question: 'Besides the above, have you had trouble sleeping due to other reason(s)? Please describe below:',
+        question: 'Besides pain, have you had trouble sleeping due to other reason(s)? Please describe below:',
         subtitle: '',
         status: false,
         type: 'freeformlikert',

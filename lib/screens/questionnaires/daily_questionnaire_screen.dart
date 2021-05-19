@@ -43,7 +43,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   double sliderValue = 0;
   double realSliderValue = -1;
   Notifications _notification;
-  List<String> answers = List();
+  List<String> answers = [];
   GSheets gSheets;
 
   @override
@@ -95,7 +95,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
               child: Center(
                 child: Text(
-                  questionnaire.getQuestion().question,
+                  // questionnaire.getQuestion().question,
+                  "About last night, how did your pain affect your sleep and/or how did your sleep affect your pain?",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white, fontSize: 25.0),
                 ),
@@ -108,23 +109,23 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               padding: EdgeInsets.all(10.0),
               child: Center(
                 child: Container(
-                  margin: EdgeInsets.all(12),
+                  margin: EdgeInsets.fromLTRB(12, 0, 12, 0),
                   child: TextField(
                     decoration: new InputDecoration(
                       filled: true,
-                      fillColor: Colors.grey[700],
+                      fillColor: Colors.white,
                       enabledBorder: const OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.white, width: 1.0)
                       ),
                       focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.grey),
                       hintText: "Enter free form text here",
                       helperText: "No answer is wrong. Write freely.",
                       helperStyle: TextStyle(color: Colors.white),
                     ),
-                    keyboardType: TextInputType.multiline,
+                    keyboardType: TextInputType.text,
                     maxLines: 12,
                     onChanged: (String value) {
                       setState(() {
@@ -153,21 +154,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                     answers.add(notes);
                     sendData(_notification, controller);
                   },
-                // FlatButton(
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(8.0),
-                //   ),
-                //   textColor: Colors.white,
-                //   color: Colors.green.shade500,
-                //   onPressed: () async {
-                //     await MyPreferences.saveDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                //     answers.add(notes);
-                //     sendData(_notification);
-                //     // setState(() {
-                //     //   completed = false;
-                //     //   Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-                //     // });
-                //   },
                   child: Text(
                     'Submit',
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
@@ -386,7 +372,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
 
-    List<String> values = [];
+    List values = [];
     values.add(DateTime.now().millisecondsSinceEpoch.toString());
     values.add(id);
     values.add(answers[0]);
@@ -396,27 +382,45 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     values.add(answers[4]);
     values.add(answers[5]);
     values.add(answers[6]);
-    var result = await sheet.values.appendRow(values);
-    if (result) {
+    values.add(DateTime.now().toString());
+    try {
+      var result = await sheet.values.appendRow(values);
+      if (result) {
+        ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+          content: Text(
+              "Your entry has been saved.",
+              style: TextStyle(color: Colors.white)),
+        ))
+            .closed
+            .then((value) {
+          answers.clear();
+          animationController.stop();
+          Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+        });
+      } else {
+        ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+          content: Text(
+              "Unable to save data. Check your internet connection and try again.",
+              style: TextStyle(color: Colors.red)),
+        ))
+            .closed
+            .then((value) {
+          animationController.stop();
+          animationController.reset();
+        });
+      }
+    } catch(exp) {
+      animationController.stop();
+      animationController.reset();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-            "Your entry has been saved.",
-            style: TextStyle(color: Colors.white)),
-      )).closed
-          .then((value) {
-        answers.clear();
-        animationController.stop();
-        Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "Unable to save data. Check your internet connection and try again.",
+            "An error occurred. Please try again.",
             style: TextStyle(color: Colors.red)),
-      )).closed
-          .then((value) {
-        animationController.stop();
-      });
+      ));
     }
 
   }
