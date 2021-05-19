@@ -93,7 +93,7 @@ class MyPreferences {
   /// Display monthly sleep survey
   static Future<Notifications> displayMonthlySleepNotification() async {
       var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
-      if (1 <= today && today <= 31) {
+      if (1 <= today && today <= 7) {
         return new Notifications(
             "ccc-ccc-ccc-ccc",
             "Monthly sleep survey",
@@ -108,7 +108,7 @@ class MyPreferences {
   /// Display monthly pain survey
   static Future<Notifications> displayMonthlyPromis10() async {
     var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
-    if (1 <= today && today <= 31) {
+    if (1 <= today && today <= 7) {
       return new Notifications(
           "ddd-ddd-ddd-ddd",
           "Monthly quality of life survey",
