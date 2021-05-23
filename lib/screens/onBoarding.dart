@@ -1,7 +1,10 @@
+
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
-import 'package:intl/intl.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
@@ -18,6 +21,8 @@ class OnBoardingState extends State<OnBoarding> {
   TextEditingController ageController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController durationController = TextEditingController();
+
+  String appId;
 
   int clinicalDiagnosisRadio = -1;
   String gender;
@@ -59,7 +64,7 @@ class OnBoardingState extends State<OnBoarding> {
   @override
   void initState() {
     super.initState();
-
+    getId();
     // gSheets = GSheets(environment['credentials']);
     gSheets = GSheets(credentials);
   }
@@ -640,15 +645,15 @@ class OnBoardingState extends State<OnBoarding> {
     // final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     final ss = await gSheets.spreadsheet(
         '1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
-    var sheet = ss.worksheetByTitle('user_info_test');
-    sheet ??= await ss.addWorksheet('user_info_test');
+    var sheet = ss.worksheetByTitle('user_info');
+    sheet ??= await ss.addWorksheet('user_info');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString("app_id");
+    // var id = prefs.getString("app_id");
     prefs.setString('segment', '07:00');
 
     List values = [];
-    values.add(id);
+    values.add(appId);
     values.add(ageController.value.text);
     values.add(gender);
     values.add(employment);
@@ -707,4 +712,26 @@ class OnBoardingState extends State<OnBoarding> {
     }
   }
 
+  Future<String> getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    var id;
+    if (Platform.isIOS) {
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      id = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      id = androidDeviceInfo.androidId; // unique ID on Android
+    }
+    setState(() {
+      appId = id;
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("app_id", id);
+
+    if (id == null) {
+      getId();
+    }
+    return id;
+  }
 }
