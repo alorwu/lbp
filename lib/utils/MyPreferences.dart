@@ -45,12 +45,6 @@ class MyPreferences {
 
   static Future<Notifications> displayTodayNotification() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dateTaken = prefs.getString("notification_taken_date");
-    var today = DateFormat("yyyy-MM-dd").format(DateTime.now());
-    // if (dateTaken != null && dateTaken == today) {
-    //   // Show "well done! You completed today's survey"
-    //   return null;
-    // } else {
       // Show task and display "Time to take the survey."
       return new Notifications(
           "bbb-bbb-bbb-bbb",
@@ -68,22 +62,6 @@ class MyPreferences {
     prefs.setString('notification_taken_date', date);
   }
 
-  // static Future<Notifications> insertOnBoardingTask() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var takenOnboarding = prefs.getBool("onboarding");
-  //   if (takenOnboarding != true) {
-  //     return Notifications(
-  //         "aaa-aaa-aaa-aaa",
-  //         "Get started here",
-  //         "Let's get to know you",
-  //         false,
-  //       "daily"
-  //     );
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
   static updateOnboarding(bool status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('first_time', status);
@@ -93,7 +71,7 @@ class MyPreferences {
   /// Display monthly sleep survey
   static Future<Notifications> displayMonthlySleepNotification() async {
       var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
-      if (1 <= today && today <= 7) {
+      if (1 <= today && today <= 31) {
         return new Notifications(
             "ccc-ccc-ccc-ccc",
             "Monthly sleep survey",
@@ -108,7 +86,7 @@ class MyPreferences {
   /// Display monthly pain survey
   static Future<Notifications> displayMonthlyPromis10() async {
     var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
-    if (1 <= today && today <= 7) {
+    if (1 <= today && today <= 31) {
       return new Notifications(
           "ddd-ddd-ddd-ddd",
           "Monthly quality of life survey",
@@ -119,11 +97,6 @@ class MyPreferences {
     }
     return null;
   }
-
-  // static saveMonthlyDateTaken(String date) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.setString('monthly_notification_taken_date', date);
-  // }
 
   /// Save date monthly sleep survey was taken
   static saveLastMonthlySleepSurveyDate(String date) async {
