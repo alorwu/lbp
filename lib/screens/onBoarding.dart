@@ -3,8 +3,11 @@ import 'dart:io';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:lbp/screens/settings/consent.dart';
+import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
@@ -40,6 +43,8 @@ class OnBoardingState extends State<OnBoarding> {
   var max = 10;
   var min = 0;
   var fullWidth = false;
+
+  var consentCheck = false;
 
   double sliderValue = 0;
   // double realSliderValue = -1;
@@ -595,30 +600,73 @@ class OnBoardingState extends State<OnBoarding> {
                   ),
                   SizedBox(height: 20.0),
                   Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Row(
+                      children: <Widget>[
+                        Checkbox(
+                          value: this.consentCheck,
+                          onChanged: (bool value) {
+                            setState(() {
+                              this.consentCheck = value;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(color: Colors.grey),
+                              children: <TextSpan>[
+                                TextSpan(text: "I have read and agree to the terms and conditions as outlined in the "),
+                                TextSpan(
+                                  text: "user consent agreement ",
+                                  style: TextStyle(color: Colors.blue),
+                                  recognizer: TapGestureRecognizer()..onTap = () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
+                                  }
+                                ),
+                                TextSpan(text: "and "),
+                                TextSpan(
+                                    text: "privacy policy.",
+                                    style: TextStyle(color: Colors.blue),
+                                    recognizer: TapGestureRecognizer()..onTap = () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
+                                    }
+                                )
+                              ]
+                            )
+                          )
+                        ),
+                          ],
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Container(
                     height: 50,
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ProgressButton(
                       borderRadius: BorderRadius.circular(8.0),
-                      color: Colors.blue,
+                      color: this.consentCheck ? Colors.blue : Colors.grey,
                       child: Text('Get started', style: TextStyle(color: Colors.white)),
                       onPressed: (AnimationController controller) async {
-
-                        if (_formKey.currentState.validate()) {
-                          // await MyPreferences.updateOnboarding(false);
-                          // await MyPreferences.saveMonthlyDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                          // await MyPreferences.saveNotificationTime("07:00");
-
-                          if (exerciseRadio < 0) {
-                            showSnackBar('Please select an answer on how active is your lifestyle', context);
-                          } else if (clinicalDiagnosisRadio < 0) {
-                            showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
-                          } else {
-                            sendData(
-                                context,
-                                controller
-                            );
-                          }
+                        if (this.consentCheck) {
+                          validateAndSend(controller);
                         }
+                        // if (_formKey.currentState.validate()) {
+                        //   // await MyPreferences.updateOnboarding(false);
+                        //   // await MyPreferences.saveMonthlyDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                        //   // await MyPreferences.saveNotificationTime("07:00");
+                        //
+                        //   if (exerciseRadio < 0) {
+                        //     showSnackBar('Please select an answer on how active is your lifestyle', context);
+                        //   } else if (clinicalDiagnosisRadio < 0) {
+                        //     showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
+                        //   } else {
+                        //     sendData(
+                        //         context,
+                        //         controller
+                        //     );
+                        //   }
+                        // }
                       },
                     ),
                   ),
@@ -631,6 +679,53 @@ class OnBoardingState extends State<OnBoarding> {
     );
   }
 
+  Future<void> showConsentDialog(BuildContext context, AnimationController controller) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Approve'),
+              onPressed: () {
+                validateAndSend(controller);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  validateAndSend(AnimationController controller) {
+    if (_formKey.currentState.validate()) {
+      // await MyPreferences.updateOnboarding(false);
+      // await MyPreferences.saveMonthlyDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+      // await MyPreferences.saveNotificationTime("07:00");
+
+      if (exerciseRadio < 0) {
+        showSnackBar('Please select an answer on how active is your lifestyle', context);
+      } else if (clinicalDiagnosisRadio < 0) {
+        showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
+      } else {
+        sendData(
+            context,
+            controller
+        );
+      }
+    }
+  }
   showSnackBar(String message, BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(

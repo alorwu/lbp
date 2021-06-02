@@ -4,6 +4,7 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:preferences/preference_page.dart';
@@ -54,6 +55,14 @@ class MapScreenState extends State<SettingsScreen> {
                 style: TextStyle(color: Colors.blue),
                 recognizer: TapGestureRecognizer()..onTap = () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
+                }
+            ),
+            TextSpan(text: "and user consent agreement "),
+            TextSpan(
+                text: "here ",
+                style: TextStyle(color: Colors.blue),
+                recognizer: TapGestureRecognizer()..onTap = () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
                 }
             ),
           ]
