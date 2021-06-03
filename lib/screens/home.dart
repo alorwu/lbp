@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lbp/model/notifications.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
+import 'package:lbp/screens/rssfeed_screen.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -403,22 +404,22 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text('Sleep Better with Back Pain'),
           elevation: 5,
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SettingsScreen()));
-                },
-                child: Icon(
-                  Icons.settings,
-                  size: 24.0,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
+          // actions: <Widget>[
+          //   Padding(
+          //     padding: EdgeInsets.only(right: 20.0),
+          //     child: GestureDetector(
+          //       onTap: () {
+          //         Navigator.push(context,
+          //             MaterialPageRoute(builder: (context) => SettingsScreen()));
+          //       },
+          //       child: Icon(
+          //         Icons.settings,
+          //         size: 24.0,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ),
+          // ],
         ),
         backgroundColor: Colors.white, //Color.fromRGBO(58, 66, 86, 1.0),
         body: FutureBuilder(
@@ -436,6 +437,52 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               }
             }
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(64, 75, 96, 0.9),
+                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50.0),
+                      child: Image.asset(
+                        'images/logo.png',
+                        height: 100.0,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Text("Sleep Better with Back Pain", style: TextStyle(color: Colors.white, fontSize: 18.0)),
+                  ],
+                ),
+              ),
+              ListTile(
+                title: Text("Home"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+                },
+              ),
+              ListTile(
+                title: Text("RSS"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => RssFeedScreen()));
+                },
+              ),
+              ListTile(
+                title: Text("Settings"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+                },
+              ),
+            ],
+          ),
         ),
       );
     }

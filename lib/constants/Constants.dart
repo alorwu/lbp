@@ -1,2 +1,3 @@
 const String ANIMATED_SPLASH = '/SplashScreen',
-    HOME = '/MyHomePage';
+    HOME = '/MyHomePage',
+    SETTINGS = '/SettingsScreen';
