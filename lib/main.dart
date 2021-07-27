@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:lbp/screens/home.dart';
+import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -20,7 +21,7 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var firstTime = prefs.getBool("first_time");
   if (firstTime == false) {
-    _defaultHome = MyHomePage();
+    _defaultHome = NewHomeScreen();
   }
 
   runApp(new MaterialApp(
@@ -32,7 +33,7 @@ void main() async {
     debugShowCheckedModeBanner: false,
     home: _defaultHome,
     routes: <String, WidgetBuilder>{
-      'home': (BuildContext context) => new MyHomePage(),
+      'home': (BuildContext context) => new NewHomeScreen(),
       'onboarding': (BuildContext context) => new OnBoarding(),
     },
   ));

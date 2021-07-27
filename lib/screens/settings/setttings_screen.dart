@@ -52,7 +52,7 @@ class MapScreenState extends State<SettingsScreen> {
             TextSpan(text: "You can read our privacy disclaimer "),
             TextSpan(
                 text: "here ",
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(color: Color.fromRGBO(58, 66, 86, 1.0)),
                 recognizer: TapGestureRecognizer()..onTap = () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
                 }
@@ -60,7 +60,7 @@ class MapScreenState extends State<SettingsScreen> {
             TextSpan(text: "and user consent agreement "),
             TextSpan(
                 text: "here ",
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(color: Color.fromRGBO(58, 66, 86, 1.0)),
                 recognizer: TapGestureRecognizer()..onTap = () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
                 }
