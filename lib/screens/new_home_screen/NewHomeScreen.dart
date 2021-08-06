@@ -6,6 +6,8 @@ import 'package:lbp/screens/settings/donate_data.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
 import 'package:lbp/screens/trends.dart';
 
+import '../sleep_monitor.dart';
+
 class NewHomeScreen extends StatefulWidget {
   @override
   NewHomeState createState() => NewHomeState();
@@ -22,7 +24,7 @@ class NewHomeState extends State<NewHomeScreen> {
 
   static List<Widget> _widgetOptions = <Widget> [
     MyHomePage(),
-    // AboutScreen(),
+    SleepMonitor(),
     TrendScreen(),
     SettingsScreen()
   ];
@@ -34,25 +36,22 @@ class NewHomeState extends State<NewHomeScreen> {
       body: Stack(
         children: <Widget>[
           Scaffold(
-            backgroundColor: Colors.red,
+            backgroundColor: Color(0xff000000),
             bottomNavigationBar: new Theme(
-              data: Theme.of(context).copyWith(canvasColor: Color.fromRGBO(58, 66, 86, 1.0)),
+              data: Theme.of(context).copyWith(canvasColor: Color(0xff000000) ), //Color.fromRGBO(58, 66, 86, 1.0)),
               child: BottomNavigationBar(
                 items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.home), label: 'Home'),
-                  // BottomNavigationBarItem(
-                  //     icon: Icon(Icons.event_note_outlined), label: 'Records'),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.bar_chart), label: 'Trends'),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.settings),
-                    label: 'More',
-                  ),
+                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+                  BottomNavigationBarItem(icon: Icon(Icons.event_note_outlined), label: 'Records'),
+                  BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Trends'),
+                  BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'More',),
                 ],
                 currentIndex: _selectedIndex,
-                selectedItemColor: Colors.amber[800],
+                selectedItemColor: Colors.white,
+                unselectedItemColor: Colors.white38,
                 onTap: _onItemTapped,
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
               ),
             ),
             body: _widgetOptions.elementAt(_selectedIndex),

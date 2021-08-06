@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lbp/screens/home.dart';
 import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:path_provider/path_provider.dart' as pathProvider;
 
 
 void main() async {
@@ -23,11 +25,13 @@ void main() async {
   if (firstTime == false) {
     _defaultHome = NewHomeScreen();
   }
+  final appDocumentDir = await pathProvider.getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
 
   runApp(new MaterialApp(
     title: 'Sleep Better with Back Pain',
     theme: ThemeData(
-      primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
+      primaryColor: Color(0xff000000), //Color.fromRGBO(58, 66, 86, 1.0),
       visualDensity: VisualDensity.adaptivePlatformDensity,
     ),
     debugShowCheckedModeBanner: false,
@@ -37,38 +41,4 @@ void main() async {
       'onboarding': (BuildContext context) => new OnBoarding(),
     },
   ));
-  // runApp(MyApp(_defaultHome));
 }
-
-
-
-// Future<void> initDb() async {
-//   final migration1to2 = Migration(1, 2, (database) async {
-//     await database.execute("ALTER TABLE notifications ADD COLUMN date_entered TEXT");
-//   });
-//
-//   final database = await $FloorAppDatabase
-//       .databaseBuilder('database.db')
-//       .addMigrations([migration1to2])
-//       .build();
-// }
-
-
-// class MyApp extends StatelessWidget {
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'SloPain',
-//       theme: ThemeData(
-//         primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//       ),
-//       home: MyHomePage(),
-//       routes: <String, WidgetBuilder>{
-//         'home': (BuildContext context) => new OnBoarding(),
-//         // 'onboarding': (BuildContext context) => new OnBoarding(),
-//       },
-//     );
-//   }
-// }
