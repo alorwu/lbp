@@ -9,6 +9,8 @@ class PrivacyDisclaimerScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Privacy disclaimer"),
+        backgroundColor: Color(0xff000000),
+        brightness: Brightness.dark,
       ),
       body: SingleChildScrollView(
         child:

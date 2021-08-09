@@ -45,29 +45,6 @@ class MapScreenState extends State<SettingsScreen> {
     ));
   }
 
-  Widget disclaimer() => RichText(
-      text: TextSpan(
-          style: TextStyle(color: Colors.grey),
-          children: <TextSpan>[
-            TextSpan(text: "You can read our privacy disclaimer "),
-            TextSpan(
-                text: "here ",
-                style: TextStyle(color: Color.fromRGBO(58, 66, 86, 1.0)),
-                recognizer: TapGestureRecognizer()..onTap = () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
-                }
-            ),
-            TextSpan(text: "and user consent agreement "),
-            TextSpan(
-                text: "here ",
-                style: TextStyle(color: Color.fromRGBO(58, 66, 86, 1.0)),
-                recognizer: TapGestureRecognizer()..onTap = () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
-                }
-            ),
-          ]
-      )
-  );
 
   Widget donateData() => Container(
     child: Column(
@@ -198,24 +175,16 @@ class MapScreenState extends State<SettingsScreen> {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
                   child: PreferencePage([
-                    PreferenceTitle("Notification time"),
+                    PreferenceTitle("Notification time", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
                     notificationTime(context),
-                    PreferenceTitle("Donate data"),
+                    PreferenceTitle("Donate data", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
                     donateData(),
-                    PreferenceTitle("About app"),
+                    PreferenceTitle("About app", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
                     aboutUs(),
-                    PreferenceTitle("Other studies"),
+                    PreferenceTitle("Other studies", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
                     otherStudies()
                   ]),
                 ),
-              ),
-              Divider(),
-              Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 20.0),
-                    child: disclaimer(),
-                  )
               ),
 
             ],

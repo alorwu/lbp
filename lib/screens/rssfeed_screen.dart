@@ -83,7 +83,9 @@ class RssFeedState extends State<RssFeedScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: Text('RSS Feed', style: TextStyle(color: Colors.white)),
+          title: Text('RSS Feed'),
+          backgroundColor: Color(0xff000000),
+          brightness: Brightness.dark,
         ),
       body: body(),
     );
@@ -93,23 +95,6 @@ class RssFeedState extends State<RssFeedScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SizedBox(
-          width: 250,
-          height: 150,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(5.0),
-                alignment: Alignment.center,
-                color: Colors.green,
-                child: const Text(
-                  'Foreground Text',
-                  style: TextStyle(color: Colors.white, fontSize: 20.0),
-                ),
-              ),
-            ],
-          ),
-        ),
         Expanded(
           flex: 3,
             child: Container(

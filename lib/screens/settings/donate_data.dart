@@ -50,6 +50,8 @@ class DonateDataState extends State<DonateDataScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Donate Oura data"),
+        backgroundColor: Color(0xff000000),
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(

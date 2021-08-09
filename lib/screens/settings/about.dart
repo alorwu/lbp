@@ -6,7 +6,9 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text('About this app', style: TextStyle(color: Colors.white)),
+        title: Text('About this app'),
+        backgroundColor: Color(0xff000000),
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(

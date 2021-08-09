@@ -13,6 +13,8 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Pain Relief Exercises"),
+        backgroundColor: Color(0xff000000),
+        brightness: Brightness.dark,
       ),
       body: ListView(
         primary: false,

@@ -9,6 +9,8 @@ class ConsentScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("User consent agreement"),
+        backgroundColor: Color(0xff000000),
+        brightness: Brightness.dark,
       ),
       body: SingleChildScrollView(
         child:

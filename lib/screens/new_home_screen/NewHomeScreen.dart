@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lbp/screens/home.dart';
+import 'package:lbp/screens/more.dart';
 import 'package:lbp/screens/settings/about.dart';
 import 'package:lbp/screens/settings/donate_data.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
+import 'package:lbp/screens/sleep_record.dart';
 import 'package:lbp/screens/trends.dart';
 
-import '../sleep_monitor.dart';
+import '../sleep_home.dart';
 
 class NewHomeScreen extends StatefulWidget {
   @override
@@ -23,10 +25,11 @@ class NewHomeState extends State<NewHomeScreen> {
   }
 
   static List<Widget> _widgetOptions = <Widget> [
-    MyHomePage(),
-    SleepMonitor(),
+    // MyHomePage(),
+    SleepHome(),
+    SleepRecordScreen(),
     TrendScreen(),
-    SettingsScreen()
+    MoreScreen()
   ];
 
   @override
@@ -44,7 +47,7 @@ class NewHomeState extends State<NewHomeScreen> {
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
                   BottomNavigationBarItem(icon: Icon(Icons.event_note_outlined), label: 'Records'),
                   BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Trends'),
-                  BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'More',),
+                  BottomNavigationBarItem(icon: Icon(Icons.add), label: 'More',),
                 ],
                 currentIndex: _selectedIndex,
                 selectedItemColor: Colors.white,
