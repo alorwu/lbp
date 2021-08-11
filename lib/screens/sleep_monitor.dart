@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -50,64 +49,67 @@ class SleepMonitorState extends State<SleepMonitor> {
       ),
       backgroundColor: Color(0xff000000),
       body: Stack(
-      fit: StackFit.expand,
-      children: [
-        Container(
-          constraints: BoxConstraints.expand(),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("images/sunrise.jpg"),
-                  fit: BoxFit.cover)),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 120.0),
-          child: Align(
-              alignment: FractionalOffset.topCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                      "$_timeString",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 70.0,
-                        fontWeight: FontWeight.w500,
-                      )
-                  ),
-                  SizedBox(width: 4,),
-                  Text(
-                      "$_amPmString",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w300,
-                      )
-                  ),
-                ],
-              )
+        fit: StackFit.expand,
+        children: [
+          Container(
+            constraints: BoxConstraints.expand(),
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("images/sunrise.jpg"),
+                    fit: BoxFit.cover)),
           ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 90.0),
-          child: Align(
+          Container(
+            margin: EdgeInsets.only(top: 120.0),
+            child: Align(
+                alignment: FractionalOffset.topCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("$_timeString",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 70.0,
+                          fontWeight: FontWeight.w500,
+                        )),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text("$_amPmString",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300,
+                        )),
+                  ],
+                )),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 90.0),
+            child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.stop_circle_outlined,
-                    color: Colors.white,
-                    semanticLabel: "Stop",
-                    size: 70.0,
-                  ),
-                  Text("Tap to stop", style: TextStyle(color: Colors.white54),)
-              ],
-            )
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Icons.stop_circle_outlined,
+                        color: Colors.white,
+                        semanticLabel: "Stop",
+                        size: 70.0,
+                      ),
+                      Text(
+                        "Tap to stop",
+                        style: TextStyle(color: Colors.white54),
+                      )
+                    ],
+                  )),
+            ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     );
   }
-
 }

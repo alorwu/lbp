@@ -70,55 +70,55 @@ class RssFeedState extends State<RssFeedScreen> {
   body() {
     return isFeedEmpty()
         ? Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: Colors.black),
           )
         : RefreshIndicator(
-            child: list(),
-            onRefresh: () => load(),
-            key: _refreshKey
-        );
+            child: list(), onRefresh: () => load(), key: _refreshKey);
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(
-          title: Text('RSS Feed'),
-          backgroundColor: Color(0xff000000),
-          brightness: Brightness.dark,
-        ),
+      appBar: AppBar(
+        title: Text('RSS Feed'),
+        backgroundColor: Color(0xff000000),
+        brightness: Brightness.dark,
+      ),
       body: body(),
     );
   }
 
   list() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Expanded(
-          flex: 3,
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            flex: 3,
             child: Container(
               child: ListView.separated(
                 itemCount: _feed.items.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = _feed.items[index];
-                    return Container(
-                      child: ListTile(
-                        title: title(item.title),
-                        subtitle: subtitle(item.pubDate),
-                        trailing: rightIcon(),
-                        contentPadding: EdgeInsets.all(10.0),
-                        onTap: () => openFeed(item.link),
-                      ),
-                    );
-                  },
+                itemBuilder: (BuildContext context, int index) {
+                  final item = _feed.items[index];
+                  return Container(
+                    child: ListTile(
+                      title: title(item.title),
+                      subtitle: subtitle(item.pubDate),
+                      trailing: rightIcon(),
+                      contentPadding: EdgeInsets.all(10.0),
+                      onTap: () => openFeed(item.link),
+                    ),
+                  );
+                },
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider();
                 },
               ),
             ),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -137,10 +137,7 @@ class RssFeedState extends State<RssFeedScreen> {
   subtitle(subtitle) {
     return Text(
       subtitle,
-      style: TextStyle(
-        fontSize: 15.0,
-        fontWeight: FontWeight.w300
-      ),
+      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -154,13 +151,13 @@ class RssFeedState extends State<RssFeedScreen> {
     );
   }
 
-  // BoxDecoration customBoxDecoration() {
-  //   return BoxDecoration(
-  //     border: Border.all(
-  //       color: Colors.grey,
-  //       width: 1.0,
-  //     ),
-  //   );
-  // }
+// BoxDecoration customBoxDecoration() {
+//   return BoxDecoration(
+//     border: Border.all(
+//       color: Colors.grey,
+//       width: 1.0,
+//     ),
+//   );
+// }
 
 }

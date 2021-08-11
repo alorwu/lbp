@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../env/.env.dart';
 
-class MonthlyPainQuestionnairePage extends StatefulWidget {
+class QualityOfLifeQuestionnaire extends StatefulWidget {
   final Notifications notification;
 
   final double sliderHeight;
@@ -22,7 +22,7 @@ class MonthlyPainQuestionnairePage extends StatefulWidget {
   final int max;
   final fullWidth;
 
-  MonthlyPainQuestionnairePage(
+  QualityOfLifeQuestionnaire(
       {Key key,
         @required this.notification,
         this.sliderHeight = 48,
@@ -32,11 +32,11 @@ class MonthlyPainQuestionnairePage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _MonthlyPainQuestionnairePageState createState() =>
-      _MonthlyPainQuestionnairePageState();
+  _QualityOfLifeQuestionnaireState createState() =>
+      _QualityOfLifeQuestionnaireState();
 }
 
-class _MonthlyPainQuestionnairePageState extends State<MonthlyPainQuestionnairePage> {
+class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire> {
   PromisQuestionnaire questionnaire = PromisQuestionnaire();
   Notifications _notification;
   // List<String> answers = List();
@@ -61,10 +61,12 @@ class _MonthlyPainQuestionnairePageState extends State<MonthlyPainQuestionnaireP
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        backgroundColor: Color(0xff000000),
         elevation: 0,
-        title: Text("Monthly Quality of Life Survey"),
+        brightness: Brightness.dark,
+        title: Text("Quality of Life Survey"),
       ),
+      backgroundColor: Color(0xff000000),
       body: Builder(
         builder: (context) => Form(
           key: _formKey,

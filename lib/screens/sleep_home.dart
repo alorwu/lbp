@@ -4,6 +4,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lbp/model/notifications.dart';
+import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
+import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
+import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 import 'package:lbp/screens/sleep_monitor.dart';
 
 class SleepHome extends StatefulWidget {
@@ -15,6 +19,30 @@ class SleepHomeState extends State<SleepHome> {
   String _timeString;
   String _amPmString;
   Timer timer;
+
+  var sleepQuestionnaire = Notifications(
+      "ccc-ccc-ccc-ccc",
+      "Monthly sleep survey",
+      "Click to open",
+      false,
+      "monthly-sleep"
+  );
+
+  var qualityOfLifeQuestionnaire = Notifications(
+      "ddd-ddd-ddd-ddd",
+      "Monthly quality of life survey",
+      "Click to open",
+      false,
+      "monthly-pain"
+  );
+
+  var dailyQuestionnaire = Notifications(
+      "bbb-bbb-bbb-bbb",
+      "Today's survey",
+      "Click to open",
+      false,
+      "daily"
+  );
 
   @override
   void initState() {
@@ -79,8 +107,14 @@ class SleepHomeState extends State<SleepHome> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: GestureDetector(
-                        onTap: () {},
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  QuestionnairePage(notification: sleepQuestionnaire))
+                          );
+                        },
                         child: Card(
                           elevation: 3.0,
                           color: Colors.grey[850],
@@ -128,8 +162,14 @@ class SleepHomeState extends State<SleepHome> {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: GestureDetector(
-                        onTap: () {},
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  SleepQuestionnaire(notification: sleepQuestionnaire))
+                          );
+                        },
                         child: Card(
                             elevation: 3.0,
                             color: Colors.grey[850],
@@ -164,11 +204,17 @@ class SleepHomeState extends State<SleepHome> {
                       ),
                     ),
 
-                    // Sleep duration
+                    // Quality of life survey
                     Expanded(
                       flex: 2,
-                      child: GestureDetector(
-                        onTap: () {},
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  QualityOfLifeQuestionnaire(notification: qualityOfLifeQuestionnaire))
+                          );
+                        },
                         child: Card(
                             elevation: 3.0,
                             color: Colors.grey[850],

@@ -18,12 +18,12 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
       ),
       body: ListView(
         primary: false,
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         physics: ScrollPhysics(),
         children: [
           Card(
             elevation: 5.0,
-            shadowColor: Colors.blueGrey,
+            shadowColor: Colors.grey,
             child: InkWell(
               onTap: () {
                 Navigator.pushNamedAndRemoveUntil(
@@ -34,7 +34,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Center(
                   child: Container(
-                    width: 250.0,
+                    width: 200.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       color: Colors.black45,
@@ -45,8 +45,8 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                         'Cobra Lift',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w400,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w300,
                           color: Colors.white,
                         ),
                       ),
@@ -56,8 +56,8 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/kapha_cobra.jpg"),
-                    fit: BoxFit.fill,
+                    image: AssetImage("images/ex/cobra.jpg"),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -98,7 +98,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/cobra_lift.jpg"),
+                    image: AssetImage("images/ex/cobra.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -140,7 +140,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/cobra_lift.jpg"),
+                    image: AssetImage("images/ex/cobra.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -182,7 +182,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/cobra_lift.jpg"),
+                    image: AssetImage("images/ex/cobra.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -224,7 +224,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/cobra_lift.jpg"),
+                    image: AssetImage("images/ex/cobra.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -255,8 +255,8 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                         'Quadrupled Arm Leg',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w300,
                           color: Colors.white,
                         ),
                       ),
@@ -266,7 +266,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/cobra_lift.jpg"),
+                    image: AssetImage("images/ex/cobra.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -308,7 +308,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   image: DecorationImage(
-                    image: AssetImage("images/exercises/cobra_lift.jpg"),
+                    image: AssetImage("images/ex/cobra.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),

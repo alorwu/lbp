@@ -17,8 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../env/.env.dart';
-import 'questionnaires/monthly_promise10_questionnaire_screen.dart';
-import 'questionnaires/monthly_sleep_questionnaire_screen.dart';
+import 'questionnaires/quality_of_life_questionnaire.dart';
+import 'questionnaires/sleep_questionnaire.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -249,13 +249,13 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MonthlyPainQuestionnairePage(
+                      builder: (context) => QualityOfLifeQuestionnaire(
                           notification: notification)));
             } else {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MonthlyQuestionnairePage(
+                      builder: (context) => SleepQuestionnaire(
                           notification: notification)));
             }
           },

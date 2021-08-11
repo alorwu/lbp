@@ -74,10 +74,12 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: Color(0xff000000),
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        backgroundColor: Color(0xff000000),
         elevation: 0,
+        brightness: Brightness.dark,
+          title: Text("Today's Survey")
       ),
       body: buildQuestionsPage(),
     );
@@ -141,15 +143,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: ProgressButton(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(50.0),
+                  color: Colors.green,
                   onPressed: (AnimationController controller) async {
-                    // if (_formKey.currentState.validate()) {
-                    //   sendData(_notification, controller);
-                    //   setState(() {
-                    //   // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-                    //   });
-                    // }
                     await MyPreferences.saveDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
                     answers.add(notes);
                     sendData(_notification, controller);
@@ -196,10 +192,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 child: Builder(
                   builder: (context) => FlatButton(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(50.0),
                       ),
                       textColor: Colors.white,
-                      color: Colors.green.shade500,
+                      color: Colors.blueGrey,
                       onPressed: () {
                         if (questionnaire.getQuestion().type == "slider") {
                           if (realSliderValue != -1) {
@@ -347,7 +343,12 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       shrinkWrap: true,
       itemCount: 5,
       itemBuilder: (BuildContext context, index) {
-        return RadioListTile(
+        return Theme(
+          data: Theme.of(context).copyWith(
+            unselectedWidgetColor: Colors.white,
+            disabledColor: Colors.white
+          ),
+          child: RadioListTile(
           title: Text(
               '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
               style: TextStyle(color: Colors.white)),
@@ -359,6 +360,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               selectedValue = value;
             });
           },
+          ),
         );
       });
 
