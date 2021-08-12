@@ -187,15 +187,9 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       ),
       iconSize: 24,
       elevation: 16,
-      // underline: Container(
-      //   height: 2,
-      //   color: Colors.black54,
-      // ),
       onChanged: (String newValue) {
-        // var val = time.indexOf(newValue);
         setState(() {
           question.data = newValue;
-          // answers[index] = newValue;
         });
       },
       items: time.map<DropdownMenuItem<String>>((String value) {
@@ -235,8 +229,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
               decoration: InputDecoration(
                 hintText: "Enter text here",
                 hintStyle: TextStyle(color: Colors.grey),
-                // labelText: 'How old are you (in years)?',
-                // border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.text,
               onChanged: (String value) {
@@ -271,10 +263,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
           ),
           iconSize: 24,
           elevation: 16,
-          // underline: Container(
-          //   height: 2,
-          //   color: Colors.black54,
-          // ),
           onChanged: (String newValue) {
             setState(() {
               question.data = newValue;
@@ -324,8 +312,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
 
     try {
       var result = await sheet.values.appendRow(values);
-      // answers.clear();
-      // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
       if (result) {
         ScaffoldMessenger
             .of(context)

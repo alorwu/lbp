@@ -88,9 +88,6 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                       if (_formKey.currentState.validate()) {
                         await MyPreferences.saveLastMonthlyPainSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
                         sendData(_notification, controller);
-                        setState(() {
-                          // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-                        });
                       }
                     },
                     child: Text(

@@ -9,6 +9,7 @@ import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 import 'package:lbp/screens/sleep_monitor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SleepHome extends StatefulWidget {
   @override
@@ -19,6 +20,13 @@ class SleepHomeState extends State<SleepHome> {
   String _timeString;
   String _amPmString;
   Timer timer;
+  bool showMonthlySurveys = true;
+  bool showQOLSurvey = true;
+  bool showSleepSurvey = true;
+
+  String todayTakenDate;
+  String qolLastDateTaken;
+  String sleepLastDateTaken;
 
   var sleepQuestionnaire = Notifications(
       "ccc-ccc-ccc-ccc",
@@ -46,10 +54,43 @@ class SleepHomeState extends State<SleepHome> {
 
   @override
   void initState() {
+    initializeVariables();
     _timeString = _formatDateTime(DateTime.now());
     _amPmString = _formatTimeOfDay(DateTime.now());
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
+    setState(() {
+      showMonthlySurveys = 1 <= today && today <= 17;
+    });
+    if (qolLastDateTaken != null) {
+      showQOLSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(qolLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
+    }
+    if (sleepLastDateTaken != null) {
+      showSleepSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(sleepLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
+    }
     super.initState();
+  }
+
+  Future<void> initializeVariables() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var todayTaken = prefs.getString("notification_taken_date");
+    var sleepSurveyDate = prefs.getString("monthly_sleep_survey_taken_date");
+    var promis10Date = prefs.getString("monthly_pain_survey_taken_date");
+
+    var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
+
+    setState(() {
+      todayTakenDate = todayTaken;
+      qolLastDateTaken = promis10Date;
+      sleepLastDateTaken = sleepSurveyDate;
+
+      // if (qolLastDateTaken != null) {
+        showQOLSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(qolLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
+      // }
+      // if (sleepLastDateTaken != null) {
+        showSleepSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(sleepLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
+      // }
+    });
   }
 
   void _getTime() {
@@ -73,6 +114,58 @@ class SleepHomeState extends State<SleepHome> {
   void dispose() {
     timer.cancel();
     super.dispose();
+  }
+
+  Widget checkIconToShow() {
+    if (todayTakenDate == DateFormat("yyyy-MM-dd").format(DateTime.now())) {
+      return happyIcon();
+    } else {
+      return sadIcon();
+    }
+  }
+
+  Widget sadIcon() {
+    return Row(
+      mainAxisAlignment:
+      MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Not completed yet. Click to open",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.0)),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+          child: Image.asset(
+            'images/sadd.png',
+            height: 40.0,
+            width: 40.0,
+            fit: BoxFit.fill,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget happyIcon() {
+    return Row(
+      mainAxisAlignment:
+      MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Good job!! You've completed today's survey.",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.0)),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+          child: Image.asset(
+            'images/smiley.png',
+            height: 40.0,
+            width: 40.0,
+            fit: BoxFit.fill,
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -129,25 +222,7 @@ class SleepHomeState extends State<SleepHome> {
                                 Text("Today's survey",
                                     style: TextStyle(color: Colors.white54)),
                                 SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Not completed yet. Click to open",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14.0)),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      child: Image.asset(
-                                        'images/sadd.png',
-                                        height: 40.0,
-                                        width: 40.0,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ],
-                                )
+                                checkIconToShow()
                               ],
                             ),
                           ),
@@ -157,99 +232,118 @@ class SleepHomeState extends State<SleepHome> {
                   ],
                 ),
                 // Monthly surveys
-                Row(
+                this.showMonthlySurveys
+                ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) =>
-                                  SleepQuestionnaire(notification: sleepQuestionnaire))
-                          );
-                        },
-                        child: Card(
-                            elevation: 3.0,
-                            color: Colors.grey[850],
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            margin: EdgeInsets.all(8),
-                            child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Monthly sleep survey",
-                                      style: TextStyle(color: Colors.white54)),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Click to open",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12.0)),
-                                      Icon(
-                                        Icons.alarm,
-                                        color: Colors.blue,
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )),
-                      ),
-                    ),
+                    // Sleep survey
+                          this.showSleepSurvey
+                              ? Expanded(
+                                  flex: 2,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SleepQuestionnaire(
+                                                      notification:
+                                                          sleepQuestionnaire)));
+                                    },
+                                    child: Card(
+                                        elevation: 3.0,
+                                        color: Colors.grey[850],
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        margin: EdgeInsets.all(8),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text("Monthly sleep survey",
+                                                  style: TextStyle(
+                                                      color: Colors.white54)),
+                                              SizedBox(height: 10),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text("Click to open",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12.0)),
+                                                  Icon(
+                                                    Icons.alarm,
+                                                    color: Colors.blue,
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )),
+                                  ),
+                                )
+                              : Container(),
 
-                    // Quality of life survey
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) =>
-                                  QualityOfLifeQuestionnaire(notification: qualityOfLifeQuestionnaire))
-                          );
-                        },
-                        child: Card(
-                            elevation: 3.0,
-                            color: Colors.grey[850],
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            margin: EdgeInsets.all(8),
-                            child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Quality of life survey",
-                                      style: TextStyle(color: Colors.white54)),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Click to open",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12.0)),
-                                      Icon(
-                                        Icons.alarm,
-                                        color: Colors.green,
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )),
-                      ),
-                    ),
+                          // Quality of life survey
+                          this.showQOLSurvey
+                              ? Expanded(
+                                  flex: 2,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  QualityOfLifeQuestionnaire(
+                                                      notification:
+                                                          qualityOfLifeQuestionnaire)));
+                                    },
+                                    child: Card(
+                                        elevation: 3.0,
+                                        color: Colors.grey[850],
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        margin: EdgeInsets.all(8),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text("Quality of life survey",
+                                                  style: TextStyle(
+                                                      color: Colors.white54)),
+                                              SizedBox(height: 10),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text("Click to open",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12.0)),
+                                                  Icon(
+                                                    Icons.alarm,
+                                                    color: Colors.green,
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )),
+                                  ),
+                                )
+                              : Container(),
                   ],
-                ),
+                )
+                : Container(),
 
                 Container(
                   width: double.infinity,
