@@ -42,4 +42,16 @@ class DailyQ {
     this.painIntensity,
     this.notes
   });
+
+}
+
+extension DailyQExtension on DailyQ {
+  get sleepPeriod {
+    var durationInMinutes = this.wakeupTime.difference(this.sleepTime).inMinutes;
+    return durationToList(durationInMinutes);
+  }
+}
+
+List<String> durationToList(int minutes) {
+  return Duration(minutes:minutes).toString().split(':');
 }

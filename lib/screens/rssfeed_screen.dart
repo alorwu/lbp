@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webfeed/domain/rss_feed.dart';
 
@@ -130,7 +131,7 @@ class RssFeedState extends State<RssFeedScreen> {
 
   subtitle(subtitle) {
     return Text(
-      subtitle,
+      DateFormat("yyyy-MM-dd").format(subtitle),
       style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,

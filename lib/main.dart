@@ -16,6 +16,7 @@ void main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(DailyQAdapter());
+  await Hive.openBox<DailyQ>("testBox");
 
   await Firebase.initializeApp();
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);

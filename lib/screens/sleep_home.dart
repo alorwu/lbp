@@ -53,8 +53,16 @@ class SleepHomeState extends State<SleepHome> {
       qolLastDateTaken = promis10Date;
       sleepLastDateTaken = sleepSurveyDate;
 
-      showQOLSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(qolLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
-      showSleepSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(sleepLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
+      if (qolLastDateTaken != null) {
+        showQOLSurvey = (1 <= today && today <= 17) &&
+            DateFormat("yyyy-MM").parse(qolLastDateTaken) !=
+                DateFormat("yyyy-MM").parse(DateTime.now().toString());
+      }
+      if (sleepLastDateTaken != null ) {
+        showSleepSurvey = (1 <= today && today <= 17) &&
+            DateFormat("yyyy-MM").parse(sleepLastDateTaken) !=
+                DateFormat("yyyy-MM").parse(DateTime.now().toString());
+      }
     });
   }
 

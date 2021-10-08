@@ -246,108 +246,18 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   Widget answerWidget(Question question) {
+    switch(question.type) {
+      case "slider":
+        return answerSliderWidget(question);
+      case "likert":
+        return answerRadioWidget(question);
+      case "date_picker":
+        return answerDatePickerWidget();
+      default:
+        return null;
+    }
     if (question.type == "slider") {
       return answerSliderWidget(question);
-      // double paddingFactor = .2;
-      // if (this.widget.fullWidth) paddingFactor = .3;
-
-      // return Column(
-      //     crossAxisAlignment: CrossAxisAlignment.center,
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       Container(
-      //         width: double.infinity, //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
-      //         height: (this.widget.sliderHeight),
-      //         decoration: new BoxDecoration(
-      //           borderRadius: new BorderRadius.all(
-      //             Radius.circular((this.widget.sliderHeight * .3)),
-      //           ),
-      //         ),
-      //         child: Padding(
-      //           padding: EdgeInsets.all(1.0),
-      //           child: Row(
-      //             children: <Widget>[
-      //               Text(
-      //                 '${this.widget.min}',
-      //                 textAlign: TextAlign.center,
-      //                 style: TextStyle(
-      //                   fontSize: this.widget.sliderHeight * .3,
-      //                   fontWeight: FontWeight.w700,
-      //                   color: Colors.white,
-      //                 ),
-      //               ),
-      //               SizedBox(
-      //                 width: this.widget.sliderHeight * .1,
-      //               ),
-      //               Expanded(
-      //                 child: Center(
-      //                   child: SliderTheme(
-      //                     data: SliderTheme.of(context).copyWith(
-      //                       activeTrackColor: Colors.white.withOpacity(1),
-      //                       inactiveTrackColor: Colors.white.withOpacity(.5),
-      //                       trackHeight: 4.0,
-      //                       thumbShape: CustomSliderThumbCircle(
-      //                         thumbRadius: this.widget.sliderHeight * .4,
-      //                         min: this.widget.min,
-      //                         max: this.widget.max,
-      //                       ),
-      //                       overlayColor: Colors.white.withOpacity(.4),
-      //                       activeTickMarkColor: Colors.white,
-      //                       inactiveTickMarkColor: Colors.red.withOpacity(.7),
-      //                     ),
-      //                     child: Slider(
-      //                         value: sliderValue,
-      //                         min: 0,
-      //                         max: 10,
-      //                         divisions: 10,
-      //                         onChanged: (double value) {
-      //                           print("Value: $value");
-      //                           setState(() {
-      //                             sliderValue = value;
-      //                             realSliderValue = value;
-      //                           });
-      //                         }),
-      //                   ),
-      //                 ),
-      //               ),
-      //               Text(
-      //                 '${this.widget.max}',
-      //                 textAlign: TextAlign.center,
-      //                 style: TextStyle(
-      //                   fontSize: this.widget.sliderHeight * .3,
-      //                   fontWeight: FontWeight.w700,
-      //                   color: Colors.white,
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //       Padding(
-      //         padding: EdgeInsets.all(1.0),
-      //         child: Row(
-      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //           children: [
-      //               Text(
-      //                 '${question.low}',
-      //                 textAlign: TextAlign.center,
-      //                 style: TextStyle(
-      //                   fontSize: this.widget.sliderHeight * .3,
-      //                   color: Colors.white,
-      //                 ),
-      //               ),
-      //               Text(
-      //                 '${question.high}',
-      //                 textAlign: TextAlign.center,
-      //                 style: TextStyle(
-      //                   fontSize: this.widget.sliderHeight * .3,
-      //                   color: Colors.white,
-      //                 ),
-      //               ),
-      //           ],
-      //         ),
-      //       ),
-      //     ]);
     } else if (question.type == "likert") {
       return answerRadioWidget(question);
     } else if (question.type == "date_picker") {
@@ -588,7 +498,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   void saveDataLocally(List<String> answers) async {
-    print(answers);
     var dailyQ = DailyQ(
         dateTaken: DateTime.now(),
         sleepTime: DateTime.parse(answers[0]),
@@ -600,8 +509,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         painIntensity: int.parse(answers[6]),
         notes: answers[7]
     );
-    final Box<DailyQ> box = await Hive.openBox('testBox');
-    await box.put(DateTime.now().toString(), dailyQ);
+    Box<DailyQ> box = Hive.box("testBox");
+    await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
   }
 
 }
