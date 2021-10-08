@@ -2,11 +2,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/monthly/PromisQuestion.dart';
 import 'package:lbp/model/monthly/PromisQuestionnaire.dart';
-import 'package:lbp/model/notifications.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../env/.env.dart';
 
 class QualityOfLifeQuestionnaire extends StatefulWidget {
-  final Notifications notification;
 
   final double sliderHeight;
   final int min;
@@ -24,7 +23,6 @@ class QualityOfLifeQuestionnaire extends StatefulWidget {
 
   QualityOfLifeQuestionnaire(
       {Key key,
-        @required this.notification,
         this.sliderHeight = 48,
         this.max = 10,
         this.min = 0,
@@ -38,8 +36,6 @@ class QualityOfLifeQuestionnaire extends StatefulWidget {
 
 class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire> {
   PromisQuestionnaire questionnaire = PromisQuestionnaire();
-  Notifications _notification;
-  // List<String> answers = List();
   GSheets gSheets;
   final _formKey = GlobalKey<FormState>();
 
@@ -63,7 +59,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       appBar: AppBar(
         backgroundColor: Color(0xff000000),
         elevation: 0,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: Text("Quality of Life Survey"),
       ),
       backgroundColor: Color(0xff000000),
@@ -87,7 +83,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                     onPressed: (AnimationController controller) async {
                       if (_formKey.currentState.validate()) {
                         await MyPreferences.saveLastMonthlyPainSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                        sendData(_notification, controller);
+                        sendData(controller);
                       }
                     },
                     child: Text(
@@ -147,9 +143,6 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
   }
 
   Widget sliderWidget(PromisQuestion question, int index) {
-    double paddingFactor = .2;
-    if (this.widget.fullWidth) paddingFactor = .3;
-
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -286,7 +279,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     );
   }
 
-  sendData(Notifications notification, AnimationController animationController) async {
+  sendData(AnimationController animationController) async {
     animationController.forward();
 
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);

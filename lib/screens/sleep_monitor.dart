@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class SleepMonitor extends StatefulWidget {
@@ -45,7 +46,7 @@ class SleepMonitorState extends State<SleepMonitor> {
       appBar: AppBar(
         toolbarHeight: 0.0,
         elevation: 0.0,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       backgroundColor: Color(0xff000000),
       body: Stack(

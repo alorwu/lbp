@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lbp/screens/rssfeed_screen.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
@@ -48,7 +49,7 @@ class MoreState extends State<MoreScreen> {
       appBar: AppBar(
         title: Text('More'),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Padding(
         padding: EdgeInsets.all(10),

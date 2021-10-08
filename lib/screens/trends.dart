@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TrendScreen extends StatefulWidget {
   @override
@@ -791,7 +792,7 @@ class TrendScreenState extends State<TrendScreen> {
               title: Text("Trends"),
               backgroundColor: Color(0xff000000),
               elevation: 0.0,
-              brightness: Brightness.dark,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
               bottom: TabBar(
                 indicatorColor: Colors.white,
                 indicatorSize: TabBarIndicatorSize.label,

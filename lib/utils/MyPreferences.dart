@@ -31,7 +31,7 @@ class MyPreferences {
 
   static Future<http.Response> saveNotificationTimeOnBackend(String time, String appId)  async {
     return http.put(
-      '${environment['remote_url']}/api/users/$appId',
+      Uri.parse('${environment['remote_url']}/api/users/$appId'),
       // 'http://10.0.2.2:8080/api/users/${this.appId}',
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -44,7 +44,6 @@ class MyPreferences {
 
 
   static Future<Notifications> displayTodayNotification() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
       // Show task and display "Time to take the survey."
       return new Notifications(
           "bbb-bbb-bbb-bbb",

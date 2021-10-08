@@ -2,11 +2,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/monthly/PSQIQuestion.dart';
 import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
-import 'package:lbp/model/notifications.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,7 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../env/.env.dart';
 
 class SleepQuestionnaire extends StatefulWidget {
-  final Notifications notification;
 
   final double sliderHeight;
   final int min;
@@ -23,7 +22,6 @@ class SleepQuestionnaire extends StatefulWidget {
 
   SleepQuestionnaire(
       {Key key,
-        @required this.notification,
         this.sliderHeight = 48,
         this.max = 10,
         this.min = 0,
@@ -37,8 +35,6 @@ class SleepQuestionnaire extends StatefulWidget {
 
 class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   PSQIQuestionnaire questionnaire = PSQIQuestionnaire();
-  Notifications _notification;
-  // List<String> answers = List();
   GSheets gSheets;
   final _formKey = GlobalKey<FormState>();
 
@@ -47,9 +43,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   initState() {
     super.initState();
     gSheets = GSheets(environment['credentials']);
-    // answers.length = questionnaire
-    //     .getPSQIQuestions()
-    //     .length;
   }
 
 
@@ -59,7 +52,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       backgroundColor: Color(0xff000000),
       appBar: AppBar(
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         elevation: 0,
         title: Text("Sleep Survey"),
       ),
@@ -83,7 +76,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
                       onPressed: (AnimationController animationController) async {
                         if (_formKey.currentState.validate()) {
                           await MyPreferences.saveLastMonthlySleepSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                          sendData(_notification, animationController);
+                          sendData(animationController);
                           // setState(() {
                           //   // Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
                           // });
@@ -296,7 +289,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     );
   }
 
-  sendData(Notifications notification, AnimationController animationController) async {
+  sendData(AnimationController animationController) async {
     animationController.forward();
 
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);

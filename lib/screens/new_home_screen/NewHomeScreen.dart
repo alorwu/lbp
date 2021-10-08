@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lbp/screens/home.dart';
 import 'package:lbp/screens/more.dart';
-import 'package:lbp/screens/settings/about.dart';
-import 'package:lbp/screens/settings/donate_data.dart';
-import 'package:lbp/screens/settings/setttings_screen.dart';
 import 'package:lbp/screens/sleep_record.dart';
 import 'package:lbp/screens/trends.dart';
 

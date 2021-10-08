@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/notifications.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
@@ -28,30 +27,6 @@ class SleepHomeState extends State<SleepHome> {
   String qolLastDateTaken;
   String sleepLastDateTaken;
 
-  var sleepQuestionnaire = Notifications(
-      "ccc-ccc-ccc-ccc",
-      "Monthly sleep survey",
-      "Click to open",
-      false,
-      "monthly-sleep"
-  );
-
-  var qualityOfLifeQuestionnaire = Notifications(
-      "ddd-ddd-ddd-ddd",
-      "Monthly quality of life survey",
-      "Click to open",
-      false,
-      "monthly-pain"
-  );
-
-  var dailyQuestionnaire = Notifications(
-      "bbb-bbb-bbb-bbb",
-      "Today's survey",
-      "Click to open",
-      false,
-      "daily"
-  );
-
   @override
   void initState() {
     initializeVariables();
@@ -62,12 +37,6 @@ class SleepHomeState extends State<SleepHome> {
     setState(() {
       showMonthlySurveys = 1 <= today && today <= 17;
     });
-    if (qolLastDateTaken != null) {
-      showQOLSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(qolLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
-    }
-    if (sleepLastDateTaken != null) {
-      showSleepSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(sleepLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
-    }
     super.initState();
   }
 
@@ -84,12 +53,8 @@ class SleepHomeState extends State<SleepHome> {
       qolLastDateTaken = promis10Date;
       sleepLastDateTaken = sleepSurveyDate;
 
-      // if (qolLastDateTaken != null) {
-        showQOLSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(qolLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
-      // }
-      // if (sleepLastDateTaken != null) {
-        showSleepSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(sleepLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
-      // }
+      showQOLSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(qolLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
+      showSleepSurvey = (1 <= today && today <= 17) && DateFormat("yyyy-MM").parse(sleepLastDateTaken) != DateFormat("yyyy-MM").parse(DateTime.now().toString());
     });
   }
 
@@ -175,7 +140,7 @@ class SleepHomeState extends State<SleepHome> {
         title: Text("Sleep Better with Back Pain"),
         backgroundColor: Color(0xff000000),
         elevation: 0.0,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -205,7 +170,7 @@ class SleepHomeState extends State<SleepHome> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) =>
-                                  QuestionnairePage(notification: sleepQuestionnaire))
+                                  QuestionnairePage())
                           );
                         },
                         child: Card(
@@ -246,9 +211,7 @@ class SleepHomeState extends State<SleepHome> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  SleepQuestionnaire(
-                                                      notification:
-                                                          sleepQuestionnaire)));
+                                                  SleepQuestionnaire()));
                                     },
                                     child: Card(
                                         elevation: 3.0,
@@ -299,9 +262,9 @@ class SleepHomeState extends State<SleepHome> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  QualityOfLifeQuestionnaire(
-                                                      notification:
-                                                          qualityOfLifeQuestionnaire)));
+                                                  QualityOfLifeQuestionnaire()
+                                          ),
+                                      );
                                     },
                                     child: Card(
                                         elevation: 3.0,
@@ -366,7 +329,7 @@ class SleepHomeState extends State<SleepHome> {
                       ),
                       icon: Icon(Icons.play_arrow_rounded),
                       label: Text(
-                        "Start Sleep",
+                        "Track sleep",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:lbp/env/.env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,7 +52,7 @@ class DonateDataState extends State<DonateDataScreen> {
       appBar: AppBar(
         title: Text("Donate Oura data"),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(
@@ -226,7 +227,7 @@ class DonateDataState extends State<DonateDataScreen> {
 
   Future<http.Response> saveEmailToRemoteDb() async {
     return http.put(
-      '${environment['remote_url']}/api/users/${this.appId}',
+      Uri.parse('${environment['remote_url']}/api/users/${this.appId}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

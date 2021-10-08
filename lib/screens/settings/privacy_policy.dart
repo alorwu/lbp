@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PrivacyDisclaimerScreen extends StatelessWidget {
   @override
@@ -10,7 +11,7 @@ class PrivacyDisclaimerScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Privacy disclaimer"),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: SingleChildScrollView(
         child:

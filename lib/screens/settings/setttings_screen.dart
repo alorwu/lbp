@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:lbp/screens/settings/consent.dart';
-import 'package:lbp/screens/settings/privacy_policy.dart';
+import 'package:flutter/services.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:preferences/preference_page.dart';
 import 'package:preferences/preference_title.dart';
@@ -38,7 +36,7 @@ class MapScreenState extends State<SettingsScreen> {
   }
 
   void showSnackBar(BuildContext context, String value) {
-    final scaffold = Scaffold.of(context);
+    final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(SnackBar(
       content: Text("Notification time updated to $value"),
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
@@ -162,7 +160,7 @@ class MapScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: Text('Settings'),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Builder(
         builder: (context) => Card(

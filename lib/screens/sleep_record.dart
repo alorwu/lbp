@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:lbp/model/hive/DailyQ.dart';
 
 class SleepRecordScreen extends StatefulWidget {
   @override
@@ -138,7 +141,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
         title: Text('Sleep records'),
         backgroundColor: Color(0xff000000),
         elevation: 0.0,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       backgroundColor: Color(0xff000000),
       body: SingleChildScrollView(

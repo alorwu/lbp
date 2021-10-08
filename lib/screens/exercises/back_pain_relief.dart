@@ -14,7 +14,7 @@ class BackPainReliefState extends State<BackPainReliefScreen> {
       appBar: AppBar(
         title: Text("Pain Relief Exercises"),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: ListView(
         primary: false,

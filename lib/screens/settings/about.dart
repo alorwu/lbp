@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AboutScreen extends StatelessWidget {
   @override
@@ -8,7 +9,7 @@ class AboutScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('About this app'),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(

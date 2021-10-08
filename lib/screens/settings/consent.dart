@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ConsentScreen extends StatelessWidget {
   @override
@@ -10,7 +11,7 @@ class ConsentScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("User consent agreement"),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: SingleChildScrollView(
         child:

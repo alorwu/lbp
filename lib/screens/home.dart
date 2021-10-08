@@ -7,10 +7,7 @@ import 'package:footer/footer.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lbp/model/notifications.dart';
-import 'package:lbp/screens/exercises/back_pain_relief.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
-import 'package:lbp/screens/rssfeed_screen.dart';
-import 'package:lbp/screens/settings/setttings_screen.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,27 +68,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> initPlatformState() async {
-    OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
-      OSiOSSettings.autoPrompt: false,
-      OSiOSSettings.promptBeforeOpeningPushUrl: true
-    });
+    OneSignal.shared.setAppId(environment['onesignal_app_id']);
+    // OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
+    //   OSiOSSettings.autoPrompt: false,
+    //   OSiOSSettings.promptBeforeOpeningPushUrl: true
+    // });
 
-    OneSignal.shared
-        .setInFocusDisplayType(OSNotificationDisplayType.notification);
+    // OneSignal.shared
+    //     .setInFocusDisplayType(OSNotificationDisplayType.notification);
 
-    OneSignal.shared.setNotificationReceivedHandler((notification) {
-      // refactorNotification(notification);
-    });
+    // OneSignal.shared.setNotificationReceivedHandler((notification) {
+    //   // refactorNotification(notification);
+    // });
 
     OneSignal.shared.setNotificationOpenedHandler((openedResult) {
       // MyPreferences.checkAndDisplayNotificationToday();
     });
 
-    var status = await OneSignal.shared.getPermissionSubscriptionState();
-
-    if (!status.permissionStatus.hasPrompted) {
-      OneSignal.shared.addTrigger("prompt_ios", "true");
-    }
+    // var status = await OneSignal.shared.getPermissionSubscriptionState();
+    //
+    // if (!status.permissionStatus.hasPrompted) {
+    //   OneSignal.shared.addTrigger("prompt_ios", "true");
+    // }
   }
 
   startTime() async {
@@ -126,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<http.Response> registerUser(String segment) async {
     return http.post(
-      '${environment['remote_url']}/api/users',
+      Uri.parse('${environment['remote_url']}/api/users'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -165,9 +163,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<String> getPlayerId() async {
-    OSPermissionSubscriptionState status =
-        await OneSignal.shared.getPermissionSubscriptionState();
-    String playerId = status.subscriptionStatus.userId;
+    // OSPermissionSubscriptionState status =
+    //     await OneSignal.shared.getPermissionSubscriptionState();
+    String playerId = await OneSignal.shared.getDeviceState().then((value) => value.userId);
+
+    // String playerId = status.subscriptionStatus.userId;
     setState(() {
       oneSignalPlayerId = playerId;
     });
@@ -179,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> pingServer() async {
     return http.get(
-      '${environment['remote_url']}/api/users/${this.appId}',
+      Uri.parse('${environment['remote_url']}/api/users/${this.appId}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -242,21 +242,16 @@ class _MyHomePageState extends State<MyHomePage> {
             if (notification.type == "daily") {
               Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          QuestionnairePage(notification: notification)));
+                  MaterialPageRoute(builder: (context) => QuestionnairePage()));
             } else if (notification.type == "monthly-pain") {
               Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => QualityOfLifeQuestionnaire(
-                          notification: notification)));
+                  MaterialPageRoute(builder: (context) => QualityOfLifeQuestionnaire()));
             } else {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SleepQuestionnaire(
-                          notification: notification)));
+                      builder: (context) => SleepQuestionnaire()));
             }
           },
         );

@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webfeed/domain/rss_feed.dart';
-import 'package:http/http.dart' as http;
 
 class RssFeedScreen extends StatefulWidget {
   @override
@@ -12,15 +13,8 @@ class RssFeedScreen extends StatefulWidget {
 class RssFeedState extends State<RssFeedScreen> {
   static const FEED_URL = "https://hnrss.org/jobs";
   RssFeed _feed;
-  String _title;
 
   GlobalKey<RefreshIndicatorState> _refreshKey;
-
-  updateTitle(title) {
-    setState(() {
-      _title = title;
-    });
-  }
 
   updateFeed(feed) {
     setState(() {
@@ -49,7 +43,7 @@ class RssFeedState extends State<RssFeedScreen> {
   Future<RssFeed> loadFeed() async {
     try {
       final client = http.Client();
-      final response = await client.get(FEED_URL);
+      final response = await client.get(Uri.parse(FEED_URL));
       return RssFeed.parse(response.body);
     } catch (e) {
       throw e;
@@ -82,7 +76,7 @@ class RssFeedState extends State<RssFeedScreen> {
       appBar: AppBar(
         title: Text('RSS Feed'),
         backgroundColor: Color(0xff000000),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: body(),
     );

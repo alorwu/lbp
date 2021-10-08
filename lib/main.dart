@@ -1,17 +1,21 @@
 
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:lbp/screens/home.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lbp/model/hive/DailyQ.dart';
 import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(DailyQAdapter());
 
   await Firebase.initializeApp();
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
@@ -25,8 +29,8 @@ void main() async {
   if (firstTime == false) {
     _defaultHome = NewHomeScreen();
   }
-  final appDocumentDir = await pathProvider.getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDir.path);
+  // final appDocumentDir = await pathProvider.getApplicationDocumentsDirectory();
+  // Hive.init(appDocumentDir.path);
 
   runApp(new MaterialApp(
     title: 'Sleep Better with Back Pain',

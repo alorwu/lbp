@@ -1,30 +1,31 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/daily/Question.dart';
 import 'package:lbp/model/daily/Questionnaire.dart';
-import 'package:lbp/model/notifications.dart';
+import 'package:lbp/model/hive/DailyQ.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../env/.env.dart';
 
 class QuestionnairePage extends StatefulWidget {
-  final Notifications notification;
 
   final double sliderHeight;
   final int min;
   final int max;
   final fullWidth;
 
+
   QuestionnairePage(
       {Key key,
-        @required this.notification,
         this.sliderHeight = 48,
         this.max = 10,
         this.min = 0,
@@ -36,13 +37,14 @@ class QuestionnairePage extends StatefulWidget {
 }
 
 class _QuestionnairePageState extends State<QuestionnairePage> {
+
   Questionnaire questionnaire = Questionnaire();
   bool completed = false;
+  DateTime timePickerValue;
   String selectedValue;
   String notes;
   double sliderValue = 0;
   double realSliderValue = -1;
-  Notifications _notification;
   List<String> answers = [];
   GSheets gSheets;
 
@@ -55,9 +57,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   void checkAnswer(Question question) {
     if (question.type == "slider") {
       setState(() {
+        realSliderValue = -1;
+        sliderValue = 0;
         if (questionnaire.nextQuestion() == true) {
           completed = true;
-          _notification = widget.notification;
         }
       });
     } else if (question.type == "likert") {
@@ -65,7 +68,13 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         selectedValue = null;
         if (questionnaire.nextQuestion() == true) {
           completed = true;
-          _notification = widget.notification;
+        }
+      });
+    } else if (question.type == "date_picker") {
+      setState(() {
+        timePickerValue = null;
+        if (questionnaire.nextQuestion() == true) {
+          completed = true;
         }
       });
     }
@@ -78,7 +87,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       appBar: AppBar(
         backgroundColor: Color(0xff000000),
         elevation: 0,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text("Today's Survey")
       ),
       body: buildQuestionsPage(),
@@ -148,7 +157,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   onPressed: (AnimationController controller) async {
                     await MyPreferences.saveDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
                     answers.add(notes);
-                    sendData(_notification, controller);
+                    sendData(controller);
                   },
                   child: Text(
                     'Submit',
@@ -197,12 +206,19 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                       textColor: Colors.white,
                       color: Colors.blueGrey,
                       onPressed: () {
-                        if (questionnaire.getQuestion().type == "slider") {
+                        if (questionnaire.getQuestion().type == "date_picker") {
+                          answers.add(
+                              DateFormat("yyyy-MM-dd HH:mm:ss")
+                                  .format((timePickerValue)
+                              )
+                          );
+                          checkAnswer(questionnaire.getQuestion());
+                        } else if (questionnaire.getQuestion().type == "slider") {
                           if (realSliderValue != -1) {
                             answers.add(realSliderValue.toInt().toString());
                             checkAnswer(questionnaire.getQuestion());
                           } else {
-                            Scaffold.of(context).showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
                               Text("Move the slider to select a value"),
                               backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
@@ -212,7 +228,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                           answers.add(selectedValue);
                           checkAnswer(questionnaire.getQuestion());
                         } else
-                          Scaffold.of(context).showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content:
                             Text("You must answer the question to proceed"),
                             backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
@@ -231,111 +247,256 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
 
   Widget answerWidget(Question question) {
     if (question.type == "slider") {
-      double paddingFactor = .2;
-      if (this.widget.fullWidth) paddingFactor = .3;
+      return answerSliderWidget(question);
+      // double paddingFactor = .2;
+      // if (this.widget.fullWidth) paddingFactor = .3;
 
-      return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: double.infinity, //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
-              height: (this.widget.sliderHeight),
-              decoration: new BoxDecoration(
-                borderRadius: new BorderRadius.all(
-                  Radius.circular((this.widget.sliderHeight * .3)),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(1.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      '${this.widget.min}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: this.widget.sliderHeight * .3,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      width: this.widget.sliderHeight * .1,
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            activeTrackColor: Colors.white.withOpacity(1),
-                            inactiveTrackColor: Colors.white.withOpacity(.5),
-                            trackHeight: 4.0,
-                            thumbShape: CustomSliderThumbCircle(
-                              thumbRadius: this.widget.sliderHeight * .4,
-                              min: this.widget.min,
-                              max: this.widget.max,
-                            ),
-                            overlayColor: Colors.white.withOpacity(.4),
-                            activeTickMarkColor: Colors.white,
-                            inactiveTickMarkColor: Colors.red.withOpacity(.7),
-                          ),
-                          child: Slider(
-                              value: sliderValue,
-                              min: 0,
-                              max: 10,
-                              divisions: 10,
-                              onChanged: (double value) {
-                                print("Value: $value");
-                                setState(() {
-                                  sliderValue = value;
-                                  realSliderValue = value;
-                                });
-                              }),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${this.widget.max}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: this.widget.sliderHeight * .3,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(1.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                    Text(
-                      '${question.low}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: this.widget.sliderHeight * .3,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      '${question.high}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: this.widget.sliderHeight * .3,
-                        color: Colors.white,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ]);
+      // return Column(
+      //     crossAxisAlignment: CrossAxisAlignment.center,
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: <Widget>[
+      //       Container(
+      //         width: double.infinity, //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
+      //         height: (this.widget.sliderHeight),
+      //         decoration: new BoxDecoration(
+      //           borderRadius: new BorderRadius.all(
+      //             Radius.circular((this.widget.sliderHeight * .3)),
+      //           ),
+      //         ),
+      //         child: Padding(
+      //           padding: EdgeInsets.all(1.0),
+      //           child: Row(
+      //             children: <Widget>[
+      //               Text(
+      //                 '${this.widget.min}',
+      //                 textAlign: TextAlign.center,
+      //                 style: TextStyle(
+      //                   fontSize: this.widget.sliderHeight * .3,
+      //                   fontWeight: FontWeight.w700,
+      //                   color: Colors.white,
+      //                 ),
+      //               ),
+      //               SizedBox(
+      //                 width: this.widget.sliderHeight * .1,
+      //               ),
+      //               Expanded(
+      //                 child: Center(
+      //                   child: SliderTheme(
+      //                     data: SliderTheme.of(context).copyWith(
+      //                       activeTrackColor: Colors.white.withOpacity(1),
+      //                       inactiveTrackColor: Colors.white.withOpacity(.5),
+      //                       trackHeight: 4.0,
+      //                       thumbShape: CustomSliderThumbCircle(
+      //                         thumbRadius: this.widget.sliderHeight * .4,
+      //                         min: this.widget.min,
+      //                         max: this.widget.max,
+      //                       ),
+      //                       overlayColor: Colors.white.withOpacity(.4),
+      //                       activeTickMarkColor: Colors.white,
+      //                       inactiveTickMarkColor: Colors.red.withOpacity(.7),
+      //                     ),
+      //                     child: Slider(
+      //                         value: sliderValue,
+      //                         min: 0,
+      //                         max: 10,
+      //                         divisions: 10,
+      //                         onChanged: (double value) {
+      //                           print("Value: $value");
+      //                           setState(() {
+      //                             sliderValue = value;
+      //                             realSliderValue = value;
+      //                           });
+      //                         }),
+      //                   ),
+      //                 ),
+      //               ),
+      //               Text(
+      //                 '${this.widget.max}',
+      //                 textAlign: TextAlign.center,
+      //                 style: TextStyle(
+      //                   fontSize: this.widget.sliderHeight * .3,
+      //                   fontWeight: FontWeight.w700,
+      //                   color: Colors.white,
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: EdgeInsets.all(1.0),
+      //         child: Row(
+      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //           children: [
+      //               Text(
+      //                 '${question.low}',
+      //                 textAlign: TextAlign.center,
+      //                 style: TextStyle(
+      //                   fontSize: this.widget.sliderHeight * .3,
+      //                   color: Colors.white,
+      //                 ),
+      //               ),
+      //               Text(
+      //                 '${question.high}',
+      //                 textAlign: TextAlign.center,
+      //                 style: TextStyle(
+      //                   fontSize: this.widget.sliderHeight * .3,
+      //                   color: Colors.white,
+      //                 ),
+      //               ),
+      //           ],
+      //         ),
+      //       ),
+      //     ]);
     } else if (question.type == "likert") {
       return answerRadioWidget(question);
+    } else if (question.type == "date_picker") {
+      return answerDatePickerWidget();
     } else {
       return null;
     }
+  }
+
+  Widget answerDatePickerWidget() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        timePickerValue != null ?
+        Text(
+          DateFormat("yyyy-MM-dd HH:mm:ss").format(timePickerValue),
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
+        )
+        :
+        Container(),
+        SizedBox(
+          height: 20.0,
+        ),
+        ElevatedButton(
+          onPressed: () => showDate(context), //_selectDate(context), // Refer step 3
+          child: Text(
+            timePickerValue != null ? 'Change date' : 'Select date',
+            style:
+            TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+  showDate(BuildContext context) async {
+    DatePicker.showDateTimePicker(
+        context, showTitleActions: true,
+        onConfirm: (date) {
+          print(date);
+          setState(() {
+            timePickerValue = date;
+          });
+        },
+        currentTime: DateTime.now(),
+    );
+  }
+
+  Widget answerSliderWidget(Question question) {
+    // double paddingFactor = .2;
+    // if (this.widget.fullWidth) paddingFactor = .3;
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
+            height: (this.widget.sliderHeight),
+            decoration: new BoxDecoration(
+              borderRadius: new BorderRadius.all(
+                Radius.circular((this.widget.sliderHeight * .3)),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(1.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    '${this.widget.min}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: this.widget.sliderHeight * .3,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    width: this.widget.sliderHeight * .1,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          activeTrackColor: Colors.white.withOpacity(1),
+                          inactiveTrackColor: Colors.white.withOpacity(.5),
+                          trackHeight: 4.0,
+                          thumbShape: CustomSliderThumbCircle(
+                            thumbRadius: this.widget.sliderHeight * .4,
+                            min: this.widget.min,
+                            max: this.widget.max,
+                          ),
+                          overlayColor: Colors.white.withOpacity(.4),
+                          activeTickMarkColor: Colors.white,
+                          inactiveTickMarkColor: Colors.red.withOpacity(.7),
+                        ),
+                        child: Slider(
+                            value: sliderValue,
+                            min: 0,
+                            max: 10,
+                            divisions: 10,
+                            onChanged: (double value) {
+                              print("Value: $value");
+                              setState(() {
+                                sliderValue = value;
+                                realSliderValue = value;
+                              });
+                            }),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${this.widget.max}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: this.widget.sliderHeight * .3,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(1.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${question.low}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: this.widget.sliderHeight * .3,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  '${question.high}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: this.widget.sliderHeight * .3,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ]);
   }
 
   Widget answerRadioWidget(Question question) => ListView.builder(
@@ -364,9 +525,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         );
       });
 
-  sendData(Notifications notification, AnimationController animationController) async {
+  sendData(AnimationController animationController) async {
     animationController.forward();
-
+    saveDataLocally(answers);
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     var sheet = ss.worksheetByTitle('survey');
     sheet ??= await ss.addWorksheet('survey');
@@ -424,7 +585,23 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
             style: TextStyle(color: Colors.red)),
       ));
     }
+  }
 
+  void saveDataLocally(List<String> answers) async {
+    print(answers);
+    var dailyQ = DailyQ(
+        dateTaken: DateTime.now(),
+        sleepTime: DateTime.parse(answers[0]),
+        wakeupTime: DateTime.parse(answers[1]),
+        timeToSleep: answers[2],
+        numberOfWakeupTimes: int.parse(answers[3]),
+        wellRestedness: answers[4],
+        qualityOfSleep: int.parse(answers[5]),
+        painIntensity: int.parse(answers[6]),
+        notes: answers[7]
+    );
+    final Box<DailyQ> box = await Hive.openBox('testBox');
+    await box.put(DateTime.now().toString(), dailyQ);
   }
 
 }

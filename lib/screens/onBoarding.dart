@@ -5,6 +5,7 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
@@ -12,8 +13,6 @@ import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:lbp/env/.env.dart';
 
 class OnBoarding extends StatefulWidget {
   @override
@@ -47,7 +46,6 @@ class OnBoardingState extends State<OnBoarding> {
   var consentCheck = false;
 
   double sliderValue = 0;
-  // double realSliderValue = -1;
 
   var credentials = r'''{
     "type": "service_account",
@@ -75,9 +73,6 @@ class OnBoardingState extends State<OnBoarding> {
   }
 
   Widget sliderWidget() {
-    double paddingFactor = .2;
-    if (fullWidth) paddingFactor = .3;
-
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +177,10 @@ class OnBoardingState extends State<OnBoarding> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome - Sleep Better'),
+        title: Text('Getting Started'),
+        backgroundColor: Color(0xff000000),
+        elevation: 0.0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Builder(
         builder: (context) => Padding(
@@ -198,7 +196,7 @@ class OnBoardingState extends State<OnBoarding> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      "Hello and welcome! Tell us a little about yourself.",
+                      "Welcome! Tell us a little about yourself.",
                       style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.w500,
@@ -320,76 +318,11 @@ class OnBoardingState extends State<OnBoarding> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          // "How often do you exercise or strain yourself physically "
-                          //     "in your free time?",
                           "In your own words, how active is your lifestyle in general?",
                           style: TextStyle(color: Colors.blue),
                         ),
                         SizedBox(height: 5.0),
                           sliderWidget(),
-                        //   RadioListTile(
-                        //     title: Text("I mostly read, watch tv and perform tasks that do not"
-                        //         " require me to move around much and do not strain me "
-                        //         "physically."),
-                        //     value: 0,
-                        //     groupValue: exerciseRadio,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         exerciseRadio = value;
-                        //       });
-                        //     },
-                        // ),
-                        //   SizedBox(height: 5.0),
-                        //   RadioListTile(
-                        //     title: Text("I walk, cycle or move in some ways for at least 4 hours "
-                        //         "each week. This could include walking, fishing, "
-                        //         "hunting, gardening, etc., but excluding travelling to "
-                        //         "work."),
-                        //     value: 1,
-                        //     groupValue: exerciseRadio,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         exerciseRadio = value;
-                        //       });
-                        //     },
-                        // ),
-                        // SizedBox(height: 5.0),
-                        //   RadioListTile(
-                        //     title: Text("I exercise on my free time for at least two hours each "
-                        //         "week. This could include running, jogging, skiing, "
-                        //         "swimming, team sports, going to the gym, or heavy "
-                        //         "gardening work."),
-                        //     value: 2,
-                        //     groupValue: exerciseRadio,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         exerciseRadio = value;
-                        //       });
-                        //     },
-                        // ),
-                        // SizedBox(height: 5.0),
-                        //   RadioListTile(
-                        //     title: Text("I practise competitively multiple times per week in "
-                        //         "running, orienteering, skiing, swimming, team sports, "
-                        //         "or other strenuous activities."),
-                        //     value: 3,
-                        //     groupValue: exerciseRadio,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         exerciseRadio = value;
-                        //       });
-                        //     },
-                        // ),
-                        //   RadioListTile(
-                        //     title: Text("Do not disclose"),
-                        //     value: 4,
-                        //     groupValue: exerciseRadio,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         exerciseRadio = value;
-                        //       });
-                        //     },
-                        //   ),
                       ],
                     ),
                   ),
@@ -513,8 +446,6 @@ class OnBoardingState extends State<OnBoarding> {
                       style: TextStyle(color: Colors.blue)),
                   TextFormField(
                     decoration: InputDecoration(
-                      // labelText: 'How long have you had Low Back Pain? (months)',
-                      // border: OutlineInputBorder(),
                       hintText: "e.g. 10",
                       hintStyle: TextStyle(color: Colors.grey)
                     ),
@@ -561,12 +492,11 @@ class OnBoardingState extends State<OnBoarding> {
                     ),
                   ),
                   SizedBox(height: 20.0),
-                  Text("In your own words please describe how to treat and maintain your lower back in your everyday life?",
+                  Text("In your own words please describe how you treat and maintain your lower back in your everyday life?",
                       style: TextStyle(color: Colors.blue)),
                   SizedBox(height: 10.0),
                   TextFormField(
                     decoration: new InputDecoration(
-                      // filled: true,
                       enabledBorder: const OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.grey, width: 1.0)
                       ),
@@ -644,29 +574,13 @@ class OnBoardingState extends State<OnBoarding> {
                     height: 50,
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ProgressButton(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(50.0),
                       color: this.consentCheck ? Colors.blue : Colors.grey,
                       child: Text('Get started', style: TextStyle(color: Colors.white)),
                       onPressed: (AnimationController controller) async {
                         if (this.consentCheck) {
                           validateAndSend(controller);
                         }
-                        // if (_formKey.currentState.validate()) {
-                        //   // await MyPreferences.updateOnboarding(false);
-                        //   // await MyPreferences.saveMonthlyDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                        //   // await MyPreferences.saveNotificationTime("07:00");
-                        //
-                        //   if (exerciseRadio < 0) {
-                        //     showSnackBar('Please select an answer on how active is your lifestyle', context);
-                        //   } else if (clinicalDiagnosisRadio < 0) {
-                        //     showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
-                        //   } else {
-                        //     sendData(
-                        //         context,
-                        //         controller
-                        //     );
-                        //   }
-                        // }
                       },
                     ),
                   ),
