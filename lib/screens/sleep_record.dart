@@ -11,8 +11,9 @@ class SleepRecordScreen extends StatefulWidget {
   SleepRecordState createState() => SleepRecordState();
 }
 
-const DATE_FORMAT_DAY = "yyyy-MM-dd";
-const DATE_FORMAT_DAY_TIME = "HH:mm";
+const DATE_FORMAT_DAY = "yMMMMd";
+const DATE_FORMAT_DAY_TIME = "hh:mm";
+const DATE_FORMAT_AM_PM = " a";
 
 class SleepRecordState extends State<SleepRecordScreen> {
 
@@ -40,7 +41,6 @@ class SleepRecordState extends State<SleepRecordScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  //"Date: 01/08 ",
                   DateFormat(DATE_FORMAT_DAY).format(data.dateTaken),
                   style: TextStyle(color: Colors.white54),
                 ),
@@ -55,25 +55,32 @@ class SleepRecordState extends State<SleepRecordScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Sleep at", style: TextStyle(color: Colors.white54)),
-                Text("Duration", style: TextStyle(color: Colors.white54),),
+                Text("Sleep duration", style: TextStyle(color: Colors.white54),),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  // "08:40 PM",
-                  DateFormat(DATE_FORMAT_DAY_TIME).format(data.sleepTime),
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w300),
-                ),
+                RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: DateFormat(DATE_FORMAT_DAY_TIME).format(data.sleepTime),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w300)),
+                      TextSpan(
+                          text: DateFormat(DATE_FORMAT_AM_PM).format(data.sleepTime),
+                          style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w300))
+                    ])),
                 RichText(
                     text: TextSpan(children: [
                       TextSpan(
                           text: data.sleepPeriod[0].toString(),
-                          style: TextStyle(color: Colors.white, fontSize: 20.0)
+                          style: TextStyle(color: Colors.white, fontSize: 16.0)
                       ),
                       TextSpan(
                           text: "h ",
@@ -81,7 +88,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
                       ),
                       TextSpan(
                           text: data.sleepPeriod[1].toString(),
-                          style: TextStyle(color: Colors.white, fontSize: 20.0)
+                          style: TextStyle(color: Colors.white, fontSize: 16.0)
                       ),
                       TextSpan(
                           text: " min",
@@ -106,23 +113,31 @@ class SleepRecordState extends State<SleepRecordScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    DateFormat(DATE_FORMAT_DAY_TIME).format(data.wakeupTime),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w300)
-                ),
+                RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: DateFormat(DATE_FORMAT_DAY_TIME).format(data.wakeupTime),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w300)),
+                      TextSpan(
+                          text: DateFormat(DATE_FORMAT_AM_PM).format(data.wakeupTime),
+                          style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w300))
+                    ])),
                 RichText(
                     text: TextSpan(children: [
                       TextSpan(
                           text: data.qualityOfSleep.toString(),
                           style: TextStyle(
-                              color: Colors.white, fontSize: 20.0)),
+                              color: Colors.white, fontSize: 16.0)),
                       TextSpan(
                           text: "/10",
                           style: TextStyle(
-                              color: Colors.white54, fontSize: 20.0))
+                              color: Colors.white54, fontSize: 16.0))
                     ])),
               ],
             ),
@@ -142,19 +157,6 @@ class SleepRecordState extends State<SleepRecordScreen> {
             systemOverlayStyle: SystemUiOverlayStyle.dark,
           ),
           backgroundColor: Color(0xff000000),
-          // body: SingleChildScrollView(
-          //   scrollDirection: Axis.vertical,
-          //   padding: EdgeInsets.all(10),
-          //   child: Column(
-          //     children: [
-          //       dailyCard,
-          //       dailyCard,
-          //       dailyCard,
-          //       dailyCard,
-          //       dailyCard
-          //     ],
-          //   ),
-          // ),
           body: ValueListenableBuilder(
             valueListenable: list.listenable(),
             builder: (context, Box<DailyQ> box, _) {
