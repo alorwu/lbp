@@ -160,7 +160,8 @@ class MapScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: Text('Settings'),
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => Card(

@@ -151,10 +151,12 @@ class SleepRecordState extends State<SleepRecordScreen> {
     Widget build(BuildContext context) {
       return Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             title: Text('Sleep records'),
             backgroundColor: Color(0xff000000),
             elevation: 0.0,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            // systemOverlayStyle: SystemUiOverlayStyle.dark,
+            brightness: Brightness.dark,
           ),
           backgroundColor: Color(0xff000000),
           body: ValueListenableBuilder(

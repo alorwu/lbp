@@ -11,7 +11,8 @@ class PrivacyDisclaimerScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Privacy disclaimer"),
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: SingleChildScrollView(
         child:

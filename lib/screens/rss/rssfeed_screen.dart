@@ -77,7 +77,8 @@ class RssFeedState extends State<RssFeedScreen> {
       appBar: AppBar(
         title: Text('RSS Feed'),
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: body(),
     );

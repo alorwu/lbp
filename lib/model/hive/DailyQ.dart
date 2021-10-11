@@ -47,11 +47,25 @@ class DailyQ {
 
 extension DailyQExtension on DailyQ {
   get sleepPeriod {
-    var durationInMinutes = this.wakeupTime.difference(this.sleepTime).inMinutes;
-    return durationToList(durationInMinutes);
+    return durationToList(differenceInSleep(this));
   }
 }
 
 List<String> durationToList(int minutes) {
   return Duration(minutes:minutes).toString().split(':');
+}
+
+int differenceInSleep(DailyQ q) {
+  return q.wakeupTime.difference(q.sleepTime).inMinutes;
+}
+
+extension DailyListExtension on List<DailyQ> {
+  get averageSleepScore {
+    return this.map((e) => e.qualityOfSleep).reduce((value, element) => value + element)/this.length;
+  }
+
+  get averageSleepPeriod {
+    int min = (this.map((e) => differenceInSleep(e)).reduce((value, element) => value + element)/this.length).round();
+    return durationToList(min);
+  }
 }

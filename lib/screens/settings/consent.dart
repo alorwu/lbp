@@ -11,7 +11,8 @@ class ConsentScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("User consent agreement"),
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: SingleChildScrollView(
         child:

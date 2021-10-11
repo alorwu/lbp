@@ -85,9 +85,11 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     return Scaffold(
       backgroundColor: Color(0xff000000),
       appBar: AppBar(
+          centerTitle: true,
         backgroundColor: Color(0xff000000),
         elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+          brightness: Brightness.dark,
           title: Text("Today's Survey")
       ),
       body: buildQuestionsPage(),

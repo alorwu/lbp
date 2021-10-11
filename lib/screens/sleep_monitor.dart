@@ -44,9 +44,11 @@ class SleepMonitorState extends State<SleepMonitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         toolbarHeight: 0.0,
         elevation: 0.0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       backgroundColor: Color(0xff000000),
       body: Stack(

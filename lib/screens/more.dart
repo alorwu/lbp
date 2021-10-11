@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lbp/screens/rssfeed_screen.dart';
+import 'package:lbp/screens/rss/rssfeed_screen.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
@@ -47,9 +47,11 @@ class MoreState extends State<MoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('More'),
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: Padding(
         padding: EdgeInsets.all(10),

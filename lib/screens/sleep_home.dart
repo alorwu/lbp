@@ -144,12 +144,12 @@ class SleepHomeState extends State<SleepHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Sleep Better with Back Pain"),
-        backgroundColor: Color(0xff000000),
-        elevation: 0.0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-      ),
+      // appBar: AppBar(
+      //   title: Text("Sleep Better with Back Pain"),
+      //   backgroundColor: Color(0xff000000),
+      //   elevation: 0.0,
+      //   systemOverlayStyle: SystemUiOverlayStyle.dark,
+      // ),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -163,6 +163,7 @@ class SleepHomeState extends State<SleepHome> {
           Container(
             constraints: BoxConstraints.expand(),
             color: Colors.black38,
+            margin: EdgeInsets.only(bottom: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -316,34 +317,34 @@ class SleepHomeState extends State<SleepHome> {
                 )
                 : Container(),
 
-                Container(
-                  width: double.infinity,
-                  height: 50,
-                  margin: EdgeInsets.only(top:10, bottom: 20, left: 8, right: 8),
-                  child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SleepMonitor()));
-                      },
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                        ),
-                      ),
-                      icon: Icon(Icons.play_arrow_rounded),
-                      label: Text(
-                        "Track sleep",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0),
-                      )),
-                ),
+                // Container(
+                //   width: double.infinity,
+                //   height: 50,
+                //   margin: EdgeInsets.only(top:10, bottom: 20, left: 8, right: 8),
+                //   child: ElevatedButton.icon(
+                //       onPressed: () {
+                //         Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (context) => SleepMonitor()));
+                //       },
+                //       style: ButtonStyle(
+                //         shape:
+                //             MaterialStateProperty.all<RoundedRectangleBorder>(
+                //           RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(50.0),
+                //           ),
+                //         ),
+                //       ),
+                //       icon: Icon(Icons.play_arrow_rounded),
+                //       label: Text(
+                //         "Track sleep",
+                //         style: TextStyle(
+                //             color: Colors.white,
+                //             fontWeight: FontWeight.bold,
+                //             fontSize: 18.0),
+                //       )),
+                // ),
               ],
             ),
           ),

@@ -52,7 +52,8 @@ class DonateDataState extends State<DonateDataScreen> {
       appBar: AppBar(
         title: Text("Donate Oura data"),
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(

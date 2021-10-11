@@ -57,9 +57,11 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color(0xff000000),
         elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
         title: Text("Quality of Life Survey"),
       ),
       backgroundColor: Color(0xff000000),

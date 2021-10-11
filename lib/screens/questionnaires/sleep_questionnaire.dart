@@ -51,8 +51,10 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     return Scaffold(
       backgroundColor: Color(0xff000000),
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color(0xff000000),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
         elevation: 0,
         title: Text("Sleep Survey"),
       ),
