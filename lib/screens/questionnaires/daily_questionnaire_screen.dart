@@ -1,4 +1,4 @@
-
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/daily/Question.dart';
 import 'package:lbp/model/daily/Questionnaire.dart';
-import 'package:lbp/model/hive/DailyQ.dart';
+import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_indicator_button/progress_button.dart';
@@ -17,19 +17,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../env/.env.dart';
 
 class QuestionnairePage extends StatefulWidget {
-
   final double sliderHeight;
   final int min;
   final int max;
   final fullWidth;
 
-
   QuestionnairePage(
       {Key key,
-        this.sliderHeight = 48,
-        this.max = 10,
-        this.min = 0,
-        this.fullWidth = false})
+      this.sliderHeight = 48,
+      this.max = 10,
+      this.min = 0,
+      this.fullWidth = false})
       : super(key: key);
 
   @override
@@ -37,7 +35,6 @@ class QuestionnairePage extends StatefulWidget {
 }
 
 class _QuestionnairePageState extends State<QuestionnairePage> {
-
   Questionnaire questionnaire = Questionnaire();
   bool completed = false;
   DateTime timePickerValue;
@@ -86,78 +83,80 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       backgroundColor: Color(0xff000000),
       appBar: AppBar(
           centerTitle: true,
-        backgroundColor: Color(0xff000000),
-        elevation: 0,
-        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+          backgroundColor: Color(0xff000000),
+          elevation: 0,
+          // systemOverlayStyle: SystemUiOverlayStyle.dark,
           brightness: Brightness.dark,
-          title: Text("Today's Survey")
-      ),
+          title: Text("Today's Survey")),
       body: buildQuestionsPage(),
     );
   }
 
-  Column buildQuestionsPage() {
+  Widget buildQuestionsPage() {
     if (completed) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
-              child: Center(
-                child: Text(
-                  // questionnaire.getQuestion().question,
-                  "About last night, how did your pain affect your sleep and/or how did your sleep affect your pain?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 25.0),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Center(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(12, 0, 12, 0),
-                  child: TextField(
-                    decoration: new InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white, width: 1.0)
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      hintStyle: TextStyle(color: Colors.grey),
-                      hintText: "Enter free form text here",
-                      helperText: "No answer is wrong. Write freely.",
-                      helperStyle: TextStyle(color: Colors.white),
-                    ),
-                    keyboardType: TextInputType.text,
-                    maxLines: 12,
-                    onChanged: (String value) {
-                      setState(() {
-                        notes = value;
-                      });
-                    },
+      return Card(
+        color: Colors.black26,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+                child: Center(
+                  child: Text(
+                    // questionnaire.getQuestion().question,
+                    "About last night, how did your pain affect your sleep and/or how did your sleep affect your pain?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 25.0),
                   ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: ProgressButton(
+            Expanded(
+              flex: 5,
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Center(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                    child: TextField(
+                      decoration: new InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Colors.white, width: 1.0)),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "Enter free form text here",
+                        helperText: "No answer is wrong. Write freely.",
+                        helperStyle: TextStyle(color: Colors.white),
+                      ),
+                      keyboardType: TextInputType.text,
+                      maxLines: 12,
+                      onChanged: (String value) {
+                        setState(() {
+                          notes = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ProgressButton(
                   borderRadius: BorderRadius.circular(50.0),
                   color: Colors.green,
                   onPressed: (AnimationController controller) async {
-                    await MyPreferences.saveDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                    await MyPreferences.saveDateTaken(
+                        DateFormat("yyyy-MM-dd").format(DateTime.now()));
                     answers.add(notes);
                     sendData(controller);
                   },
@@ -165,90 +164,142 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                     'Submit',
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
                   ),
-              ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
-              child: Center(
-                child: Text(
-                  questionnaire.getQuestion().question,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 25.0),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
-              child: Center(
-                child: this.answerWidget(questionnaire.getQuestion()),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Card(
+          color: Colors.white60,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 16,
               ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Builder(
-                  builder: (context) => FlatButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50.0),
-                      ),
-                      textColor: Colors.white,
-                      color: Colors.blueGrey,
-                      onPressed: () {
-                        if (questionnaire.getQuestion().type == "date_picker") {
-                          answers.add(
-                              DateFormat("yyyy-MM-dd HH:mm:ss")
-                                  .format((timePickerValue)
-                              )
-                          );
-                          checkAnswer(questionnaire.getQuestion());
-                        } else if (questionnaire.getQuestion().type == "slider") {
-                          if (realSliderValue != -1) {
-                            answers.add(realSliderValue.toInt().toString());
-                            checkAnswer(questionnaire.getQuestion());
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content:
-                              Text("Move the slider to select a value"),
-                              backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-                            ));
-                          }
-                        } else if (selectedValue != null) {
-                          answers.add(selectedValue);
-                          checkAnswer(questionnaire.getQuestion());
-                        } else
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content:
-                            Text("You must answer the question to proceed"),
-                            backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-                          ));
-                      },
+              Center(
+                child: DotsIndicator(
+                  dotsCount: questionnaire.getQuestionnaireLength(),
+                  position: questionnaire.questionNumber().toDouble(),
+                  decorator: DotsDecorator(
+                    size: Size.square(15),
+                    activeSize: Size(18, 18),
+                    activeColor: Theme.of(context).primaryColor,
+                    color: Theme.of(context).disabledColor,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+                  child: Center(
+                    child: Text(
+                      questionnaire.getQuestion().question,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 25.0),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                  child: Center(
+                    child: this.answerWidget(questionnaire.getQuestion()),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  questionnaire.questionNumber() > 0
+                      ? TextButton(
+                          onPressed: () => prevButtonClickHandler(),
+                          child: Text(
+                            'Prev',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20.0),
+                          ))
+                      : Container(),
+                  TextButton(
+                      onPressed: () => nextButtonClickHandler(),
                       child: Text(
                         'Next',
-                        style: TextStyle(color: Colors.white, fontSize: 20.0),
-                      )),
-                )),
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 20.0),
+                      )
+                  ),
+                ],
+                // padding: Padding(
+                //     padding: EdgeInsets.all(10.0),
+                //     child: Builder(
+                //       builder: (context) => TextButton(
+                //           onPressed: () => nextButtonClickHandler(),
+                //           child: Text(
+                //             'Next',
+                //             style:
+                //                 TextStyle(color: Colors.white, fontSize: 20.0),
+                //           )),
+                //     )),
+              ),
+            ],
           ),
-        ],
+        ),
       );
     }
   }
 
+  void prevButtonClickHandler() {
+    // answers.remove(answers.length -1);
+    questionnaire.prevQuestion();
+  }
+
+  void nextButtonClickHandler() {
+    if (questionnaire.getQuestion().type ==
+        "date_picker") {
+      answers.add(DateFormat("yyyy-MM-dd HH:mm:ss")
+          .format((timePickerValue)));
+      checkAnswer(questionnaire.getQuestion());
+    } else if (questionnaire.getQuestion().type ==
+        "slider") {
+      if (realSliderValue != -1) {
+        answers.add(realSliderValue.toInt().toString());
+        checkAnswer(questionnaire.getQuestion());
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(
+          content:
+          Text("Move the slider to select a value"),
+          backgroundColor:
+          Color.fromRGBO(58, 66, 86, 1.0),
+        ));
+      }
+    } else if (selectedValue != null) {
+      answers.add(selectedValue);
+      checkAnswer(questionnaire.getQuestion());
+    } else
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(
+        content: Text(
+            "You must answer the question to proceed"),
+        backgroundColor:
+        Color.fromRGBO(58, 66, 86, 1.0),
+      ));
+  }
+
   Widget answerWidget(Question question) {
-    switch(question.type) {
+    switch (question.type) {
       case "slider":
         return answerSliderWidget(question);
       case "likert":
@@ -258,53 +309,55 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       default:
         return null;
     }
-    if (question.type == "slider") {
-      return answerSliderWidget(question);
-    } else if (question.type == "likert") {
-      return answerRadioWidget(question);
-    } else if (question.type == "date_picker") {
-      return answerDatePickerWidget();
-    } else {
-      return null;
-    }
   }
 
   Widget answerDatePickerWidget() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        timePickerValue != null ?
-        Text(
-          DateFormat("yyyy-MM-dd HH:mm:ss").format(timePickerValue),
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
-        )
-        :
-        Container(),
+        timePickerValue != null
+            ? Text(
+                DateFormat("hh:mm a").format(timePickerValue),
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              )
+            : Container(),
         SizedBox(
           height: 20.0,
         ),
-        ElevatedButton(
-          onPressed: () => showDate(context), //_selectDate(context), // Refer step 3
-          child: Text(
-            timePickerValue != null ? 'Change date' : 'Select date',
-            style:
-            TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        SizedBox(
+          width: 200.0,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(20.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                )),
+            onPressed: () => showDate(context),
+            child: Text(
+              timePickerValue != null ? 'Change time' : 'Select time',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
+        )
       ],
     );
   }
 
   showDate(BuildContext context) async {
-    DatePicker.showDateTimePicker(
-        context, showTitleActions: true,
-        onConfirm: (date) {
-          print(date);
-          setState(() {
-            timePickerValue = date;
-          });
-        },
-        currentTime: DateTime.now(),
+    DatePicker.showTimePicker(
+      context,
+      showTitleActions: true,
+      onConfirm: (date) {
+        print(date);
+        setState(() {
+          timePickerValue = date;
+        });
+      },
+      currentTime: DateTime.now(),
     );
   }
 
@@ -418,21 +471,19 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       itemBuilder: (BuildContext context, index) {
         return Theme(
           data: Theme.of(context).copyWith(
-            unselectedWidgetColor: Colors.white,
-            disabledColor: Colors.white
-          ),
+              unselectedWidgetColor: Colors.white, disabledColor: Colors.white),
           child: RadioListTile(
-          title: Text(
-              '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
-              style: TextStyle(color: Colors.white)),
-          value: '${index + 1}',
-          groupValue: selectedValue,
-          activeColor: Colors.white,
-          onChanged: (String value) {
-            setState(() {
-              selectedValue = value;
-            });
-          },
+            title: Text(
+                '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
+                style: TextStyle(color: Colors.white)),
+            value: '${index + 1}',
+            groupValue: selectedValue,
+            activeColor: Colors.white,
+            onChanged: (String value) {
+              setState(() {
+                selectedValue = value;
+              });
+            },
           ),
         );
       });
@@ -441,8 +492,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     animationController.forward();
     saveDataLocally(answers);
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-    var sheet = ss.worksheetByTitle('survey');
-    sheet ??= await ss.addWorksheet('survey');
+    var sheet = ss.worksheetByTitle('daily_q');
+    sheet ??= await ss.addWorksheet('daily_q');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
@@ -461,13 +512,11 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     try {
       var result = await sheet.values.appendRow(values);
       if (result) {
-        ScaffoldMessenger
-            .of(context)
+        ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-          content: Text(
-              "Your entry has been saved.",
-              style: TextStyle(color: Colors.white)),
-        ))
+              content: Text("Your entry has been saved.",
+                  style: TextStyle(color: Colors.white)),
+            ))
             .closed
             .then((value) {
           answers.clear();
@@ -475,25 +524,23 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
         });
       } else {
-        ScaffoldMessenger
-            .of(context)
+        ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-          content: Text(
-              "Unable to save data. Check your internet connection and try again.",
-              style: TextStyle(color: Colors.red)),
-        ))
+              content: Text(
+                  "Unable to save data. Check your internet connection and try again.",
+                  style: TextStyle(color: Colors.red)),
+            ))
             .closed
             .then((value) {
           animationController.stop();
           animationController.reset();
         });
       }
-    } catch(exp) {
+    } catch (exp) {
       animationController.stop();
       animationController.reset();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "An error occurred. Please try again.",
+        content: Text("An error occurred. Please try again.",
             style: TextStyle(color: Colors.red)),
       ));
     }
@@ -509,11 +556,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         wellRestedness: answers[4],
         qualityOfSleep: int.parse(answers[5]),
         painIntensity: int.parse(answers[6]),
-        notes: answers[7]
-    );
+        notes: answers[7]);
     Box<DailyQ> box = Hive.box("testBox");
     await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
   }
-
 }
-

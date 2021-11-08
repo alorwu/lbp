@@ -7,6 +7,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'package:lbp/model/hive/user/User.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
@@ -20,23 +23,25 @@ class OnBoarding extends StatefulWidget {
 }
 
 class OnBoardingState extends State<OnBoarding> {
+  TextEditingController usernameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController durationController = TextEditingController();
 
   String appId;
 
-  int clinicalDiagnosisRadio = -1;
+  int diagnosedOfLbp = -1;
+  String username;
   String gender;
   String employment;
   String exercise;
   String academic;
   String lbpTreatment;
-  String surgicalOp;
-  String previewBackPain;
+  String hasHadBackSurgery;
+  String hasHadLowBackPain;
   String sciatica;
   String painIntensity;
-  double exerciseRadio = -1;
+  double activeLifeStyleLevel = -1;
 
   var sliderHeight = 48.0;
   var max = 10;
@@ -126,7 +131,7 @@ class OnBoardingState extends State<OnBoarding> {
                               // print("Value: $value");
                               setState(() {
                                 sliderValue = value;
-                                exerciseRadio = value;
+                                activeLifeStyleLevel = value;
                               });
                             }),
                       ),
@@ -198,7 +203,7 @@ class OnBoardingState extends State<OnBoarding> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      "Welcome! Tell us a little about yourself.",
+                      "Let's get acquainted!",
                       style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.w500,
@@ -210,11 +215,28 @@ class OnBoardingState extends State<OnBoarding> {
                   SizedBox(height: 10),
                   Divider(),
                   SizedBox(height: 20),
-                  Text("How old are you (in years)?", style: TextStyle(color: Colors.blue)),
+                  Text("Enter your username", style: TextStyle(color: Colors.blue)),
                   TextFormField(
                     focusNode: new FocusNode(),
                     decoration: InputDecoration(
-                      hintText: "Enter age here",
+                      hintText: "e.g. Murvin",
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                    keyboardType: TextInputType.text,
+                    controller: usernameController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter a username';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  Text("How old are you (in years)?", style: TextStyle(color: Colors.blue)),
+                  TextFormField(
+                    // focusNode: new FocusNode(),
+                    decoration: InputDecoration(
+                      hintText: "e.g. 24",
                       hintStyle: TextStyle(color: Colors.grey),
                       // labelText: 'How old are you (in years)?',
                       // border: OutlineInputBorder(),
@@ -324,7 +346,7 @@ class OnBoardingState extends State<OnBoarding> {
                           style: TextStyle(color: Colors.blue),
                         ),
                         SizedBox(height: 5.0),
-                          sliderWidget(),
+                        sliderWidget(),
                       ],
                     ),
                   ),
@@ -345,7 +367,7 @@ class OnBoardingState extends State<OnBoarding> {
                     }).toList(),
                     onChanged: (String value) {
                       setState(() {
-                        previewBackPain = value;
+                        hasHadLowBackPain = value;
                       });
                     },
                     isExpanded: true,
@@ -356,7 +378,7 @@ class OnBoardingState extends State<OnBoarding> {
                       }
                       return null;
                     },
-                    value: previewBackPain,
+                    value: hasHadLowBackPain,
                   ),
                   SizedBox(height: 20.0),
                   Text("Have you had or do you have sciatica?", style: TextStyle(color: Colors.blue)),
@@ -432,7 +454,7 @@ class OnBoardingState extends State<OnBoarding> {
                     }).toList(),
                     onChanged: (String value) {
                       setState(() {
-                        surgicalOp = value;
+                        hasHadBackSurgery = value;
                       });
                     },
                     validator: (value) {
@@ -441,7 +463,7 @@ class OnBoardingState extends State<OnBoarding> {
                       }
                       return null;
                     },
-                    value: surgicalOp,
+                    value: hasHadBackSurgery,
                   ),
                   SizedBox(height: 20.0),
                   Text("How long have you had Low Back Pain? (in years)",
@@ -473,20 +495,20 @@ class OnBoardingState extends State<OnBoarding> {
                           RadioListTile(
                             title: Text('No'),
                             value: 0,
-                            groupValue: clinicalDiagnosisRadio,
+                            groupValue: diagnosedOfLbp,
                             onChanged: (int value) {
                               setState(() {
-                                clinicalDiagnosisRadio = value;
+                                diagnosedOfLbp = value;
                               });
                             },
                         ),
                           RadioListTile(
                             title: Text('Yes'),
                             value: 1,
-                            groupValue: clinicalDiagnosisRadio,
+                            groupValue: diagnosedOfLbp,
                             onChanged: (int value) {
                               setState(() {
-                                clinicalDiagnosisRadio = value;
+                                diagnosedOfLbp = value;
                               });
                             },
                         ),
@@ -630,9 +652,13 @@ class OnBoardingState extends State<OnBoarding> {
       // await MyPreferences.saveMonthlyDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
       // await MyPreferences.saveNotificationTime("07:00");
 
-      if (exerciseRadio < 0) {
-        showSnackBar('Please select an answer on how active is your lifestyle', context);
-      } else if (clinicalDiagnosisRadio < 0) {
+      if (activeLifeStyleLevel < 0) {
+        // If user doesn't touch slider, use default of 0
+        setState(() {
+          sliderValue = 0.0;
+        });
+        // showSnackBar('Please select an answer on how active is your lifestyle', context);
+      } else if (diagnosedOfLbp < 0) {
         showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
       } else {
         sendData(
@@ -656,26 +682,29 @@ class OnBoardingState extends State<OnBoarding> {
     // final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     final ss = await gSheets.spreadsheet(
         '1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
-    var sheet = ss.worksheetByTitle('user_info');
-    sheet ??= await ss.addWorksheet('user_info');
+    var sheet = ss.worksheetByTitle('onboarding_q');
+    sheet ??= await ss.addWorksheet('onboarding_q');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var id = prefs.getString("app_id");
     prefs.setString('segment', '07:00');
 
+    saveDataLocally();
+
     List values = [];
     values.add(appId);
+    values.add(usernameController.value.text);
     values.add(ageController.value.text);
     values.add(gender);
     values.add(employment);
     values.add(academic);
-    values.add(exerciseRadio);
-    values.add(previewBackPain);
+    values.add(activeLifeStyleLevel);
+    values.add(hasHadLowBackPain);
     values.add(sciatica);
     values.add(painIntensity);
-    values.add(surgicalOp);
+    values.add(hasHadBackSurgery);
     values.add(durationController.value.text);
-    values.add(clinicalDiagnosisRadio);
+    values.add(diagnosedOfLbp == 0 ? "No" : "Yes");
     values.add(lbpTreatment);
     values.add(DateTime.now().toString());
     print(values);
@@ -744,5 +773,26 @@ class OnBoardingState extends State<OnBoarding> {
       getId();
     }
     return id;
+  }
+
+  void saveDataLocally() async {
+    var user = User(
+      username: usernameController.value.text,
+      age: int.parse(ageController.value.text),
+      gender: gender,
+      employment: employment,
+      academic: academic,
+      activeLifeStyleLevel: activeLifeStyleLevel,
+      hasHadLowBackPain: hasHadLowBackPain,
+      sciatica: sciatica,
+      painIntensity: painIntensity,
+      hasHadBackSurgery: hasHadBackSurgery,
+      hasHadLbpFor: durationController.value.text,
+      diagnosedOfLbp: diagnosedOfLbp == 0 ? "No" : "Yes",
+      lbpTreatment: lbpTreatment,
+      date: DateTime.now().toString(),
+    );
+    Box<User> box = Hive.box("userBox");
+    await box.put("user", user);
   }
 }

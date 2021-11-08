@@ -5,18 +5,26 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lbp/model/hive/DailyQ.dart';
+import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'model/hive/user/User.dart';
+
+void initializeHiveDependencies() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(DailyQAdapter());
+  Hive.registerAdapter(UserAdapter());
+
+  await Hive.openBox<DailyQ>("testBox");
+  await Hive.openBox<User>("userBox");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Hive.initFlutter();
-  Hive.registerAdapter(DailyQAdapter());
-  await Hive.openBox<DailyQ>("testBox");
+  initializeHiveDependencies();
 
   await Firebase.initializeApp();
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);

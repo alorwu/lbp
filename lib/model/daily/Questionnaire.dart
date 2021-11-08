@@ -27,16 +27,30 @@ class Questionnaire {
   dynamic nextQuestion(){
     if(_questionNumber < _questionList.length - 1){
       _questionNumber++;
-    }else{
+    } else{
       bool completed = true;
       return completed;
     }
+  }
+
+  dynamic prevQuestion() {
+    if (_questionNumber >= 1) {
+      _questionNumber--;
+    }
+  }
+
+  int questionNumber() {
+    return _questionNumber;
   }
 
 // this function will return the question text of the 
 //specific question number text when called in the main.dart
   Question getQuestion(){
     return _questionList[_questionNumber];
+  }
+
+  int getQuestionnaireLength() {
+    return _questionList.length;
   }
 
 // this function will return the answer of the 

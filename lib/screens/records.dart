@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/DailyQ.dart';
+import 'package:lbp/model/hive/daily/DailyQ.dart';
+import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 
 class SleepRecordScreen extends StatefulWidget {
   @override
@@ -23,6 +25,96 @@ class SleepRecordState extends State<SleepRecordScreen> {
   initState() {
     super.initState();
     list = Hive.box('testBox');
+  }
+
+  Widget emptyRecordsCard() {
+    return Card(
+      color: Colors.white,
+      elevation: 5.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Image.asset(
+                    'images/icons-calendar.png',
+                    width: 150.0,
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "You have no logged records yet",
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible (
+                    child: Text(
+                      "Take today's daily survey to collect your sleep quality and pain intensity history in order to get personalized insights about your low back pain.",
+                      style: TextStyle(fontSize: 16.0)
+                    ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(15.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      primary: Colors.blue
+                  ),
+                  onPressed: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                          QuestionnairePage())
+                  )
+                },
+                  child: Text(
+                    "Take today's survey",
+                    style:
+                    TextStyle(fontSize: 18.0, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget dailyCard(int index, DailyQ data) {
@@ -162,12 +254,16 @@ class SleepRecordState extends State<SleepRecordScreen> {
           body: ValueListenableBuilder(
             valueListenable: list.listenable(),
             builder: (context, Box<DailyQ> box, _) {
-              return ListView.builder(
-                      itemCount: list.length,
-                      itemBuilder: (context, listIndex) {
+              if (list.isNotEmpty) {
+                return ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (context, listIndex) {
                         return dailyCard(listIndex, list.getAt(listIndex));
-                      }
-              );
+                    }
+                );
+              } else {
+                return emptyRecordsCard();
+              }
             },
           ),
       );

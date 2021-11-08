@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lbp/screens/more.dart';
-import 'package:lbp/screens/sleep_record.dart';
+import 'package:lbp/screens/records.dart';
 import 'package:lbp/screens/trends.dart';
 
 import '../sleep_home.dart';

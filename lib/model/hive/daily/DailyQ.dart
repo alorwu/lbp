@@ -2,7 +2,7 @@
 import 'package:hive/hive.dart';
 part 'DailyQ.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class DailyQ {
   @HiveField(0)
   DateTime dateTaken;
