@@ -8,7 +8,10 @@ import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 import 'package:lbp/screens/sleep_monitor.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../env/.env.dart';
 
 class SleepHome extends StatefulWidget {
   @override
@@ -27,8 +30,12 @@ class SleepHomeState extends State<SleepHome> {
   String qolLastDateTaken;
   String sleepLastDateTaken;
 
+  String userId;
+  String oneSignalPlayerId;
+
   @override
   void initState() {
+    initPlatformState();
     initializeVariables();
     _timeString = _formatDateTime(DateTime.now());
     _amPmString = _formatTimeOfDay(DateTime.now());
@@ -40,6 +47,31 @@ class SleepHomeState extends State<SleepHome> {
     super.initState();
   }
 
+  Future<void> initPlatformState() async {
+    OneSignal.shared.setAppId(environment['onesignal_app_id']);
+    // OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
+    //   OSiOSSettings.autoPrompt: false,
+    //   OSiOSSettings.promptBeforeOpeningPushUrl: true
+    // });
+
+    // OneSignal.shared
+    //     .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+    // OneSignal.shared.setNotificationReceivedHandler((notification) {
+    //   // refactorNotification(notification);
+    // });
+
+    OneSignal.shared.setNotificationOpenedHandler((openedResult) {
+      // MyPreferences.checkAndDisplayNotificationToday();
+    });
+
+    // var status = await OneSignal.shared.getPermissionSubscriptionState();
+    //
+    // if (!status.permissionStatus.hasPrompted) {
+    //   OneSignal.shared.addTrigger("prompt_ios", "true");
+    // }
+  }
+
   Future<void> initializeVariables() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var todayTaken = prefs.getString("notification_taken_date");
@@ -48,7 +80,14 @@ class SleepHomeState extends State<SleepHome> {
 
     var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
 
+    var id = prefs.getString("app_id");
+    var playerId = await getPlayerId();
+    if (playerId == null) {
+      getPlayerId();
+    }
     setState(() {
+      userId = id;
+      oneSignalPlayerId = playerId;
       todayTakenDate = todayTaken;
       qolLastDateTaken = promis10Date;
       sleepLastDateTaken = sleepSurveyDate;
@@ -64,6 +103,10 @@ class SleepHomeState extends State<SleepHome> {
                 DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
     });
+    print("**************************");
+    print(id);
+    print(oneSignalPlayerId);
+    print("*******************");
   }
 
   void _getTime() {
@@ -81,6 +124,14 @@ class SleepHomeState extends State<SleepHome> {
 
   String _formatTimeOfDay(DateTime dateTime) {
     return DateFormat("a").format(dateTime);
+  }
+
+  Future<String> getPlayerId() async {
+    String playerId = await OneSignal.shared.getDeviceState().then((value) => value.userId);
+    setState(() {
+      oneSignalPlayerId = playerId;
+    });
+    return playerId;
   }
 
   @override
