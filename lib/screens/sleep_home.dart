@@ -10,6 +10,7 @@ import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 import 'package:lbp/screens/sleep_monitor.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../env/.env.dart';
 
@@ -49,27 +50,20 @@ class SleepHomeState extends State<SleepHome> {
 
   Future<void> initPlatformState() async {
     OneSignal.shared.setAppId(environment['onesignal_app_id']);
-    // OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
-    //   OSiOSSettings.autoPrompt: false,
-    //   OSiOSSettings.promptBeforeOpeningPushUrl: true
-    // });
-
-    // OneSignal.shared
-    //     .setInFocusDisplayType(OSNotificationDisplayType.notification);
-
-    // OneSignal.shared.setNotificationReceivedHandler((notification) {
-    //   // refactorNotification(notification);
-    // });
 
     OneSignal.shared.setNotificationOpenedHandler((openedResult) {
       // MyPreferences.checkAndDisplayNotificationToday();
     });
 
-    // var status = await OneSignal.shared.getPermissionSubscriptionState();
-    //
-    // if (!status.permissionStatus.hasPrompted) {
-    //   OneSignal.shared.addTrigger("prompt_ios", "true");
-    // }
+    OneSignal.shared.setInAppMessageClickedHandler((action) async {
+      if (action != null && action.clickName == "buttonClick") {
+        // https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=appId
+        var url =
+            "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$appId";
+        await launch(url,
+            forceWebView: false, forceSafariVC: false, enableJavaScript: true);
+      }
+    });
   }
 
   Future<void> initializeVariables() async {
@@ -103,10 +97,6 @@ class SleepHomeState extends State<SleepHome> {
                 DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
     });
-    print("**************************");
-    print(id);
-    print(oneSignalPlayerId);
-    print("*******************");
   }
 
   void _getTime() {
