@@ -61,7 +61,7 @@ class _MonthlyPainQuestionnairePageState extends State<MonthlyPainQuestionnaireP
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        backgroundColor: Color.fromRGBO(64, 75, 96, 0.9),
         elevation: 0,
         title: Text("Monthly Quality of Life Survey"),
       ),

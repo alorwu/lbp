@@ -58,7 +58,7 @@ class _MonthlyQuestionnairePageState extends State<MonthlyQuestionnairePage> {
     return Scaffold(
       // backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        backgroundColor: Color.fromRGBO(64, 75, 96, 0.9),
         elevation: 0,
         title: Text("Monthly Sleep Survey"),
       ),

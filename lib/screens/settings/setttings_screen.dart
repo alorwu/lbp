@@ -184,6 +184,7 @@ class MapScreenState extends State<SettingsScreen> {
     return new Scaffold(
       appBar: AppBar(
         title: Text('Settings', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color.fromRGBO(64, 75, 96, 0.9),
       ),
       body: Builder(
         builder: (context) => Card(

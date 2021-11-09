@@ -38,12 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   String monthlySleepLastDateTaken;
 
   var notification = Notifications(
-    "bbb-bbb-bbb-bbb",
-    "Today's survey", // - ${DateFormat("dd MMM yyyy").format(DateTime.now())}",
-    "Click to open",
-    false,
-    "daily"
-  );
+      "bbb-bbb-bbb-bbb",
+      "Today's survey",
+      // - ${DateFormat("dd MMM yyyy").format(DateTime.now())}",
+      "Click to open",
+      false,
+      "daily");
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     OneSignal.shared
         .setInFocusDisplayType(OSNotificationDisplayType.notification);
 
-    OneSignal.shared.setNotificationReceivedHandler((notification) {
+    OneSignal.shared.setNotificationReceivedHandler((notification) async {
       // refactorNotification(notification);
     });
 
@@ -84,26 +84,33 @@ class _MyHomePageState extends State<MyHomePage> {
       // MyPreferences.checkAndDisplayNotificationToday();
     });
 
+    OneSignal.shared.setInAppMessageClickedHandler((action) async {
+      if (action != null && action.clickName == "buttonClick") {
+        // https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=appId
+        var url =
+            "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$appId";
+        await launch(url,
+            forceWebView: false, forceSafariVC: false, enableJavaScript: true);
+      }
+    });
+
     var status = await OneSignal.shared.getPermissionSubscriptionState();
 
     if (!status.permissionStatus.hasPrompted) {
       OneSignal.shared.addTrigger("prompt_ios", "true");
     }
-
   }
 
   startTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    MyPreferences.saveNotificationTimeOnBackend(prefs.getString("segment").substring(0, 2), appId);
+    MyPreferences.saveNotificationTimeOnBackend(
+        prefs.getString("segment").substring(0, 2), appId);
 
     if (await connection()) {
       await registerUser(prefs.getString("segment").substring(0, 2));
     }
-
   }
-
-
 
   Future<bool> connection() async {
     try {
@@ -166,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> getPlayerId() async {
     OSPermissionSubscriptionState status =
-    await OneSignal.shared.getPermissionSubscriptionState();
+        await OneSignal.shared.getPermissionSubscriptionState();
     String playerId = status.subscriptionStatus.userId;
     setState(() {
       oneSignalPlayerId = playerId;
@@ -179,16 +186,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> pingServer() async {
     return http.get(
-        '${environment['remote_url']}/api/users/${this.appId}',
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
+      '${environment['remote_url']}/api/users/${this.appId}',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     String numOfDays(String surveyDate) {
       if (surveyDate == null || surveyDate.isEmpty) {
         return "Not completed yet. Click to open.";
@@ -198,187 +204,185 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     ListTile makeListTile(Notifications notification) => ListTile(
-      contentPadding: EdgeInsets.fromLTRB(15.0, 0, 5.0, 0),
-      title: Text(
-        notification.title,
-        style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 15.0),
-      ),
-      subtitle: Row(
-        children: <Widget>[
-          (notification.type == "daily") ?
-          Expanded(
-            flex: 4,
-            child: Text(
-              notification.description,
-              style: TextStyle(color: Colors.white, fontSize: 12.0),
-            ),
-          ) : Container(),
-          (notification.type == "monthly-pain") ?
-            Expanded(
-              flex: 4,
-              child: Text(
-                numOfDays(monthlyPromis10LastDateTaken),
-                style: TextStyle(color: Colors.white, fontSize: 12.0),
-              ),
-            ) : Container(),
-          (notification.type == "monthly-sleep") ?
-          Expanded(
-            flex: 4,
-            child: Text(
-              numOfDays(monthlySleepLastDateTaken),
-              style: TextStyle(color: Colors.white, fontSize: 12.0),
-            ),
-          ) : Container(),
-        ],
-
-      ),
-      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
-      onTap: () async {
-        if(notification.type == "daily") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      QuestionnairePage(notification: notification)
-              )
-          );
-        } else if(notification.type == "monthly-pain") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      MonthlyPainQuestionnairePage(notification: notification)
-              )
-          );
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      MonthlyQuestionnairePage(notification: notification)
-              )
-          );
-        }
-      },
-    );
+          contentPadding: EdgeInsets.fromLTRB(15.0, 0, 5.0, 0),
+          title: Text(
+            notification.title,
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 15.0),
+          ),
+          subtitle: Row(
+            children: <Widget>[
+              (notification.type == "daily")
+                  ? Expanded(
+                      flex: 4,
+                      child: Text(
+                        notification.description,
+                        style: TextStyle(color: Colors.white, fontSize: 12.0),
+                      ),
+                    )
+                  : Container(),
+              (notification.type == "monthly-pain")
+                  ? Expanded(
+                      flex: 4,
+                      child: Text(
+                        numOfDays(monthlyPromis10LastDateTaken),
+                        style: TextStyle(color: Colors.white, fontSize: 12.0),
+                      ),
+                    )
+                  : Container(),
+              (notification.type == "monthly-sleep")
+                  ? Expanded(
+                      flex: 4,
+                      child: Text(
+                        numOfDays(monthlySleepLastDateTaken),
+                        style: TextStyle(color: Colors.white, fontSize: 12.0),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+          trailing:
+              Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
+          onTap: () async {
+            if (notification.type == "daily") {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          QuestionnairePage(notification: notification)));
+            } else if (notification.type == "monthly-pain") {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MonthlyPainQuestionnairePage(
+                          notification: notification)));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MonthlyQuestionnairePage(
+                          notification: notification)));
+            }
+          },
+        );
 
     Card makeCard(Notifications notification) => Card(
-      elevation: 8.0,
-      margin: EdgeInsets.fromLTRB(6.0, 3.0, 6.0, 3.0),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Color.fromRGBO(64, 75, 96, 0.9),
-            borderRadius: BorderRadius.circular(4.0)
-        ),
-        child: notification == null ? Container() : makeListTile(notification),
-      ),
-    );
+          elevation: 8.0,
+          margin: EdgeInsets.fromLTRB(6.0, 3.0, 6.0, 3.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Color.fromRGBO(64, 75, 96, 0.9),
+                borderRadius: BorderRadius.circular(4.0)),
+            child:
+                notification == null ? Container() : makeListTile(notification),
+          ),
+        );
 
     Widget bottomLogo() => Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: <Widget>[
-        GestureDetector(
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(5.0),
-                  child: Image.asset(
-                    'images/cc.jpg',
-                    height: 40.0,
-                    width: 40.0,
-                    fit: BoxFit.fill,
-                  ),
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: Image.asset(
+                        'images/cc.jpg',
+                        height: 40.0,
+                        width: 40.0,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    SizedBox(height: 5.0),
+                    Text("CC Research Group",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(64, 75, 96, 0.9))),
+                  ],
                 ),
-                SizedBox(height: 5.0),
-                Text("CC Research Group",
-                    style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(64, 75, 96, 0.9))),
-              ],
+              ),
+              onTap: () {
+                openCCGroup();
+              },
             ),
-          ),
-          onTap: () {
-            openCCGroup();
-          },
-        ),
-        GestureDetector(
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(5.0),
-                  child: Image.asset(
-                    'images/ubicomp.jpg',
-                    height: 40.0,
-                    width: 40.0,
-                    fit: BoxFit.fill,
-                  ),
+            GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: Image.asset(
+                        'images/ubicomp.jpg',
+                        height: 40.0,
+                        width: 40.0,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    SizedBox(height: 5.0),
+                    Text("UBICOMP Research Unit",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(64, 75, 96, 0.9))),
+                  ],
                 ),
-                SizedBox(height: 5.0),
-                Text("UBICOMP Research Unit",
-                    style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(64, 75, 96, 0.9))),
-              ],
+              ),
+              onTap: () {
+                openUbiComp();
+              },
             ),
-          ),
-          onTap: () {
-            openUbiComp();
-          },
-        ),
-      ],
-    );
-
+          ],
+        );
 
     Widget sadFace() => Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset('images/sadd.png', height: 140.0, width: 140.0),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Text(
-                "You haven't taken your survey for today yet. Do so now.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color.fromRGBO(64, 75, 96, 0.9), fontSize: 20.0)
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset('images/sadd.png', height: 140.0, width: 140.0),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                child: Text(
+                    "You haven't taken your survey for today yet. Do so now.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Color.fromRGBO(64, 75, 96, 0.9),
+                        fontSize: 20.0)),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
 
     Widget happyFace() => Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset('images/smiley.png', height: 140.0, width: 140.0),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Text(
-                "Congratulations!! \nYou have taken your survey for today. Check back tomorrow.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color.fromRGBO(64, 75, 96, 0.9), fontSize: 20.0)
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset('images/smiley.png', height: 140.0, width: 140.0),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                child: Text(
+                    "Congratulations!! \nYou have taken your survey for today. Check back tomorrow.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Color.fromRGBO(64, 75, 96, 0.9),
+                        fontSize: 20.0)),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-
+        );
 
     Widget checkFaceToShow() {
-      if (notificationTakenDate == DateFormat("yyyy-MM-dd").format(DateTime.now())) {
+      if (notificationTakenDate ==
+          DateFormat("yyyy-MM-dd").format(DateTime.now())) {
         return happyFace();
       } else {
         return sadFace();
@@ -388,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget bodyWidget(List<Notifications> data) {
       return Column(
         children: <Widget>[
-          for(var i in data) makeCard(i),
+          for (var i in data) makeCard(i),
           checkFaceToShow(),
           Footer(
             child: bottomLogo(),
@@ -398,49 +402,46 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
-
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Sleep Better with Back Pain'),
-          elevation: 5,
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SettingsScreen()));
-                },
-                child: Icon(
-                  Icons.settings,
-                  size: 24.0,
-                  color: Colors.white,
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sleep Better with Back Pain'),
+        elevation: 5,
+        backgroundColor: Color.fromRGBO(64, 75, 96, 0.9),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()));
+              },
+              child: Icon(
+                Icons.settings,
+                size: 24.0,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
-        backgroundColor: Colors.white, //Color.fromRGBO(58, 66, 86, 1.0),
-        body: FutureBuilder(
-            future: getSurveys(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text("There was an error $snapshot");
-              } else if (snapshot.hasData) {
-                return bodyWidget(snapshot.data);
-              } else {
-                return Container(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white, //Color.fromRGBO(58, 66, 86, 1.0),
+      body: FutureBuilder(
+          future: getSurveys(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("There was an error $snapshot");
+            } else if (snapshot.hasData) {
+              return bodyWidget(snapshot.data);
+            } else {
+              return Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
             }
-        ),
-      );
-    }
-
-
+          }),
+    );
+  }
 
   Future<List<Notifications>> getSurveys() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -455,7 +456,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     var survey = await MyPreferences.displayTodayNotification();
-    var monthlySleepSurvey = await MyPreferences.displayMonthlySleepNotification();
+    var monthlySleepSurvey =
+        await MyPreferences.displayMonthlySleepNotification();
     var monthlyPainSurvey = await MyPreferences.displayMonthlyPromis10();
     notificationsList.clear();
 
@@ -472,16 +474,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return notificationsList;
   }
 
-
   void openCCGroup() async {
     final url = "https://ubicomp.oulu.fi/cc";
     if (await canLaunch(url)) {
-      await launch(
-          url,
-          forceWebView: true,
-          forceSafariVC: true,
-          enableJavaScript: true
-      );
+      await launch(url,
+          forceWebView: true, forceSafariVC: true, enableJavaScript: true);
     } else {
       throw 'Could not launch url';
     }
@@ -490,12 +487,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void openUbiComp() async {
     final url = "https://ubicomp.oulu.fi";
     if (await canLaunch(url)) {
-      await launch(
-          url,
-          forceWebView: true,
-          forceSafariVC: true,
-          enableJavaScript: true
-      );
+      await launch(url,
+          forceWebView: true, forceSafariVC: true, enableJavaScript: true);
     } else {
       throw 'Could not launch url';
     }

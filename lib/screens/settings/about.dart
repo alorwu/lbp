@@ -6,6 +6,7 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromRGBO(64, 75, 96, 0.9),
         title: Text('About this app', style: TextStyle(color: Colors.white)),
       ),
       body: Builder(

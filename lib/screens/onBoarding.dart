@@ -183,6 +183,7 @@ class OnBoardingState extends State<OnBoarding> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Welcome - Sleep Better'),
+        backgroundColor: Color.fromRGBO(64, 75, 96, 0.9),
       ),
       body: Builder(
         builder: (context) => Padding(
