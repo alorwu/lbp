@@ -59,7 +59,7 @@ class SleepHomeState extends State<SleepHome> {
       if (action != null && action.clickName == "buttonClick") {
         // https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=appId
         var url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$appId";
+            "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$userId";
         await launch(url,
             forceWebView: false, forceSafariVC: false, enableJavaScript: true);
       }

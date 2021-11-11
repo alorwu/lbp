@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/user/User.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
-import 'package:progress_indicator_button/progress_button.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnBoarding extends StatefulWidget {
@@ -42,6 +42,8 @@ class OnBoardingState extends State<OnBoarding> {
   String sciatica;
   String painIntensity;
   double activeLifeStyleLevel = -1;
+
+  ButtonState submitButtonState = ButtonState.idle;
 
   var sliderHeight = 48.0;
   var max = 10;
@@ -83,7 +85,7 @@ class OnBoardingState extends State<OnBoarding> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: double.infinity, //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
+            width: double.infinity,
             height: (sliderHeight),
             decoration: new BoxDecoration(
               borderRadius: new BorderRadius.all(
@@ -111,14 +113,12 @@ class OnBoardingState extends State<OnBoarding> {
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: Colors.blue.withOpacity(1),
-                          // inactiveTrackColor: Colors.black,
                           trackHeight: 4.0,
                           thumbShape: CustomSliderThumbCircle(
                             thumbRadius: sliderHeight * .4,
                             min: min,
                             max: max,
                           ),
-                          // overlayColor: Colors.black,
                           activeTickMarkColor: Colors.blue,
                           inactiveTickMarkColor: Colors.blue,
                         ),
@@ -128,7 +128,6 @@ class OnBoardingState extends State<OnBoarding> {
                             max: 10,
                             divisions: 10,
                             onChanged: (double value) {
-                              // print("Value: $value");
                               setState(() {
                                 sliderValue = value;
                                 activeLifeStyleLevel = value;
@@ -186,7 +185,6 @@ class OnBoardingState extends State<OnBoarding> {
         title: Text('Getting Started'),
         backgroundColor: Color(0xff000000),
         elevation: 0.0,
-        // systemOverlayStyle: SystemUiOverlayStyle.dark,
         brightness: Brightness.dark,
       ),
       body: Builder(
@@ -234,12 +232,9 @@ class OnBoardingState extends State<OnBoarding> {
                   SizedBox(height: 20),
                   Text("How old are you (in years)?", style: TextStyle(color: Colors.blue)),
                   TextFormField(
-                    // focusNode: new FocusNode(),
                     decoration: InputDecoration(
                       hintText: "e.g. 24",
                       hintStyle: TextStyle(color: Colors.grey),
-                      // labelText: 'How old are you (in years)?',
-                      // border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
                     controller: ageController,
@@ -597,15 +592,35 @@ class OnBoardingState extends State<OnBoarding> {
                   Container(
                     height: 50,
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: ProgressButton(
-                      borderRadius: BorderRadius.circular(50.0),
-                      color: this.consentCheck ? Colors.blue : Colors.grey,
-                      child: Text('Get started', style: TextStyle(color: Colors.white)),
-                      onPressed: (AnimationController controller) async {
+                    child: ProgressButton.icon(
+                      iconedButtons: {
+                        ButtonState.idle: IconedButton(
+                            text: "Submit",
+                            icon: Icon(Icons.send, color: Colors.white),
+                            color: Colors.green
+                        ),
+                        ButtonState.loading: IconedButton(
+                            text: "Submitting...",
+                            color: Colors.green
+                        ),
+                        ButtonState.fail: IconedButton(
+                            text: "Failed",
+                            icon: Icon(Icons.cancel,color: Colors.white),
+                            color: Colors.red.shade500
+                        ),
+                        ButtonState.success: IconedButton(
+                            text: "Success",
+                            icon: Icon(Icons.check_circle,color: Colors.white,),
+                            color: Colors.green
+                        )
+                      },
+                      progressIndicatorSize: 25,
+                      onPressed: () async {
                         if (this.consentCheck) {
-                          validateAndSend(controller);
+                          validateAndSend();
                         }
                       },
+                      state: submitButtonState,
                     ),
                   ),
                 ],
@@ -617,41 +632,8 @@ class OnBoardingState extends State<OnBoarding> {
     );
   }
 
-  Future<void> showConsentDialog(BuildContext context, AnimationController controller) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Approve'),
-              onPressed: () {
-                validateAndSend(controller);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  validateAndSend(AnimationController controller) {
+  validateAndSend() {
     if (_formKey.currentState.validate()) {
-      // await MyPreferences.updateOnboarding(false);
-      // await MyPreferences.saveMonthlyDateTaken(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-      // await MyPreferences.saveNotificationTime("07:00");
-
       if (activeLifeStyleLevel < 0) {
         // If user doesn't touch slider, use default of 0
         setState(() {
@@ -661,10 +643,7 @@ class OnBoardingState extends State<OnBoarding> {
       } else if (diagnosedOfLbp < 0) {
         showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
       } else {
-        sendData(
-            context,
-            controller
-        );
+        sendData(context);
       }
     }
   }
@@ -676,12 +655,14 @@ class OnBoardingState extends State<OnBoarding> {
     ));
   }
 
-  Future<void> sendData(BuildContext context, AnimationController animationController) async {
-    animationController.forward();
+  Future<void> sendData(BuildContext context) async {
+    setState(() {
+      submitButtonState = ButtonState.loading;
+    });
 
     // final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-    final ss = await gSheets.spreadsheet(
-        '1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
+    final ss = await gSheets
+        .spreadsheet('1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
     var sheet = ss.worksheetByTitle('onboarding_q');
     sheet ??= await ss.addWorksheet('onboarding_q');
 
@@ -712,41 +693,40 @@ class OnBoardingState extends State<OnBoarding> {
       var result = await sheet.values.appendRow(values);
       if (result) {
         await MyPreferences.updateOnboarding(false);
-        // await MyPreferences.saveMonthlyDateTaken(
-        //     DateFormat("yyyy-MM-dd").format(DateTime.now()));
         await MyPreferences.saveNotificationTime("07:00");
-        ScaffoldMessenger
-            .of(context)
+        ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-          content: Text(
-              "Your notification time has been set to 07:00. You can change this in the settings screen later.",
-              style: TextStyle(color: Colors.white)),
-        ))
+              content: Text(
+                  "Your notification time has been set to 07:00. You can change this in the settings screen later.",
+                  style: TextStyle(color: Colors.white)),
+            ))
             .closed
             .then((value) {
           Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
-          animationController.stop();
+          setState(() {
+            submitButtonState = ButtonState.success;
+          });
         });
       } else {
-        ScaffoldMessenger
-            .of(context)
+        ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-          content: Text(
-              "Unable to save data. Check your internet connection and try again.",
-              style: TextStyle(color: Colors.red)),
-        ))
+              content: Text(
+                  "Unable to save data. Check your internet connection and try again.",
+                  style: TextStyle(color: Colors.red)),
+            ))
             .closed
             .then((value) {
-          animationController.stop();
-          animationController.reset();
+          setState(() {
+            submitButtonState = ButtonState.fail;
+          });
         });
       }
-    } catch(exp) {
-      animationController.stop();
-      animationController.reset();
+    } catch (exp) {
+      setState(() {
+        submitButtonState = ButtonState.fail;
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "An error occurred. Please try again.",
+        content: Text("An error occurred. Please try again.",
             style: TextStyle(color: Colors.red)),
       ));
     }

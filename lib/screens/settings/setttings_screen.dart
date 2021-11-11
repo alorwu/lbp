@@ -176,8 +176,8 @@ class MapScreenState extends State<SettingsScreen> {
                   child: PreferencePage([
                     PreferenceTitle("Notification time", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
                     notificationTime(context),
-                    PreferenceTitle("Donate data", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
-                    donateData(),
+                    // PreferenceTitle("Donate data", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
+                    // donateData(),
                     PreferenceTitle("About app", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
                     aboutUs(),
                     PreferenceTitle("Other studies", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),

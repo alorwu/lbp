@@ -28,7 +28,9 @@ class SleepRecordState extends State<SleepRecordScreen> {
   }
 
   Widget emptyRecordsCard() {
-    return Card(
+    return Padding(
+      padding: EdgeInsets.all(20.0),
+      child: Card(
       color: Colors.white,
       elevation: 5.0,
       shape: RoundedRectangleBorder(
@@ -85,10 +87,9 @@ class SleepRecordState extends State<SleepRecordScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: ElevatedButton(
+                ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.all(15.0),
+                      padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
@@ -105,15 +106,15 @@ class SleepRecordState extends State<SleepRecordScreen> {
                   child: Text(
                     "Take today's survey",
                     style:
-                    TextStyle(fontSize: 18.0, color: Colors.white, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 18.0, color: Colors.white),
                   ),
-                ),
                 ),
               ],
             ),
           ],
         ),
       ),
+    ),
     );
   }
 

@@ -11,7 +11,8 @@ import 'package:lbp/model/daily/Questionnaire.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
-import 'package:progress_indicator_button/progress_button.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../env/.env.dart';
@@ -45,36 +46,86 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   List<String> answers = [];
   GSheets gSheets;
 
+  ButtonState submitButtonState = ButtonState.idle;
+
   @override
   initState() {
     super.initState();
     gSheets = GSheets(environment['credentials']);
   }
 
+  void resetValues() {
+    setState(() {
+      timePickerValue = null;
+      sliderValue = 0;
+      realSliderValue = -1;
+      selectedValue = null;
+    });
+  }
   void checkAnswer(Question question) {
-    if (question.type == "slider") {
-      setState(() {
-        realSliderValue = -1;
-        sliderValue = 0;
-        if (questionnaire.nextQuestion() == true) {
-          completed = true;
-        }
-      });
-    } else if (question.type == "likert") {
-      setState(() {
-        selectedValue = null;
-        if (questionnaire.nextQuestion() == true) {
-          completed = true;
-        }
-      });
-    } else if (question.type == "date_picker") {
-      setState(() {
-        timePickerValue = null;
-        if (questionnaire.nextQuestion() == true) {
-          completed = true;
-        }
-      });
-    }
+    setState(() {
+      resetValues();
+      if (questionnaire.nextQuestion() == true) {
+        completed = true;
+      }
+    });
+
+    // if (question.type == "slider") {
+    //   setState(() {
+    //     realSliderValue = -1;
+    //     sliderValue = 0;
+    //     if (questionnaire.nextQuestion() == true) {
+    //       completed = true;
+    //     }
+    //   });
+    // } else if (question.type == "likert") {
+    //   setState(() {
+    //     selectedValue = null;
+    //     if (questionnaire.nextQuestion() == true) {
+    //       completed = true;
+    //     }
+    //   });
+    // } else if (question.type == "date_picker") {
+    //   setState(() {
+    //     timePickerValue = null;
+    //     if (questionnaire.nextQuestion() == true) {
+    //       completed = true;
+    //     }
+    //   });
+    // }
+  }
+
+  void checkAnswerPrev(Question question) {
+    setState(() {
+      resetValues();
+      if (questionnaire.prevQuestion() == false) {
+        completed = false;
+      }
+    });
+
+    // if (question.type == "slider") {
+    //   setState(() {
+    //     realSliderValue = -1;
+    //     sliderValue = 0;
+    //     if (questionnaire.prevQuestion() == false) {
+    //       completed = false;
+    //     }
+    //   });
+    // } else if (question.type == "likert") {
+    //   setState(() {
+    //     selectedValue = null;
+    //     if (questionnaire.prevQuestion() == false) {
+    //       completed = false;
+    //     }
+    //   });
+    // } else if (question.type == "date_picker") {
+    //   setState(() {
+    //     timePickerValue = null;
+    //     if (questionnaire.prevQuestion() == false) {
+    //       completed = false;
+    //     }
+    //   });
+    // }
   }
 
   @override
@@ -87,7 +138,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           elevation: 0,
           // systemOverlayStyle: SystemUiOverlayStyle.dark,
           brightness: Brightness.dark,
-          title: Text("Today's Survey")),
+          title: Text("Today's Survey"),
+          automaticallyImplyLeading: false,
+      ),
       body: buildQuestionsPage(),
     );
   }
@@ -152,18 +205,18 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               child: Padding(
                 padding: EdgeInsets.all(10.0),
                 child: ProgressButton(
-                  borderRadius: BorderRadius.circular(50.0),
-                  color: Colors.green,
-                  onPressed: (AnimationController controller) async {
-                    await MyPreferences.saveDateTaken(
-                        DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                    answers.add(notes);
-                    sendData(controller);
-                  },
-                  child: Text(
-                    'Submit',
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  ),
+                  // borderRadius: BorderRadius.circular(50.0),
+                  // color: Colors.green,
+                  // onPressed: (AnimationController controller) async {
+                  //   await MyPreferences.saveDateTaken(
+                  //       DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                  //   answers.add(notes);
+                  //   sendData(controller);
+                  // },
+                  // child: Text(
+                  //   'Submit',
+                  //   style: TextStyle(color: Colors.white, fontSize: 20.0),
+                  // ),
                 ),
               ),
             ),
@@ -174,23 +227,23 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       return Padding(
         padding: EdgeInsets.all(20.0),
         child: Card(
-          color: Colors.white60,
+          color: Colors.white24,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                height: 16,
+                height: 30,
               ),
               Center(
                 child: DotsIndicator(
                   dotsCount: questionnaire.getQuestionnaireLength(),
                   position: questionnaire.questionNumber().toDouble(),
                   decorator: DotsDecorator(
-                    size: Size.square(15),
-                    activeSize: Size(18, 18),
-                    activeColor: Theme.of(context).primaryColor,
-                    color: Theme.of(context).disabledColor,
+                    size: Size.square(12),
+                    activeSize: Size(15, 15),
+                    activeColor: Colors.white70, //Theme.of(context).primaryColor,
+                    color: Colors.black54 //Theme.of(context).disabledColor,
                   ),
                 ),
               ),
@@ -198,14 +251,14 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 height: 24,
               ),
               Expanded(
-                flex: 3,
+                flex: 2,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+                  padding: EdgeInsets.all(10.0),
                   child: Center(
                     child: Text(
                       questionnaire.getQuestion().question,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 25.0),
+                      style: TextStyle(color: Colors.white, fontSize: 22.0),
                     ),
                   ),
                 ),
@@ -220,27 +273,18 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  questionnaire.questionNumber() > 0
-                      ? TextButton(
-                          onPressed: () => prevButtonClickHandler(),
-                          child: Text(
-                            'Prev',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20.0),
-                          ))
-                      : Container(),
-                  TextButton(
-                      onPressed: () => nextButtonClickHandler(),
-                      child: Text(
-                        'Next',
-                        style:
-                        TextStyle(color: Colors.white, fontSize: 20.0),
-                      )
-                  ),
-                ],
+              Expanded(
+                child: Padding(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    questionnaire.questionNumber() > 0
+                        ? prevButton()
+                        : Container(),
+                    questionnaire.lastQuestion() ? submitButton() : nextButton()
+                  ],
+                ),
                 // padding: Padding(
                 //     padding: EdgeInsets.all(10.0),
                 //     child: Builder(
@@ -252,7 +296,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 //                 TextStyle(color: Colors.white, fontSize: 20.0),
                 //           )),
                 //     )),
-              ),
+              ),),
             ],
           ),
         ),
@@ -260,34 +304,134 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     }
   }
 
+  Widget submitButton() {
+    // return Padding(
+    //     padding: EdgeInsets.all(10.0),
+    //     child: OutlinedButton(
+    //         style: OutlinedButton.styleFrom(
+    //             backgroundColor: Colors.green,
+    //             side: BorderSide(color: Colors.green)),
+    //         onPressed: () async => sendDataNew(),
+    //         child: Text('Submit', style: TextStyle(color: Colors.white)),
+    //     ),
+    // );
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: ProgressButton.icon(
+        iconedButtons: {
+          ButtonState.idle: IconedButton(
+              text: "Submit",
+              icon: Icon(Icons.send, color: Colors.white),
+              color: Colors.green),
+          ButtonState.loading: IconedButton(color: Colors.green),
+          ButtonState.fail: IconedButton(
+              text: "Failed",
+              icon: Icon(Icons.cancel, color: Colors.white),
+              color: Colors.red.shade500),
+          ButtonState.success: IconedButton(
+              text: "Success",
+              icon: Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
+              color: Colors.green.shade400)
+        },
+        progressIndicatorSize: 25.0,
+        onPressed: () async {
+          await MyPreferences.saveDateTaken(
+              DateFormat("yyyy-MM-dd").format(DateTime.now()));
+          // answers.add(notes);
+          sendDataNew();
+        },
+        state: submitButtonState,
+      ),
+    );
+  }
+
+  Widget prevButton() {
+    return Padding(
+        padding: EdgeInsets.all(10.0),
+        child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.white)),
+            onPressed: () => prevButtonClickHandler(),
+            child: Text(
+              'Prev',
+              style: TextStyle(color: Colors.white),
+            ))
+    );
+  }
+
+  Widget nextButton() {
+    return Padding(
+        padding: EdgeInsets.all(10.0),
+        child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.white)),
+            onPressed: () => nextButtonClickHandler(),
+            child: Text(
+              'Next',
+              style: TextStyle(color: Colors.white),
+            ))
+    );
+  }
+
   void prevButtonClickHandler() {
     // answers.remove(answers.length -1);
-    questionnaire.prevQuestion();
+    // if (questionnaire.getQuestion().type ==
+    //     "date_picker") {
+    //   checkAnswerPrev(questionnaire.getQuestion());
+    // } else if (questionnaire.getQuestion().type ==
+    //     "slider") {
+    //     checkAnswerPrev(questionnaire.getQuestion());
+    // } else if (questionnaire.getQuestion().type ==
+    //     "likert") {
+    //   checkAnswerPrev(questionnaire.getQuestion());
+    // }
+    // checkAnswerPrev(questionnaire.getQuestion());
+    setState(() {
+      // question.data = null;
+      resetValues();
+      if (questionnaire.prevQuestion() == false) {
+        completed = false;
+      }
+    });
   }
 
   void nextButtonClickHandler() {
-    if (questionnaire.getQuestion().type ==
-        "date_picker") {
-      answers.add(DateFormat("yyyy-MM-dd HH:mm:ss")
-          .format((timePickerValue)));
-      checkAnswer(questionnaire.getQuestion());
-    } else if (questionnaire.getQuestion().type ==
-        "slider") {
-      if (realSliderValue != -1) {
-        answers.add(realSliderValue.toInt().toString());
-        checkAnswer(questionnaire.getQuestion());
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(
-          content:
-          Text("Move the slider to select a value"),
-          backgroundColor:
-          Color.fromRGBO(58, 66, 86, 1.0),
-        ));
-      }
-    } else if (selectedValue != null) {
-      answers.add(selectedValue);
-      checkAnswer(questionnaire.getQuestion());
+    if (questionnaire.getQuestion().data != null) {
+      // checkAnswer(questionnaire.getQuestion());
+      setState(() {
+        resetValues();
+        if (questionnaire.nextQuestion() == true) {
+          completed = true;
+        }
+      });
+    // if (questionnaire.getQuestion().type ==
+    //     "date_picker") {
+    //   answers.add(DateFormat("yyyy-MM-dd HH:mm:ss")
+    //       .format((timePickerValue)));
+    //   // questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm:ss").format(timePickerValue);
+    //   checkAnswer(questionnaire.getQuestion());
+    // } else if (questionnaire.getQuestion().type ==
+    //     "slider") {
+    //   if (realSliderValue != -1) {
+    //     answers.add(realSliderValue.toInt().toString());
+    //     // questionnaire.getQuestion().data = realSliderValue.toInt().toString();
+    //     checkAnswer(questionnaire.getQuestion());
+    //   } else {
+    //     ScaffoldMessenger.of(context)
+    //         .showSnackBar(SnackBar(
+    //       content:
+    //       Text("Move the slider to select a value"),
+    //       backgroundColor:
+    //       Color.fromRGBO(58, 66, 86, 1.0),
+    //     ));
+    //   }
+    // } else if (selectedValue != null) {
+    //   answers.add(selectedValue);
+    //   // questionnaire.getQuestion().data = selectedValue;
+    //   checkAnswer(questionnaire.getQuestion());
     } else
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(
@@ -307,17 +451,54 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       case "date_picker":
         return answerDatePickerWidget();
       default:
-        return null;
+        return answerNotesWidget();
     }
+  }
+
+  Widget answerNotesWidget() {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Center(
+        child: Container(
+          child: TextFormField(
+            initialValue: questionnaire.getQuestion().data != null ? questionnaire.getQuestion().data : "",
+            decoration: new InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              enabledBorder: const OutlineInputBorder(
+                  borderSide: const BorderSide(
+                      color: Colors.white, width: 1.0)),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              hintStyle: TextStyle(color: Colors.grey),
+              hintText: "Enter free form text here",
+              helperText: "No answer is wrong. Write freely.",
+              helperStyle: TextStyle(color: Colors.white),
+            ),
+            keyboardType: TextInputType.text,
+            maxLines: 12,
+            onChanged: (String value) {
+              setState(() {
+                questionnaire.getQuestion().data = value;
+                // notes = value;
+              });
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Widget answerDatePickerWidget() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        timePickerValue != null
+        // timePickerValue != null
+        questionnaire.getQuestion().data != null
             ? Text(
-                DateFormat("hh:mm a").format(timePickerValue),
+                // DateFormat("hh:mm a").format(timePickerValue),
+                DateFormat("hh:mm a").format(DateTime.parse(questionnaire.getQuestion().data)),
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
@@ -327,22 +508,14 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         SizedBox(
           height: 20.0,
         ),
-        SizedBox(
-          width: 200.0,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(20.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                )),
-            onPressed: () => showDate(context),
-            child: Text(
-              timePickerValue != null ? 'Change time' : 'Select time',
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-            ),
+        // SizedBox(
+        //   width: 200.0,
+          OutlinedButton.icon(
+              onPressed: () => showDate(context),
+              icon: Icon(Icons.access_alarm),
+              label: Text(questionnaire.getQuestion().data != null ? 'Change time' : 'Select time', style: TextStyle(color: Colors.white70)),
+            style: OutlinedButton.styleFrom(primary: Colors.white70, side: BorderSide(color: Colors.white70)),
           ),
-        )
       ],
     );
   }
@@ -352,9 +525,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       context,
       showTitleActions: true,
       onConfirm: (date) {
-        print(date);
         setState(() {
-          timePickerValue = date;
+          questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm").format(date);
         });
       },
       currentTime: DateTime.now(),
@@ -410,15 +582,16 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                           inactiveTickMarkColor: Colors.red.withOpacity(.7),
                         ),
                         child: Slider(
-                            value: sliderValue,
+                            // value: sliderValue,
+                            value: double.parse(question.data ?? "0"),
                             min: 0,
                             max: 10,
                             divisions: 10,
                             onChanged: (double value) {
-                              print("Value: $value");
                               setState(() {
-                                sliderValue = value;
-                                realSliderValue = value;
+                                // sliderValue = value;
+                                // realSliderValue = value;
+                                questionnaire.getQuestion().data = value.toInt().toString();
                               });
                             }),
                       ),
@@ -477,16 +650,89 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
                 style: TextStyle(color: Colors.white)),
             value: '${index + 1}',
-            groupValue: selectedValue,
+            // groupValue: selectedValue,
+            groupValue: question.data,
             activeColor: Colors.white,
             onChanged: (String value) {
               setState(() {
-                selectedValue = value;
+                // selectedValue = value;
+                questionnaire.getQuestion().data = value;
               });
             },
           ),
         );
       });
+
+  sendDataNew() async {
+    setState(() {
+      submitButtonState = ButtonState.loading;
+    });
+    await MyPreferences.saveDateTaken(
+        DateFormat("yyyy-MM-dd").format(DateTime.now()));
+    // saveDataLocally(answers);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString("app_id");
+
+    List values = [];
+    questionnaire.getQuestions().forEach((e) => values.add(e.data));
+    values.insert(0, DateTime.now().millisecondsSinceEpoch.toString());
+    values.insert(1, id);
+    values.add(DateTime.now().toString());
+
+    saveDataLocally(values);
+
+    final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
+    var sheet = ss.worksheetByTitle('daily_q');
+    sheet ??= await ss.addWorksheet('daily_q');
+
+    // List values = [];
+    // questionnaire.getQuestions().forEach((e) => values.add(e.data));
+    // values.insert(0, DateTime.now().millisecondsSinceEpoch.toString());
+    // values.insert(1, id);
+    // values.add(DateTime.now().toString());
+    //
+    // saveDataLocally(values);
+
+    try {
+      var result = await sheet.values.appendRow(values);
+      if (result) {
+        setState(() {
+          submitButtonState = ButtonState.success;
+        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(
+              content: Text("Your entry has been saved.",
+                  style: TextStyle(color: Colors.white)),
+            ))
+            .closed
+            .then((value) {
+          answers.clear();
+          Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(
+              content: Text(
+                  "Unable to save data. Check your internet connection and try again.",
+                  style: TextStyle(color: Colors.red)),
+            ))
+            .closed
+            .then((value) {
+            setState(() {
+              submitButtonState = ButtonState.fail;
+            });
+        });
+      }
+    } catch (exp) {
+      setState(() {
+        submitButtonState = ButtonState.fail;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("An error occurred. Please try again.",
+            style: TextStyle(color: Colors.red)),
+      ));
+    }
+  }
 
   sendData(AnimationController animationController) async {
     animationController.forward();
@@ -499,24 +745,29 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     var id = prefs.getString("app_id");
 
     List values = [];
-    values.add(DateTime.now().millisecondsSinceEpoch.toString());
-    values.add(id);
-    values.add(answers[0]);
-    values.add(answers[1]);
-    values.add(answers[2]);
-    values.add(answers[3]);
-    values.add(answers[4]);
-    values.add(answers[5]);
-    values.add(answers[6]);
+    questionnaire.getQuestions().forEach((e) => values.add(e.data));
+    values.insert(0, DateTime.now().millisecondsSinceEpoch.toString());
+    values.insert(1, id);
     values.add(DateTime.now().toString());
+
+    // values.add(DateTime.now().millisecondsSinceEpoch.toString());
+    // values.add(id);
+    // values.add(answers[0]);
+    // values.add(answers[1]);
+    // values.add(answers[2]);
+    // values.add(answers[3]);
+    // values.add(answers[4]);
+    // values.add(answers[5]);
+    // values.add(answers[6]);
+    // values.add(DateTime.now().toString());
     try {
       var result = await sheet.values.appendRow(values);
       if (result) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-              content: Text("Your entry has been saved.",
-                  style: TextStyle(color: Colors.white)),
-            ))
+          content: Text("Your entry has been saved.",
+              style: TextStyle(color: Colors.white)),
+        ))
             .closed
             .then((value) {
           answers.clear();
@@ -526,10 +777,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-              content: Text(
-                  "Unable to save data. Check your internet connection and try again.",
-                  style: TextStyle(color: Colors.red)),
-            ))
+          content: Text(
+              "Unable to save data. Check your internet connection and try again.",
+              style: TextStyle(color: Colors.red)),
+        ))
             .closed
             .then((value) {
           animationController.stop();
@@ -546,17 +797,18 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     }
   }
 
-  void saveDataLocally(List<String> answers) async {
+  void saveDataLocally(List<dynamic> values) async {
+    print(values);
     var dailyQ = DailyQ(
         dateTaken: DateTime.now(),
-        sleepTime: DateTime.parse(answers[0]),
-        wakeupTime: DateTime.parse(answers[1]),
-        timeToSleep: answers[2],
-        numberOfWakeupTimes: int.parse(answers[3]),
-        wellRestedness: answers[4],
-        qualityOfSleep: int.parse(answers[5]),
-        painIntensity: int.parse(answers[6]),
-        notes: answers[7]);
+        sleepTime: DateTime.parse(values[2]),
+        wakeupTime: DateTime.parse(values[3]),
+        timeToSleep: values[4],
+        numberOfWakeupTimes: int.parse(values[5]),
+        wellRestedness: values[6],
+        qualityOfSleep: int.parse(values[7]),
+        painIntensity: int.parse(values[8]),
+        notes: values[9]);
     Box<DailyQ> box = Hive.box("testBox");
     await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
   }

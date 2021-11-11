@@ -1,5 +1,6 @@
 
 import 'package:hive/hive.dart';
+
 part 'DailyQ.g.dart';
 
 @HiveType(typeId: 1)
@@ -52,20 +53,35 @@ extension DailyQExtension on DailyQ {
 }
 
 List<String> durationToList(int minutes) {
+  if (minutes < 0) {
+    minutes = 1440 + minutes; //1440 -> 24hrs
+  }
   return Duration(minutes:minutes).toString().split(':');
 }
 
 int differenceInSleep(DailyQ q) {
-  return q.wakeupTime.difference(q.sleepTime).inMinutes;
+  return q.wakeupTime.difference(q.sleepTime).inMinutes.round();
 }
 
 extension DailyListExtension on List<DailyQ> {
   get averageSleepScore {
-    return this.map((e) => e.qualityOfSleep).reduce((value, element) => value + element)/this.length;
+    return (this.map((e) => e.qualityOfSleep).reduce((value, element) => value + element)/this.length).toDouble();
   }
 
   get averageSleepPeriod {
-    int min = (this.map((e) => differenceInSleep(e)).reduce((value, element) => value + element)/this.length).round();
+    int min = (this.map((e) => differenceInSleep(e)).reduce((value, element) {
+              if (value < 0) {
+                value = 1440 + value;
+              }
+              if (element < 0) {
+                value += (1440 + element);
+              } else {
+                value += element;
+              }
+              return value;
+            })/this.length).round();
     return durationToList(min);
   }
+
+
 }

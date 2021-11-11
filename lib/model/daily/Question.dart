@@ -5,6 +5,7 @@ class Question{
   String type;
   String low;
   String high;
+  String data;
 
-  Question({this.question, this.status, this.type, this.low, this.high});
+  Question({this.question, this.status, this.type, this.low, this.high, this.data});
 }

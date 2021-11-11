@@ -29,16 +29,19 @@ class TrendScreenState extends State<TrendScreen> {
 
   var now = new DateTime.now();
 
+  var week;
+  var month;
+
   @override
   initState() {
     super.initState();
-    var week = now.subtract(Duration(days: 7));
-    var month = DateTime(now.year, now.month-1, now.day);
+    week = now.subtract(Duration(days: 7));
+    month = DateTime(now.year, now.month, 1);
 
     box = Hive.box('testBox');
     allData = box.values.toList();
-    weekData = allData.where((element) => week.isBefore(element.sleepTime)).toList();
-    monthData = allData.where((element) => month.isBefore(element.sleepTime)).toList();
+    weekData = allData.where((element) => element.sleepTime.isAfter(week)).toList();
+    monthData = allData.where((element) => element.sleepTime.isAfter(month)).toList();
 
     avgWeekSleepTime = averageSleepDateTime(weekData);
     avgWeekWakeTime = averageWakeDateTime(weekData);
@@ -75,7 +78,6 @@ class TrendScreenState extends State<TrendScreen> {
           .millisecondsSinceEpoch).fold(
           0.0, (previousValue, element) => previousValue += element);
       var res = DateTime.fromMillisecondsSinceEpoch((vg / data.length).round());
-      print("Wakeup avg: $res");
       return res;
     }
   }
@@ -114,7 +116,7 @@ class TrendScreenState extends State<TrendScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                    weekData.averageSleepScore.toString(),
+                                    weekData.averageSleepScore.toStringAsFixed(2),
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 18.0)),
                                 Icon(
@@ -1067,7 +1069,9 @@ class TrendScreenState extends State<TrendScreen> {
     }
 
   Widget emptyTrendScreen() {
-    return Card(
+    return Padding(
+    padding: EdgeInsets.all(20.0),
+        child: Card(
       color: Colors.white,
       elevation: 5.0,
       shape: RoundedRectangleBorder(
@@ -1124,10 +1128,9 @@ class TrendScreenState extends State<TrendScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: ElevatedButton(
+                ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.all(15.0),
+                        padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -1144,15 +1147,15 @@ class TrendScreenState extends State<TrendScreen> {
                     child: Text(
                       "Take today's survey",
                       style:
-                      TextStyle(fontSize: 18.0, color: Colors.white, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 18.0, color: Colors.white),
                     ),
                   ),
-                ),
               ],
             ),
           ],
         ),
       ),
+        ),
     );
   }
 
