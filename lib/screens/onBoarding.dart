@@ -614,7 +614,7 @@ class OnBoardingState extends State<OnBoarding> {
                             color: Colors.green
                         )
                       },
-                      progressIndicatorSize: 25,
+                      progressIndicatorSize: 20.0,
                       onPressed: () async {
                         if (this.consentCheck) {
                           validateAndSend();

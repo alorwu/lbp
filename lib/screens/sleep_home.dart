@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
-import 'package:lbp/screens/sleep_monitor.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -91,12 +89,23 @@ class SleepHomeState extends State<SleepHome> {
             DateFormat("yyyy-MM").parse(qolLastDateTaken) !=
                 DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
-      if (sleepLastDateTaken != null ) {
+      if (sleepLastDateTaken != null) {
         showSleepSurvey = (1 <= today && today <= 17) &&
             DateFormat("yyyy-MM").parse(sleepLastDateTaken) !=
                 DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
     });
+  }
+
+  String greeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning';
+    }
+    if (hour < 17) {
+      return 'Good afternoon';
+    }
+    return 'Good evening';
   }
 
   void _getTime() {
@@ -117,7 +126,8 @@ class SleepHomeState extends State<SleepHome> {
   }
 
   Future<String> getPlayerId() async {
-    String playerId = await OneSignal.shared.getDeviceState().then((value) => value.userId);
+    String playerId =
+        await OneSignal.shared.getDeviceState().then((value) => value.userId);
     setState(() {
       oneSignalPlayerId = playerId;
     });
@@ -140,13 +150,10 @@ class SleepHomeState extends State<SleepHome> {
 
   Widget sadIcon() {
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("Not completed yet. Click to open",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 14.0)),
+            style: TextStyle(color: Colors.white, fontSize: 14.0)),
         ClipRRect(
           borderRadius: BorderRadius.circular(5.0),
           child: Image.asset(
@@ -162,13 +169,10 @@ class SleepHomeState extends State<SleepHome> {
 
   Widget happyIcon() {
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("Good job!! You've completed today's survey.",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 14.0)),
+            style: TextStyle(color: Colors.white, fontSize: 14.0)),
         ClipRRect(
           borderRadius: BorderRadius.circular(5.0),
           child: Image.asset(
@@ -219,9 +223,8 @@ class SleepHomeState extends State<SleepHome> {
                         onTap: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) =>
-                                  QuestionnairePage())
-                          );
+                              MaterialPageRoute(
+                                  builder: (context) => QuestionnairePage()));
                         },
                         child: Card(
                           elevation: 3.0,
@@ -248,10 +251,10 @@ class SleepHomeState extends State<SleepHome> {
                 ),
                 // Monthly surveys
                 this.showMonthlySurveys
-                ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Sleep survey
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Sleep survey
                           this.showSleepSurvey
                               ? Expanded(
                                   flex: 2,
@@ -309,11 +312,10 @@ class SleepHomeState extends State<SleepHome> {
                                   child: InkWell(
                                     onTap: () {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  QualityOfLifeQuestionnaire()
-                                          ),
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                QualityOfLifeQuestionnaire()),
                                       );
                                     },
                                     child: Card(
@@ -354,9 +356,9 @@ class SleepHomeState extends State<SleepHome> {
                                   ),
                                 )
                               : Container(),
-                  ],
-                )
-                : Container(),
+                        ],
+                      )
+                    : Container(),
 
                 // Container(
                 //   width: double.infinity,
@@ -393,8 +395,9 @@ class SleepHomeState extends State<SleepHome> {
           Container(
             margin: EdgeInsets.only(top: 120.0),
             child: Align(
-                alignment: FractionalOffset.topCenter,
-                child: Row(
+              alignment: FractionalOffset.topCenter,
+              child: Column(children: [
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("$_timeString",
@@ -413,7 +416,23 @@ class SleepHomeState extends State<SleepHome> {
                           fontWeight: FontWeight.w300,
                         )),
                   ],
-                )),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(greeting(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300,
+                        )),
+                  ],
+                )
+              ]),
+            ),
           ),
         ],
       ),

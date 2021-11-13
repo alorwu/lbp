@@ -62,13 +62,13 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       selectedValue = null;
     });
   }
-  void checkAnswer(Question question) {
-    setState(() {
-      resetValues();
-      if (questionnaire.nextQuestion() == true) {
-        completed = true;
-      }
-    });
+  // void checkAnswer(Question question) {
+  //   setState(() {
+  //     resetValues();
+  //     if (questionnaire.nextQuestion() == true) {
+  //       completed = true;
+  //     }
+  //   });
 
     // if (question.type == "slider") {
     //   setState(() {
@@ -93,15 +93,15 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     //     }
     //   });
     // }
-  }
+  // }
 
-  void checkAnswerPrev(Question question) {
-    setState(() {
-      resetValues();
-      if (questionnaire.prevQuestion() == false) {
-        completed = false;
-      }
-    });
+  // void checkAnswerPrev(Question question) {
+  //   setState(() {
+  //     resetValues();
+  //     if (questionnaire.prevQuestion() == false) {
+  //       completed = false;
+  //     }
+  //   });
 
     // if (question.type == "slider") {
     //   setState(() {
@@ -126,7 +126,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     //     }
     //   });
     // }
-  }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -146,84 +146,84 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   Widget buildQuestionsPage() {
-    if (completed) {
-      return Card(
-        color: Colors.black26,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
-                child: Center(
-                  child: Text(
-                    // questionnaire.getQuestion().question,
-                    "About last night, how did your pain affect your sleep and/or how did your sleep affect your pain?",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 25.0),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 5,
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Center(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(12, 0, 12, 0),
-                    child: TextField(
-                      decoration: new InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.white, width: 1.0)),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "Enter free form text here",
-                        helperText: "No answer is wrong. Write freely.",
-                        helperStyle: TextStyle(color: Colors.white),
-                      ),
-                      keyboardType: TextInputType.text,
-                      maxLines: 12,
-                      onChanged: (String value) {
-                        setState(() {
-                          notes = value;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: ProgressButton(
-                  // borderRadius: BorderRadius.circular(50.0),
-                  // color: Colors.green,
-                  // onPressed: (AnimationController controller) async {
-                  //   await MyPreferences.saveDateTaken(
-                  //       DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                  //   answers.add(notes);
-                  //   sendData(controller);
-                  // },
-                  // child: Text(
-                  //   'Submit',
-                  //   style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  // ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
+    // if (completed) {
+    //   return Card(
+    //     color: Colors.black26,
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.stretch,
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: <Widget>[
+    //         Expanded(
+    //           flex: 3,
+    //           child: Padding(
+    //             padding: EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+    //             child: Center(
+    //               child: Text(
+    //                 // questionnaire.getQuestion().question,
+    //                 "About last night, how did your pain affect your sleep and/or how did your sleep affect your pain?",
+    //                 textAlign: TextAlign.center,
+    //                 style: TextStyle(color: Colors.white, fontSize: 25.0),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         Expanded(
+    //           flex: 5,
+    //           child: Padding(
+    //             padding: EdgeInsets.all(10.0),
+    //             child: Center(
+    //               child: Container(
+    //                 margin: EdgeInsets.fromLTRB(12, 0, 12, 0),
+    //                 child: TextField(
+    //                   decoration: new InputDecoration(
+    //                     filled: true,
+    //                     fillColor: Colors.white,
+    //                     enabledBorder: const OutlineInputBorder(
+    //                         borderSide: const BorderSide(
+    //                             color: Colors.white, width: 1.0)),
+    //                     focusedBorder: const OutlineInputBorder(
+    //                       borderSide: BorderSide(color: Colors.white),
+    //                     ),
+    //                     hintStyle: TextStyle(color: Colors.grey),
+    //                     hintText: "Enter free form text here",
+    //                     helperText: "No answer is wrong. Write freely.",
+    //                     helperStyle: TextStyle(color: Colors.white),
+    //                   ),
+    //                   keyboardType: TextInputType.text,
+    //                   maxLines: 12,
+    //                   onChanged: (String value) {
+    //                     setState(() {
+    //                       notes = value;
+    //                     });
+    //                   },
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         Expanded(
+    //           child: Padding(
+    //             padding: EdgeInsets.all(10.0),
+    //             child: ProgressButton(
+    //               // borderRadius: BorderRadius.circular(50.0),
+    //               // color: Colors.green,
+    //               // onPressed: (AnimationController controller) async {
+    //               //   await MyPreferences.saveDateTaken(
+    //               //       DateFormat("yyyy-MM-dd").format(DateTime.now()));
+    //               //   answers.add(notes);
+    //               //   sendData(controller);
+    //               // },
+    //               // child: Text(
+    //               //   'Submit',
+    //               //   style: TextStyle(color: Colors.white, fontSize: 20.0),
+    //               // ),
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // } else {
       return Padding(
         padding: EdgeInsets.all(20.0),
         child: Card(
@@ -282,39 +282,20 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                     questionnaire.questionNumber() > 0
                         ? prevButton()
                         : Container(),
-                    questionnaire.lastQuestion() ? submitButton() : nextButton()
+                    questionnaire.lastQuestion()
+                        ? submitButton()
+                        : nextButton()
                   ],
                 ),
-                // padding: Padding(
-                //     padding: EdgeInsets.all(10.0),
-                //     child: Builder(
-                //       builder: (context) => TextButton(
-                //           onPressed: () => nextButtonClickHandler(),
-                //           child: Text(
-                //             'Next',
-                //             style:
-                //                 TextStyle(color: Colors.white, fontSize: 20.0),
-                //           )),
-                //     )),
               ),),
             ],
           ),
         ),
       );
-    }
+    // }
   }
 
   Widget submitButton() {
-    // return Padding(
-    //     padding: EdgeInsets.all(10.0),
-    //     child: OutlinedButton(
-    //         style: OutlinedButton.styleFrom(
-    //             backgroundColor: Colors.green,
-    //             side: BorderSide(color: Colors.green)),
-    //         onPressed: () async => sendDataNew(),
-    //         child: Text('Submit', style: TextStyle(color: Colors.white)),
-    //     ),
-    // );
     return Padding(
       padding: EdgeInsets.all(10),
       child: ProgressButton.icon(
@@ -323,7 +304,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               text: "Submit",
               icon: Icon(Icons.send, color: Colors.white),
               color: Colors.green),
-          ButtonState.loading: IconedButton(color: Colors.green),
+          ButtonState.loading: IconedButton(
+              color: Colors.green
+          ),
           ButtonState.fail: IconedButton(
               text: "Failed",
               icon: Icon(Icons.cancel, color: Colors.white),
@@ -336,11 +319,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               ),
               color: Colors.green.shade400)
         },
-        progressIndicatorSize: 25.0,
+        progressIndicatorSize: 15.0,
         onPressed: () async {
           await MyPreferences.saveDateTaken(
               DateFormat("yyyy-MM-dd").format(DateTime.now()));
-          // answers.add(notes);
           sendDataNew();
         },
         state: submitButtonState,
@@ -481,7 +463,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
             onChanged: (String value) {
               setState(() {
                 questionnaire.getQuestion().data = value;
-                // notes = value;
               });
             },
           ),
@@ -494,7 +475,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // timePickerValue != null
         questionnaire.getQuestion().data != null
             ? Text(
                 // DateFormat("hh:mm a").format(timePickerValue),
@@ -508,8 +488,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         SizedBox(
           height: 20.0,
         ),
-        // SizedBox(
-        //   width: 200.0,
           OutlinedButton.icon(
               onPressed: () => showDate(context),
               icon: Icon(Icons.access_alarm),
@@ -534,15 +512,12 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   Widget answerSliderWidget(Question question) {
-    // double paddingFactor = .2;
-    // if (this.widget.fullWidth) paddingFactor = .3;
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
             width: double.infinity,
-            //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
             height: (this.widget.sliderHeight),
             decoration: new BoxDecoration(
               borderRadius: new BorderRadius.all(
@@ -582,15 +557,12 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                           inactiveTickMarkColor: Colors.red.withOpacity(.7),
                         ),
                         child: Slider(
-                            // value: sliderValue,
                             value: double.parse(question.data ?? "0"),
                             min: 0,
                             max: 10,
                             divisions: 10,
                             onChanged: (double value) {
                               setState(() {
-                                // sliderValue = value;
-                                // realSliderValue = value;
                                 questionnaire.getQuestion().data = value.toInt().toString();
                               });
                             }),
@@ -650,12 +622,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
                 style: TextStyle(color: Colors.white)),
             value: '${index + 1}',
-            // groupValue: selectedValue,
             groupValue: question.data,
             activeColor: Colors.white,
             onChanged: (String value) {
               setState(() {
-                // selectedValue = value;
                 questionnaire.getQuestion().data = value;
               });
             },

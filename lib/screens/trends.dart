@@ -55,6 +55,10 @@ class TrendScreenState extends State<TrendScreen> {
   }
 
   averageSleepDateTime(List<DailyQ> data) {
+    print("Week: $week");
+    print("Month: $month");
+    print("Week data: $weekData");
+    print("Month data: $monthData");
     if (data.isNotEmpty) {
       double avg = data.map((e) => e.sleepTime.millisecondsSinceEpoch).fold(
           0.0, (value, element) => value += element);
@@ -124,12 +128,11 @@ class TrendScreenState extends State<TrendScreen> {
                                   color: Colors.blue,
                                 )
                               ],
-                            )
+                            ),
                           ],
                         ),
                       )),
                 ),
-
                 // Sleep duration
                 Expanded(
                   flex: 2,
@@ -437,7 +440,7 @@ class TrendScreenState extends State<TrendScreen> {
                                     .spaceBetween,
                                 children: [
                                   Text(
-                                      monthData.averageSleepScore.toString(),
+                                      monthData.averageSleepScore.toStringAsFixed(2),
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 18.0)),
                                   Icon(
@@ -775,7 +778,7 @@ class TrendScreenState extends State<TrendScreen> {
                                     .spaceBetween,
                                 children: [
                                   Text(
-                                      allData.averageSleepScore.toString(),
+                                      allData.averageSleepScore.toStringAsFixed(2),
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 16.0)),
                                   Icon(

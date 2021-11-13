@@ -83,5 +83,4 @@ extension DailyListExtension on List<DailyQ> {
     return durationToList(min);
   }
 
-
 }

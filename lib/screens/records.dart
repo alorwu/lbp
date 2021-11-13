@@ -176,7 +176,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
                           style: TextStyle(color: Colors.white, fontSize: 16.0)
                       ),
                       TextSpan(
-                          text: "h ",
+                          text: " h ",
                           style: TextStyle(color: Colors.white54)
                       ),
                       TextSpan(

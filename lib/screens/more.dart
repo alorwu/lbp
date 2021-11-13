@@ -7,8 +7,6 @@ import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
 
-import 'exercises/back_pain_relief.dart';
-
 class MoreScreen extends StatefulWidget {
   @override
   MoreState createState() => MoreState();
@@ -57,21 +55,21 @@ class MoreState extends State<MoreScreen> {
         padding: EdgeInsets.all(10),
         child: ListView(
           children: [
-            ListTile(
-              leading: Icon(Icons.fitness_center),
-              title: Text("Exercises"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BackPainReliefScreen()));
-              },
-            ),
-            Divider(),
+            // ListTile(
+            //   leading: Icon(Icons.fitness_center),
+            //   title: Text("Exercises"),
+            //   trailing: Icon(Icons.chevron_right),
+            //   onTap: () {
+            //     Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) => BackPainReliefScreen()));
+            //   },
+            // ),
+            // Divider(),
             ListTile(
               leading: Icon(Icons.rss_feed),
-              title: Text("RssFeed"),
+              title: Text("Online information"),
               trailing: Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.push(context,
@@ -90,12 +88,12 @@ class MoreState extends State<MoreScreen> {
             ),
             Divider(),
             Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: 10.0, right: 10.0, top: 10.0, bottom: 20.0),
-                  child: disclaimer(),
-                ),
+              alignment: FractionalOffset.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: 10.0, right: 10.0, top: 10.0, bottom: 20.0),
+                child: disclaimer(),
+              ),
             ),
           ],
         ),
