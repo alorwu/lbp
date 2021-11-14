@@ -27,7 +27,7 @@ class RssFeedState extends State<RssFeedScreen> {
     if (await canLaunch(url)) {
       await launch(
         url,
-        forceSafariVC: true,
+        forceSafariVC: false,
         forceWebView: false,
       );
       return;
@@ -75,8 +75,8 @@ class RssFeedState extends State<RssFeedScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text('RSS Feed'),
-        backgroundColor: Color(0xff000000),
+        title: Text('Online information'),
+        backgroundColor: Colors.black,
         // systemOverlayStyle: SystemUiOverlayStyle.dark,
         brightness: Brightness.dark,
       ),
@@ -146,14 +146,5 @@ class RssFeedState extends State<RssFeedScreen> {
       size: 30.0,
     );
   }
-
-// BoxDecoration customBoxDecoration() {
-//   return BoxDecoration(
-//     border: Border.all(
-//       color: Colors.grey,
-//       width: 1.0,
-//     ),
-//   );
-// }
 
 }
