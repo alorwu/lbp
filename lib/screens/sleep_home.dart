@@ -126,8 +126,10 @@ class SleepHomeState extends State<SleepHome> {
   }
 
   Future<String> getPlayerId() async {
-    String playerId =
-        await OneSignal.shared.getDeviceState().then((value) => value.userId);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String playerId = prefs.getString("one_signal_id");
+    // String playerId =
+    //     await OneSignal.shared.getDeviceState().then((value) => value.userId);
     setState(() {
       oneSignalPlayerId = playerId;
     });
@@ -189,12 +191,6 @@ class SleepHomeState extends State<SleepHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Sleep Better with Back Pain"),
-      //   backgroundColor: Color(0xff000000),
-      //   elevation: 0.0,
-      //   systemOverlayStyle: SystemUiOverlayStyle.dark,
-      // ),
       body: Stack(
         fit: StackFit.expand,
         children: [

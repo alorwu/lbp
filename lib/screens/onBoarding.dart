@@ -13,9 +13,13 @@ import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../env/.env.dart';
+
 
 class OnBoarding extends StatefulWidget {
   @override
@@ -74,9 +78,15 @@ class OnBoardingState extends State<OnBoarding> {
   @override
   void initState() {
     super.initState();
+    initOneSignalPlatformState();
     getId();
+    getOneSignalId();
     // gSheets = GSheets(environment['credentials']);
     gSheets = GSheets(credentials);
+  }
+
+  Future<void> initOneSignalPlatformState() async {
+    OneSignal.shared.setAppId(environment['onesignal_app_id']);
   }
 
   Widget sliderWidget() {
@@ -742,17 +752,26 @@ class OnBoardingState extends State<OnBoarding> {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       id = androidDeviceInfo.androidId; // unique ID on Android
     }
+    if (id == null) {
+      getId();
+    }
     setState(() {
       appId = id;
     });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("app_id", id);
-
-    if (id == null) {
-      getId();
-    }
     return id;
+  }
+
+  Future<void> getOneSignalId() async {
+    String oneSignalId =
+    await OneSignal.shared.getDeviceState().then((value) => value.userId);
+    if(oneSignalId == null) {
+      getOneSignalId();
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("one_signal_id", oneSignalId);
   }
 
   void saveDataLocally() async {

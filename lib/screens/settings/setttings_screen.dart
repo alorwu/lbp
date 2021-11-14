@@ -1,6 +1,4 @@
-import 'dart:io';
 
-import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -231,15 +229,8 @@ class MapScreenState extends State<SettingsScreen> {
   }
 
   Future<String> getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    var id = "";
-    if (Platform.isIOS) { // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      id = iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      id = androidDeviceInfo.androidId; // unique ID on Android
-    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString('app_id');
     setState(() {
       appId = id;
     });
