@@ -85,12 +85,12 @@ class SleepHomeState extends State<SleepHome> {
       sleepLastDateTaken = sleepSurveyDate;
 
       if (qolLastDateTaken != null) {
-        showQOLSurvey = (1 <= today && today <= 17) &&
+        showQOLSurvey = //(1 <= today && today <= 17) &&
             DateFormat("yyyy-MM").parse(qolLastDateTaken) !=
                 DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
       if (sleepLastDateTaken != null) {
-        showSleepSurvey = (1 <= today && today <= 17) &&
+        showSleepSurvey = //(1 <= today && today <= 17) &&
             DateFormat("yyyy-MM").parse(sleepLastDateTaken) !=
                 DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }

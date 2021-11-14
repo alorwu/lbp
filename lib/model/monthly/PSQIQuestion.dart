@@ -8,7 +8,7 @@ class PSQIQuestion{
   String notInPastMonth;
   String lessThanOnceAWeek;
   String onceOrTwiceAWeek;
-  String threeOrMoreAWee3k;
+  String threeOrMoreAWeek;
   String data;
 
   PSQIQuestion(
@@ -21,7 +21,7 @@ class PSQIQuestion{
         this.notInPastMonth,
         this.lessThanOnceAWeek,
         this.onceOrTwiceAWeek,
-        this.threeOrMoreAWee3k,
+        this.threeOrMoreAWeek,
         this.data
       }
     );

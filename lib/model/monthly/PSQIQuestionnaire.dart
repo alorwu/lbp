@@ -4,8 +4,6 @@ class PSQIQuestionnaire {
 
   int _questionNumber = 0;
 
-// this List variable will store our questions 
-// and answers as specified in the questions class
 
   List<PSQIQuestion> _questionList = [
     PSQIQuestion(
@@ -42,110 +40,110 @@ class PSQIQuestionnaire {
     ),
     PSQIQuestion(
         number: '5a',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...cannot go to sleep within 30 minutes',
+        question: 'During the past month, how often have you had trouble sleeping because you cannot go to sleep within 30 minutes',
+        subtitle: '', //'...cannot go to sleep within 30 minutes',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5b',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...wake up in the middle of the night or early morning',
+        question: 'During the past month, how often have you had trouble sleeping because you wake up in the middle of the night or early morning',
+        subtitle: '', //'''...wake up in the middle of the night or early morning',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5c',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...have to get up to use the bathroom',
+        question: 'During the past month, how often have you had trouble sleeping because you have to get up to use the bathroom',
+        subtitle: '', //'''...have to get up to use the bathroom',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5d',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...cannot breathe comfortably',
+        question: 'During the past month, how often have you had trouble sleeping because you cannot breathe comfortably',
+        subtitle: '', //'''...cannot breathe comfortably',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5e',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...cough or snore loudly',
+        question: 'During the past month, how often have you had trouble sleeping because you cough or snore loudly',
+        subtitle: '', //'''...cough or snore loudly',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5f',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...feel too cold',
+        question: 'During the past month, how often have you had trouble sleeping because you feel too cold',
+        subtitle: '', //'''...feel too cold',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5g',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...feel too hot',
+        question: 'During the past month, how often have you had trouble sleeping because you feel too hot',
+        subtitle: '', //'''...feel too hot',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5h',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...had bad dreams',
+        question: 'During the past month, how often have you had trouble sleeping because you had bad dreams',
+        subtitle: '', //'''...had bad dreams',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '5i',
-        question: 'During the past month, how often have you had trouble sleeping because you...',
-        subtitle: '...have pain',
+        question: 'During the past month, how often have you had trouble sleeping because you have pain',
+        subtitle: '', //'''...have pain',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
@@ -157,7 +155,7 @@ class PSQIQuestionnaire {
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
@@ -169,7 +167,7 @@ class PSQIQuestionnaire {
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
@@ -181,7 +179,7 @@ class PSQIQuestionnaire {
         notInPastMonth: 'Very good',
         lessThanOnceAWeek: 'Fairly good',
         onceOrTwiceAWeek: 'Fairly bad',
-        threeOrMoreAWee3k: 'Very bad',
+        threeOrMoreAWeek: 'Very bad',
         data: null
     ),
     PSQIQuestion(
@@ -193,7 +191,7 @@ class PSQIQuestionnaire {
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
@@ -205,7 +203,7 @@ class PSQIQuestionnaire {
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
@@ -217,7 +215,7 @@ class PSQIQuestionnaire {
         notInPastMonth: 'No problem at all',
         lessThanOnceAWeek: 'Only a very slight problem',
         onceOrTwiceAWeek: 'Somewhat of a problem',
-        threeOrMoreAWee3k: 'A very big problem',
+        threeOrMoreAWeek: 'A very big problem',
         data: null
     ),
     PSQIQuestion(
@@ -229,67 +227,67 @@ class PSQIQuestionnaire {
         notInPastMonth: 'No bed partner or room mate',
         lessThanOnceAWeek: 'Partner/room mate in other room',
         onceOrTwiceAWeek: 'Partner in same room, but not same bed',
-        threeOrMoreAWee3k: 'Partner in same bed',
+        threeOrMoreAWeek: 'Partner in same bed',
         data: null
     ),
     PSQIQuestion(
         number: '10a',
-        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had...',
-        subtitle: '...loud snoring',
+        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had loud snoring',
+        subtitle: '', //'''...loud snoring',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '10b',
-        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had...',
-        subtitle: '...long pauses between breaths while asleep',
+        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had long pauses between breaths while asleep',
+        subtitle: '', //'...long pauses between breaths while asleep',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '10c',
-        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had...',
-        subtitle: '...legs twitching or jerking while you sleep',
+        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had legs twitching or jerking while you sleep',
+        subtitle: '', //'''...legs twitching or jerking while you sleep',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '10d',
-        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had...',
-        subtitle: '...episodes of disorientation or confusion during sleep',
+        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had episodes of disorientation or confusion during sleep',
+        subtitle: '', //'''...episodes of disorientation or confusion during sleep',
         status: false,
         type: 'likert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
         number: '10e-i',
-        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had...',
-        subtitle: '...other restlessness while you sleep; please describe:',
+        question: 'If you have a room mate or bed partner, ask him/her how often in the past month you have had other restlessness while you sleep; please describe:',
+        subtitle: '', //'''...other restlessness while you sleep; please describe:',
         status: false,
         type: 'freeformlikert',
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
     PSQIQuestion(
@@ -301,36 +299,43 @@ class PSQIQuestionnaire {
         notInPastMonth: 'Not during the past month',
         lessThanOnceAWeek: 'Less than once a week',
         onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWee3k: 'Three or more times a week',
+        threeOrMoreAWeek: 'Three or more times a week',
         data: null
     ),
   ];
 
-// this function will access the question number and increment it
-// also it will let us know if the questions have been completed
-  dynamic nextQuestionPSQI(){
-    if(_questionNumber < _questionList.length - 1){
-      _questionNumber++;
-    }else{
-      bool completed = true;
-      return completed;
+
+  dynamic nextPSQIQuestion(){
+    // if(_questionNumber < _questionList.length - 1){
+    //   _questionNumber++;
+    // }else{
+    //   bool completed = true;
+    //   return completed;
+    // }
+    if (_questionNumber <= _questionList.length - 1) {
+      if (_questionNumber != _questionList.length - 1) {
+        _questionNumber++;
+      }
     }
   }
 
-// this function will return the question text of the 
-//specific question number text when called in the main.dart
-  PSQIQuestion getQuestionPSQI(){
+  dynamic prevQuestion() {
+    if (_questionNumber > 0) {
+      _questionNumber--;
+    }
+    return false;
+  }
+
+  PSQIQuestion getPSQIQuestion(){
     return _questionList[_questionNumber];
   }
 
-// this function will return the answer of the 
-//specific question number when called in the main.dart
-  bool getQuestionAnswerPSQI(){
-    return _questionList[_questionNumber].status;
+  int getPSQIQuestionNumber(){
+    return _questionNumber;
   }
 
 
-  void setQuestionStatusPSQI(bool status) {
+  void setPSQIQuestionStatus(bool status) {
      _questionList[_questionNumber].status = status;
   }
 
@@ -338,10 +343,15 @@ class PSQIQuestionnaire {
     return _questionList;
   }
 
-// this function will set the question 
-//number back the 0 when the quiz is restarted
   int startOverPSQI(){
     return _questionNumber = 0;
   }
 
+  bool lastQuestion() {
+    return _questionNumber == _questionList.length - 1;
+  }
+
+  int getQuestionnaireLength() {
+    return _questionList.length;
+  }
 }

@@ -1,4 +1,5 @@
 
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -9,7 +10,9 @@ import 'package:lbp/model/monthly/PromisQuestion.dart';
 import 'package:lbp/model/monthly/PromisQuestionnaire.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
-import 'package:progress_indicator_button/progress_button.dart';
+// import 'package:progress_indicator_button/progress_button.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../env/.env.dart';
@@ -38,7 +41,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
   PromisQuestionnaire questionnaire = PromisQuestionnaire();
   GSheets gSheets;
   final _formKey = GlobalKey<FormState>();
-
+  ButtonState submitButtonState = ButtonState.idle;
 
   double sliderValue = 0;
   double realSliderValue = -1;
@@ -58,18 +61,18 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color(0xff000000),
+        backgroundColor: Colors.black,
         elevation: 0,
         // systemOverlayStyle: SystemUiOverlayStyle.dark,
         brightness: Brightness.dark,
         title: Text("Quality of Life Survey"),
+        automaticallyImplyLeading: false,
       ),
-      backgroundColor: Color(0xff000000),
+      backgroundColor: Colors.black,
       body: Builder(
         builder: (context) => Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
+          child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -77,80 +80,185 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                   fit: FlexFit.loose,
                   child: buildQuestionsPage(),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: ProgressButton(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: Colors.blue,
-                    onPressed: (AnimationController controller) async {
-                      if (_formKey.currentState.validate()) {
-                        await MyPreferences.saveLastMonthlyPainSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                        sendData(controller);
-                      }
-                    },
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(color: Colors.white, fontSize: 20.0),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
-        ),
       ),
     );
   }
 
   Widget buildQuestionsPage() {
-    var entries = questionnaire.getPromisQuestions();
-    return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(10.0),
-      itemCount: entries.length,
-      shrinkWrap: true,
-      itemBuilder: (BuildContext context, int index) {
-        return Card(
-          elevation: 5,
-          margin: EdgeInsets.fromLTRB(0, 10, 0, 5),
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                Text(
-                  entries[index].number + ". " + entries[index].question,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18.0),
-                ),
-                Center(
-                  child: this.answerWidget(entries[index], index),
-                ),
-              ],
+    return Padding(
+      padding: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+      child: Card(
+        color: Colors.white24,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 25,
             ),
-          ),
-        );
-      },
+            Center(
+              child: DotsIndicator(
+                dotsCount: questionnaire.getQuestionnaireLength(),
+                position: questionnaire.questionNumber().toDouble(),
+                decorator: DotsDecorator(
+                    size: Size.square(12),
+                    activeSize: Size(15, 15),
+                    activeColor: Colors.white70, //Theme.of(context).primaryColor,
+                    color: Colors.black54 //Theme.of(context).disabledColor,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Center(
+                  child: Text(
+                    questionnaire.getPromisQuestion().question,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 18.0),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Padding(
+                padding:
+                EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                child: Center(
+                  child: this.answerWidget(questionnaire.getPromisQuestion()),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    questionnaire.questionNumber() > 0
+                        ? prevButton()
+                        : Container(),
+                    questionnaire.lastQuestion()
+                        ? submitButton()
+                        : nextButton()
+                  ],
+                ),
+              ),),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget answerWidget(PromisQuestion question, int index) {
+  Widget submitButton() {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: ProgressButton.icon(
+        iconedButtons: {
+          ButtonState.idle: IconedButton(
+              text: "Submit",
+              icon: Icon(Icons.send, color: Colors.white),
+              color: Colors.green),
+          ButtonState.loading: IconedButton(
+              color: Colors.green
+          ),
+          ButtonState.fail: IconedButton(
+              text: "Failed",
+              icon: Icon(Icons.cancel, color: Colors.white),
+              color: Colors.red.shade500),
+          ButtonState.success: IconedButton(
+              text: "Success",
+              icon: Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
+              color: Colors.green.shade400)
+        },
+        progressIndicatorSize: 15.0,
+        onPressed: () async {
+          await MyPreferences.saveLastMonthlyPainSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+          sendData();
+        },
+        state: submitButtonState,
+      ),
+    );
+  }
+
+  Widget prevButton() {
+    return Padding(
+        padding: EdgeInsets.all(10.0),
+        child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.white)),
+            onPressed: () => prevButtonClickHandler(),
+            child: Text(
+              'Prev',
+              style: TextStyle(color: Colors.white),
+            ))
+    );
+  }
+
+  Widget nextButton() {
+    return Padding(
+        padding: EdgeInsets.all(10.0),
+        child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.white)),
+            onPressed: () => nextButtonClickHandler(),
+            child: Text(
+              'Next',
+              style: TextStyle(color: Colors.white),
+            ))
+    );
+  }
+
+  void prevButtonClickHandler() {
+    setState(() {
+      if (questionnaire.prevQuestion() == false) {
+      }
+    });
+  }
+
+  void nextButtonClickHandler() {
+    if (questionnaire.getPromisQuestion().data != null) {
+      setState(() {
+        if (questionnaire.nextPromisQuestion() == true) {
+        }
+      });
+    } else
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(
+        content: Text(
+            "You must answer the question to proceed"),
+        backgroundColor:
+        Color.fromRGBO(58, 66, 86, 1.0),
+        duration: Duration(seconds: 1),
+      ));
+  }
+
+  Widget answerWidget(PromisQuestion question) {
     switch (question.type) {
       case "likert":
-        return comboWidget(question, index);
+        return answerRadioWidget(question); //comboWidget(question);
       case "slider":
-        return sliderWidget(question, index);
+        return sliderWidget(question);
       default:
         return null;
     }
   }
 
-  Widget sliderWidget(PromisQuestion question, int index) {
+  Widget sliderWidget(PromisQuestion question) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: double.infinity, //this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
+            width: double.infinity,
             height: (this.widget.sliderHeight),
             decoration: new BoxDecoration(
               borderRadius: new BorderRadius.all(
@@ -167,7 +275,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                     style: TextStyle(
                       fontSize: this.widget.sliderHeight * .3,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   SizedBox(
@@ -178,28 +286,23 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: Colors.blue.withOpacity(1),
-                          // inactiveTrackColor: Colors.black,
                           trackHeight: 4.0,
                           thumbShape: CustomSliderThumbCircle(
                             thumbRadius: this.widget.sliderHeight * .4,
                             min: this.widget.min,
                             max: this.widget.max,
                           ),
-                          // overlayColor: Colors.black,
                           activeTickMarkColor: Colors.blue,
-                          inactiveTickMarkColor: Colors.blue,
+                          inactiveTickMarkColor: Colors.white,
                         ),
                         child: Slider(
-                            value: sliderValue,
+                            value: double.parse(question.data ?? "0"),
                             min: 0,
                             max: 10,
                             divisions: 10,
                             onChanged: (double value) {
-                              // print("Value: $value");
                               setState(() {
-                                question.data = value.toString();
-                                sliderValue = value;
-                                realSliderValue = value;
+                                question.data = value.toInt().toString();
                               });
                             }),
                       ),
@@ -211,7 +314,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                     style: TextStyle(
                       fontSize: this.widget.sliderHeight * .3,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -228,7 +331,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: this.widget.sliderHeight * .3,
-                    color: Colors.black,
+                    color: Colors.white70,
                   ),
                 ),
                 Text(
@@ -236,7 +339,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: this.widget.sliderHeight * .3,
-                    color: Colors.black,
+                    color: Colors.white70,
                   ),
                 ),
               ],
@@ -245,44 +348,58 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
         ]);
   }
 
-  Widget comboWidget(PromisQuestion question, int index) {
-    var list = [question.one, question.two, question.three, question.four, question.five];
-    return Column(
-      children: [
-        DropdownButtonFormField(
-          decoration: InputDecoration(
-            hintText: "Choose one",
-            hintStyle: TextStyle(color: Colors.grey),
+  Widget answerRadioWidget(PromisQuestion question) => ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: 5,
+      itemBuilder: (BuildContext context, index) {
+        var text;
+        switch(index) {
+          case 0: {
+            text = question.one;
+          }
+          break;
+          case 1: {
+            text = question.two;
+          }
+          break;
+          case 2: {
+            text = question.three;
+          }
+          break;
+          case 3: {
+            text = question.four;
+          }
+          break;
+          case 4: {
+            text = question.five;
+          }
+          break;
+          default: text = "";
+          break;
+        }
+        return Theme(
+          data: Theme.of(context).copyWith(
+              unselectedWidgetColor: Colors.white, disabledColor: Colors.white),
+          child: RadioListTile(
+            title: Text(text, overflow: TextOverflow.clip, style: TextStyle(color: Colors.white)),
+            value: "$text",
+            groupValue: question.data,
+            activeColor: Colors.white,
+            onChanged: (String value) {
+              setState(() {
+                questionnaire.getPromisQuestion().data = value;
+              });
+            },
           ),
-          iconSize: 24,
-          elevation: 16,
-          onChanged: (String newValue) {
-            setState(() {
-              question.data = newValue;
-              // answers[index] = newValue;
-            });
-          },
-          items: list.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value, overflow: TextOverflow.clip),
-            );
-          }).toList(),
-          validator: (value) {
-            if (null == value) {
-              return 'Please select one';
-            }
-            return null;
-          },
-          value: question.data,
-        ),
-        SizedBox(height: 5.0),
-      ],
-    );
-  }
+        );
+      });
 
-  sendData(AnimationController animationController) async {
-    animationController.forward();
+  sendData() async {
+    // animationController.forward();
+    setState(() {
+      submitButtonState = ButtonState.loading;
+    });
 
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     var sheet = ss.worksheetByTitle('monthly_qol_q');
@@ -292,8 +409,8 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("app_id");
     questionnaire.getPromisQuestions().forEach((e) => values.add(e.data));
-    values.add(DateTime.now().toString());
-    values.add(id);
+    values.insert(0, DateTime.now().toString());
+    values.insert(1, id);
 
     try {
       var result = await sheet.values.appendRow(values);
@@ -304,10 +421,14 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
           content: Text(
               "Your entry has been saved.",
               style: TextStyle(color: Colors.white)),
+          duration: Duration(seconds: 1),
         ))
             .closed
             .then((value) {
-          animationController.stop();
+          // animationController.stop();
+          setState(() {
+            submitButtonState = ButtonState.success;
+          });
           Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
         });
       } else {
@@ -317,20 +438,28 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
           content: Text(
               "Unable to save data. Check your internet connection and try again.",
               style: TextStyle(color: Colors.red)),
+          duration: Duration(seconds: 1),
         ))
             .closed
             .then((value) {
-          animationController.stop();
-          animationController.reset();
+          // animationController.stop();
+          // animationController.reset();
+          setState(() {
+            submitButtonState = ButtonState.fail;
+          });
         });
       }
     } catch(exp) {
-      animationController.stop();
-      animationController.reset();
+      // animationController.stop();
+      // animationController.reset();
+      setState(() {
+        submitButtonState = ButtonState.fail;
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
             "An error occurred. Please try again.",
             style: TextStyle(color: Colors.red)),
+        duration: Duration(seconds: 1),
       ));
     }
   }

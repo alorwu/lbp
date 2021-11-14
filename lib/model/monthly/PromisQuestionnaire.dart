@@ -5,9 +5,6 @@ class PromisQuestionnaire {
 
   int _questionNumber = 0;
 
-// this List variable will store our questions 
-// and answers as specified in the questions class
-
   List<PromisQuestion> _questionList = [
     PromisQuestion(
         number: '1',
@@ -66,7 +63,7 @@ class PromisQuestionnaire {
     ),
     PromisQuestion(
         number: '6',
-        question: 'In general, please rate how well you carry out your usual social activities and roles. (This includes activities at home, at work, and in your community, and responsibilities as a parent, child, spouse, employee, friend, etc.)',
+        question: 'In general, please rate how well you carry out your usual social activities and roles. (e.g. activities at home and at work, and responsibilities as a parent, child, spouse, employee, etc.)',
         type: 'likert',
         data: null,
         one: 'Poor',
@@ -112,32 +109,46 @@ class PromisQuestionnaire {
         number: '10',
         question: 'How would you rate your pain on average?',
         type: 'slider',
-        data: null,
+        data: '0',
         low: 'No pain',
         high: 'Worst imaginable pain'
     ),
 
   ];
 
-// this function will access the question number and increment it
-// also it will let us know if the questions have been completed
-  dynamic nextPromisQuestion(){
-    if(_questionNumber < _questionList.length - 1){
-      _questionNumber++;
-    }else{
-      bool completed = true;
-      return completed;
+  dynamic nextPromisQuestion() {
+    if (_questionNumber <= _questionList.length - 1) {
+      if (_questionNumber != _questionList.length - 1) {
+        _questionNumber++;
+      }
     }
   }
 
-// this function will return the question text of the 
-//specific question number text when called in the main.dart
+  dynamic prevQuestion() {
+    if (_questionNumber > 0) {
+      _questionNumber--;
+    }
+    return false;
+  }
+
+  int questionNumber() {
+    return _questionNumber;
+  }
+
+  bool lastQuestion() {
+    return _questionNumber == _questionList.length - 1;
+  }
+
   PromisQuestion getPromisQuestion(){
     return _questionList[_questionNumber];
   }
 
   List<PromisQuestion> getPromisQuestions() {
     return _questionList;
+  }
+
+  int getQuestionnaireLength() {
+    return _questionList.length;
   }
 
 }
