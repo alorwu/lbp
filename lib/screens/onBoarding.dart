@@ -521,7 +521,7 @@ class OnBoardingState extends State<OnBoarding> {
                     ),
                   ),
                   SizedBox(height: 20.0),
-                  Text("In your own words please describe how you treat and maintain your lower back in your everyday life?",
+                  Text("In your own words please describe how you treat and maintain your lower back in your everyday life.",
                       style: TextStyle(color: Colors.blue)),
                   SizedBox(height: 10.0),
                   TextFormField(

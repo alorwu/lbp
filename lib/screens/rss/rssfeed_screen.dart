@@ -12,7 +12,7 @@ class RssFeedScreen extends StatefulWidget {
 }
 
 class RssFeedState extends State<RssFeedScreen> {
-  static const FEED_URL = "https://hnrss.org/jobs";
+  static const FEED_URL = "https://zapier.com/engine/rss/714473/lbp-cc"; //"https://hnrss.org/jobs";
   RssFeed _feed;
 
   GlobalKey<RefreshIndicatorState> _refreshKey;
@@ -45,6 +45,7 @@ class RssFeedState extends State<RssFeedScreen> {
     try {
       final client = http.Client();
       final response = await client.get(Uri.parse(FEED_URL));
+      print(response.body);
       return RssFeed.parse(response.body);
     } catch (e) {
       throw e;
@@ -100,7 +101,7 @@ class RssFeedState extends State<RssFeedScreen> {
                   return Container(
                     child: ListTile(
                       title: title(item.title),
-                      subtitle: subtitle(item.pubDate),
+                      subtitle: subtitle(item.description),
                       trailing: rightIcon(),
                       contentPadding: EdgeInsets.all(10.0),
                       onTap: () => openFeed(item.link),
@@ -122,19 +123,19 @@ class RssFeedState extends State<RssFeedScreen> {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 18.0,
+        fontSize: 16.0,
         fontWeight: FontWeight.w500,
       ),
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+      // maxLines: 3,
+      overflow: TextOverflow.clip,
     );
   }
 
   subtitle(subtitle) {
     return Text(
-      DateFormat("yyyy-MM-dd").format(subtitle),
-      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
-      maxLines: 2,
+      subtitle,
+      style: TextStyle(fontSize: 15.0),
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
     );
   }
