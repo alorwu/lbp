@@ -16,11 +16,12 @@ class Questionnaire {
     // Question(question: 'Compared to other days, how early did you wake up and leave the bed this morning?', status: false, type: 'likert', low: 'Earlier than normal', high: 'Later than normal'),
     Question(question: 'How long did it take to fall asleep after you went to bed yesterday?', status: false, type: 'likert', low: 'Less time than normal', high: 'More time than normal', data: null),
     // Question(question: 'How often do you remember waking up during last night?', status: false, type: 'likert', low: 'Less than normal', high: 'More than normal'),
-    Question(question: 'How often do you remember waking up during last night?', status: false, type: 'slider', low: '', high: '', data: '0'),
+    Question(question: 'How often do you remember waking up last night?', status: false, type: 'slider', low: '', high: '', data: '0'),
     Question(question: 'How well rested did you feel after waking up today?', status: false, type: 'likert', low: 'Less rest than normal', high: 'More rest than normal', data: null),
     Question(question: 'On the scale of 0-10, how would you rate the quality of your sleep last night?', status: false, type: 'slider', low: 'Very poor', high: 'Very good', data: '0'),
     Question(question: 'How would you rate your low back pain on average during last night?', status: false, type: 'slider', low: 'No pain', high: 'Worst imaginable pain', data: '0'),
     Question(question: 'About last night, how did your pain affect your sleep and/or how did your sleep affect your pain?', status: false, type: 'notes', low: '', high: '', data: null),
+    Question(question: 'Was your sleep disturbed by any factors? If so, list them here (e.g. noise, pain, pets, etc.)', status: false, type: 'notes', low: '', high: '', data: null)
   ];
 
   dynamic nextQuestion(){

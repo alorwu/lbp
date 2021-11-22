@@ -6,8 +6,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/monthly/PromisQuestion.dart';
-import 'package:lbp/model/monthly/PromisQuestionnaire.dart';
+import 'package:lbp/model/monthly/QoLQuestion.dart';
+import 'package:lbp/model/monthly/QoLQuestionnaire.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 // import 'package:progress_indicator_button/progress_button.dart';
@@ -38,7 +38,7 @@ class QualityOfLifeQuestionnaire extends StatefulWidget {
 }
 
 class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire> {
-  PromisQuestionnaire questionnaire = PromisQuestionnaire();
+  QoLQuestionnaire questionnaire = QoLQuestionnaire();
   GSheets gSheets;
   final _formKey = GlobalKey<FormState>();
   ButtonState submitButtonState = ButtonState.idle;
@@ -241,7 +241,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       ));
   }
 
-  Widget answerWidget(PromisQuestion question) {
+  Widget answerWidget(QoLQuestion question) {
     switch (question.type) {
       case "likert":
         return answerRadioWidget(question); //comboWidget(question);
@@ -252,7 +252,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     }
   }
 
-  Widget sliderWidget(PromisQuestion question) {
+  Widget sliderWidget(QoLQuestion question) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -348,7 +348,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
         ]);
   }
 
-  Widget answerRadioWidget(PromisQuestion question) => ListView.builder(
+  Widget answerRadioWidget(QoLQuestion question) => ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: 5,

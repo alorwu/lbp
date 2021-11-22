@@ -223,7 +223,7 @@ class OnBoardingState extends State<OnBoarding> {
                   SizedBox(height: 10),
                   Divider(),
                   SizedBox(height: 20),
-                  Text("Enter your username", style: TextStyle(color: Colors.blue)),
+                  Text("Enter your nickname", style: TextStyle(color: Colors.blue)),
                   TextFormField(
                     focusNode: new FocusNode(),
                     decoration: InputDecoration(
@@ -234,7 +234,7 @@ class OnBoardingState extends State<OnBoarding> {
                     controller: usernameController,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please enter a username';
+                        return 'Please enter a nickname';
                       }
                       return null;
                     },

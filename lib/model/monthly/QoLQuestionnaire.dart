@@ -1,12 +1,12 @@
 
-import 'PromisQuestion.dart';
+import 'QoLQuestion.dart';
 
-class PromisQuestionnaire {
+class QoLQuestionnaire {
 
   int _questionNumber = 0;
 
-  List<PromisQuestion> _questionList = [
-    PromisQuestion(
+  List<QoLQuestion> _questionList = [
+    QoLQuestion(
         number: '1',
         question: 'In general, would you say your health is:',
         type: 'likert',
@@ -17,7 +17,7 @@ class PromisQuestionnaire {
         four: 'Very good',
         five: 'Excellent'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '2',
         question: 'In general, would you say your quality of life is:',
         type: 'likert',
@@ -28,7 +28,7 @@ class PromisQuestionnaire {
         four: 'Very good',
         five: 'Excellent'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '3',
         question: 'In general, how would you rate your physical health?',
         type: 'likert',
@@ -39,7 +39,7 @@ class PromisQuestionnaire {
         four: 'Very good',
         five: 'Excellent'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '4',
         question: 'In general, how would you rate your mental health, including your mood and your ability to think?',
         type: 'likert',
@@ -50,7 +50,7 @@ class PromisQuestionnaire {
         four: 'Very good',
         five: 'Excellent'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '5',
         question: 'In general, how would you rate your satisfaction with your social activities and relationships?',
         type: 'likert',
@@ -61,7 +61,7 @@ class PromisQuestionnaire {
         four: 'Very good',
         five: 'Excellent'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '6',
         question: 'In general, please rate how well you carry out your usual social activities and roles. (e.g. activities at home and at work, and responsibilities as a parent, child, spouse, employee, etc.)',
         type: 'likert',
@@ -72,7 +72,7 @@ class PromisQuestionnaire {
         four: 'Very good',
         five: 'Excellent'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '7',
         question: 'To what extent are you able to carry out your everyday physical activities such as walking, climbing stairs, carrying groceries, or moving a chair?',
         type: 'likert',
@@ -83,9 +83,9 @@ class PromisQuestionnaire {
         four: 'Mostly',
         five: 'Completely'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '8',
-        question: 'How often have you been bothered by emotional problems such as feeling anxious, depressed or irritable?',
+        question: 'In the past 7 days, how often have you been bothered by emotional problems such as feeling anxious, depressed or irritable?',
         type: 'likert',
         data: null,
         one: 'Always',
@@ -94,7 +94,7 @@ class PromisQuestionnaire {
         four: 'Rarely',
         five: 'Never'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '9',
         question: 'How would you rate your fatigue on average?',
         type: 'likert',
@@ -105,7 +105,7 @@ class PromisQuestionnaire {
         four: 'Mild',
         five: 'None'
     ),
-    PromisQuestion(
+    QoLQuestion(
         number: '10',
         question: 'How would you rate your pain on average?',
         type: 'slider',
@@ -139,11 +139,11 @@ class PromisQuestionnaire {
     return _questionNumber == _questionList.length - 1;
   }
 
-  PromisQuestion getPromisQuestion(){
+  QoLQuestion getPromisQuestion(){
     return _questionList[_questionNumber];
   }
 
-  List<PromisQuestion> getPromisQuestions() {
+  List<QoLQuestion> getPromisQuestions() {
     return _questionList;
   }
 

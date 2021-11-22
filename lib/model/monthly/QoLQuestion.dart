@@ -1,5 +1,5 @@
 
-class PromisQuestion{
+class QoLQuestion{
   String number;
   String question;
   String type;
@@ -12,7 +12,7 @@ class PromisQuestion{
   String low;
   String high;
 
-  PromisQuestion(
+  QoLQuestion(
       {
         this.number,
         this.question,
