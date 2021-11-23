@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/constants/Constants.dart';
+import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 
 class TrendScreen extends StatefulWidget {
@@ -55,37 +55,26 @@ class TrendScreenState extends State<TrendScreen> {
   }
 
   averageSleepDateTime(List<DailyQ> data) {
-    print("Week: $week");
-    print("Month: $month");
-    print("Week data: $weekData");
-    print("Month data: $monthData");
     if (data.isNotEmpty) {
-      double avg = data.map((e) => e.sleepTime.millisecondsSinceEpoch).fold(
-          0.0, (value, element) => value += element);
-      double vg = data.map((e) =>
-      DateTime(now.year, now.month, now.day, e.sleepTime.hour, e.sleepTime.minute)
-          .millisecondsSinceEpoch).fold(
-          0.0, (previousValue, element) => previousValue += element);
-      var res = DateTime.fromMillisecondsSinceEpoch((vg / data.length).round());
-      return res;
+      double avg = data
+          .map((e) => DateTime(now.year, now.month, now.day, e.sleepTime.hour,
+                  e.sleepTime.minute)
+              .millisecondsSinceEpoch)
+          .fold(0.0, (previousValue, element) => previousValue += element);
+      return DateTime.fromMillisecondsSinceEpoch((avg / data.length).round());
     }
   }
 
   averageWakeDateTime(List<DailyQ> data) {
     if (data.isNotEmpty) {
-      double avg = data.map((e) => e.wakeupTime.millisecondsSinceEpoch).fold(
-          0.0, (value, element) => value += element);
-      // return new DateTime.fromMillisecondsSinceEpoch((avg/data.length).round());
-      double vg = data.map((e) =>
-      DateTime(
-          now.year, now.month, now.day, e.wakeupTime.hour, e.wakeupTime.minute)
-          .millisecondsSinceEpoch).fold(
-          0.0, (previousValue, element) => previousValue += element);
-      var res = DateTime.fromMillisecondsSinceEpoch((vg / data.length).round());
-      return res;
+      double avg = data
+          .map((e) => DateTime(now.year, now.month, now.day, e.wakeupTime.hour,
+                  e.wakeupTime.minute)
+              .millisecondsSinceEpoch)
+          .fold(0.0, (previousValue, element) => previousValue += element);
+      return DateTime.fromMillisecondsSinceEpoch((avg / data.length).round());
     }
   }
-
 
   Widget weekTab(List<DailyQ> weekData) {
     if (weekData.isNotEmpty) {

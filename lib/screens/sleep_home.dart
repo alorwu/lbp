@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:lbp/model/hive/user/User.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
@@ -32,8 +34,11 @@ class SleepHomeState extends State<SleepHome> {
   String userId;
   String oneSignalPlayerId;
 
+  String username;
+
   @override
   void initState() {
+    getUserName();
     initPlatformState();
     initializeVariables();
     _timeString = _formatDateTime(DateTime.now());
@@ -97,15 +102,31 @@ class SleepHomeState extends State<SleepHome> {
     });
   }
 
+  void getUserName() async {
+    var boxOpened = Hive.isBoxOpen("userBox");
+    Box<User> box;
+    var user;
+    if (boxOpened) {
+      box = Hive.box('userBox');
+    } else {
+      box = await Hive.openBox('userBox');
+    }
+    user = box.get('user');
+    setState(() {
+      username = user.username;
+    });
+  }
+
   String greeting() {
+
     var hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good morning';
+      return 'Good morning $username';
     }
     if (hour < 17) {
-      return 'Good afternoon';
+      return 'Good afternoon $username';
     }
-    return 'Good evening';
+    return 'Good evening $username';
   }
 
   void _getTime() {
