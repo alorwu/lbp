@@ -38,7 +38,7 @@ class TrendScreenState extends State<TrendScreen> {
     week = now.subtract(Duration(days: 7));
     month = DateTime(now.year, now.month, 1);
 
-    box = Hive.box('testBox');
+    box = Hive.box('dailyBox');
     allData = box.values.toList();
     weekData = allData.where((element) => element.sleepTime.isAfter(week)).toList();
     monthData = allData.where((element) => element.sleepTime.isAfter(month)).toList();

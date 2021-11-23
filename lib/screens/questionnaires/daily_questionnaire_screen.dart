@@ -508,7 +508,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   void saveDataLocally(List<dynamic> values) async {
-    print(values);
     var dailyQ = DailyQ(
         dateTaken: DateTime.now(),
         sleepTime: DateTime.parse(values[2]),
@@ -519,7 +518,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         qualityOfSleep: int.parse(values[7]),
         painIntensity: int.parse(values[8]),
         notes: values[9]);
-    Box<DailyQ> box = Hive.box("testBox");
+    Box<DailyQ> box = Hive.box("dailyBox");
     await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
   }
 }

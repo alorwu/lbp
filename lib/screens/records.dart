@@ -6,7 +6,11 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
+import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
+import 'package:lbp/model/monthly/QoLQuestionnaire.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
+import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
+import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 
 class SleepRecordScreen extends StatefulWidget {
   @override
@@ -24,10 +28,10 @@ class SleepRecordState extends State<SleepRecordScreen> {
   @override
   initState() {
     super.initState();
-    list = Hive.box('testBox');
+    list = Hive.box('dailyBox');
   }
 
-  Widget emptyRecordsCard() {
+  Widget emptyDailyCard() {
     return Padding(
       padding: EdgeInsets.all(20.0),
       child: Card(
@@ -106,7 +110,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
                   child: Text(
                     "Take today's survey",
                     style:
-                    TextStyle(fontSize: 18.0, color: Colors.white),
+                    TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal, color: Colors.white),
                   ),
                 ),
               ],
@@ -115,6 +119,188 @@ class SleepRecordState extends State<SleepRecordScreen> {
         ),
       ),
     ),
+    );
+  }
+
+  Widget emptyQoLCard() {
+    return Padding(
+      padding: EdgeInsets.all(20.0),
+      child: Card(
+        color: Colors.white,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Image.asset(
+                      'images/icons-calendar.png',
+                      width: 150.0,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "You have no quality of life records",
+                    style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible (
+                    child: Text(
+                        "Take the monthly quality of life survey to display history and personalized insights about the quality of your life.",
+                        style: TextStyle(fontSize: 16.0)
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        primary: Colors.blue
+                    ),
+                    onPressed: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  QualityOfLifeQuestionnaire())
+                      )
+                    },
+                    child: Text(
+                      "Start quality of life survey",
+                      style:
+                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget emptyPSQICard() {
+    return Padding(
+      padding: EdgeInsets.all(20.0),
+      child: Card(
+        color: Colors.white,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Image.asset(
+                      'images/icons-calendar.png',
+                      width: 150.0,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "You have no sleep quality records",
+                    style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible (
+                    child: Text(
+                        "Take the monthly sleep quality index survey to display history and personalized insights about your monthly sleep quality.",
+                        style: TextStyle(fontSize: 16.0)
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        primary: Colors.blue
+                    ),
+                    onPressed: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SleepQuestionnaire())
+                      )
+                    },
+                    child: Text(
+                      "Take sleep quality survey",
+                      style:
+                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -240,32 +426,113 @@ class SleepRecordState extends State<SleepRecordScreen> {
     );
   }
 
+    // @override
+    // Widget build(BuildContext context) {
+    //   return Scaffold(
+    //       appBar: AppBar(
+    //         centerTitle: true,
+    //         title: Text('Sleep records'),
+    //         backgroundColor: Color(0xff000000),
+    //         elevation: 0.0,
+    //         // systemOverlayStyle: SystemUiOverlayStyle.dark,
+    //         brightness: Brightness.dark,
+    //       ),
+    //       backgroundColor: Color(0xff000000),
+    //       body: ValueListenableBuilder(
+    //         valueListenable: list.listenable(),
+    //         builder: (context, Box<DailyQ> box, _) {
+    //           if (list.isNotEmpty) {
+    //             return ListView.builder(
+    //                 itemCount: list.length,
+    //                 itemBuilder: (context, listIndex) {
+    //                     return dailyCard(listIndex, list.getAt(listIndex));
+    //                 }
+    //             );
+    //           } else {
+    //             return emptyRecordsCard();
+    //           }
+    //         },
+    //       ),
+    //   );
+    // }
+
+  Widget dailySurvey(Box<DailyQ> list) {
+    return SingleChildScrollView(
+        child: ValueListenableBuilder(
+        valueListenable: list.listenable(),
+        builder: (context, Box<DailyQ> box, _) {
+          if (list.isNotEmpty) {
+            return ListView.builder(
+                itemCount: list.length,
+                itemBuilder: (context, listIndex) {
+                  return dailyCard(listIndex, list.getAt(listIndex));
+                }
+            );
+          } else {
+            return emptyDailyCard();
+          }
+        },
+        ),
+      );
+  }
+
+  Widget qualityOfLifeSurvey() {
+    return SingleChildScrollView(
+      child: emptyQoLCard()
+    );
+  }
+
+  Widget pSQISurvey() {
+    return SingleChildScrollView(
+      child: emptyPSQICard()
+    );
+  }
+
     @override
     Widget build(BuildContext context) {
-      return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text('Sleep records'),
-            backgroundColor: Color(0xff000000),
-            elevation: 0.0,
-            // systemOverlayStyle: SystemUiOverlayStyle.dark,
-            brightness: Brightness.dark,
-          ),
+      return DefaultTabController(
+          length: 3,
+          child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Survey records'),
           backgroundColor: Color(0xff000000),
-          body: ValueListenableBuilder(
-            valueListenable: list.listenable(),
-            builder: (context, Box<DailyQ> box, _) {
-              if (list.isNotEmpty) {
-                return ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (context, listIndex) {
-                        return dailyCard(listIndex, list.getAt(listIndex));
-                    }
-                );
-              } else {
-                return emptyRecordsCard();
-              }
-            },
+          elevation: 0.0,
+          // systemOverlayStyle: SystemUiOverlayStyle.dark,
+          brightness: Brightness.dark,
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            indicatorSize: TabBarIndicatorSize.label,
+            tabs: [
+              Padding(padding: EdgeInsets.all(10), child: Text("Daily")),
+              Padding(padding: EdgeInsets.all(10), child: Text("QoL")),
+              Padding(padding: EdgeInsets.all(10), child: Text("PSQI")),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.black,
+        body: TabBarView(
+          children: [
+            dailySurvey(list),
+            qualityOfLifeSurvey(),
+            pSQISurvey(),
+          ],
+        )
+        // ValueListenableBuilder(
+        //   valueListenable: list.listenable(),
+        //   builder: (context, Box<DailyQ> box, _) {
+        //     if (list.isNotEmpty) {
+        //       return ListView.builder(
+        //           itemCount: list.length,
+        //           itemBuilder: (context, listIndex) {
+        //             return dailyCard(listIndex, list.getAt(listIndex));
+        //           }
+        //       );
+        //     } else {
+        //       return emptyRecordsCard();
+        //     }
+        //   },
+        // ),
           ),
       );
     }

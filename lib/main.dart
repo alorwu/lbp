@@ -1,24 +1,29 @@
 
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'model/hive/daily/DailyQ.dart';
+import 'model/hive/qol/QoL.dart';
+import 'model/hive/sleep/PSQI.dart';
 import 'model/hive/user/User.dart';
 
 void initializeHiveDependencies() async {
   await Hive.initFlutter();
   Hive.registerAdapter(DailyQAdapter());
   Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(PSQIAdapter());
+  Hive.registerAdapter(QoLAdapter());
 
-  await Hive.openBox<DailyQ>("testBox");
+  await Hive.openBox<DailyQ>("dailyBox");
   await Hive.openBox<User>("userBox");
+  await Hive.openBox<PSQI>("psqiBox");
+  await Hive.openBox<QoL>("qolBox");
 }
 
 void main() async {
@@ -38,13 +43,11 @@ void main() async {
   if (firstTime == false) {
     _defaultHome = NewHomeScreen();
   }
-  // final appDocumentDir = await pathProvider.getApplicationDocumentsDirectory();
-  // Hive.init(appDocumentDir.path);
 
   runApp(new MaterialApp(
     title: 'Sleep Better with Back Pain',
     theme: ThemeData(
-      primaryColor: Color(0xff000000), //Color.fromRGBO(58, 66, 86, 1.0),
+      primaryColor: Colors.black,
       visualDensity: VisualDensity.adaptivePlatformDensity,
     ),
     debugShowCheckedModeBanner: false,

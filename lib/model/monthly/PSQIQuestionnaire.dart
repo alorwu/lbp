@@ -152,10 +152,10 @@ class PSQIQuestionnaire {
         subtitle: '',
         status: false,
         type: 'freeformlikert',
-        notInPastMonth: 'Not during the past month',
-        lessThanOnceAWeek: 'Less than once a week',
-        onceOrTwiceAWeek: 'Once or twice a week',
-        threeOrMoreAWeek: 'Three or more times a week',
+        notInPastMonth: '',
+        lessThanOnceAWeek: '',
+        onceOrTwiceAWeek: '',
+        threeOrMoreAWeek: '',
         data: null
     ),
     PSQIQuestion(
@@ -306,12 +306,6 @@ class PSQIQuestionnaire {
 
 
   dynamic nextPSQIQuestion(){
-    // if(_questionNumber < _questionList.length - 1){
-    //   _questionNumber++;
-    // }else{
-    //   bool completed = true;
-    //   return completed;
-    // }
     if (_questionNumber <= _questionList.length - 1) {
       if (_questionNumber != _questionList.length - 1) {
         _questionNumber++;

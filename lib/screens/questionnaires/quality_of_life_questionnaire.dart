@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:lbp/model/hive/qol/QoL.dart';
 import 'package:lbp/model/monthly/QoLQuestion.dart';
 import 'package:lbp/model/monthly/QoLQuestionnaire.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
@@ -401,6 +403,8 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       submitButtonState = ButtonState.loading;
     });
 
+    saveLocally();
+
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     var sheet = ss.worksheetByTitle('monthly_qol_q');
     sheet ??= await ss.addWorksheet('monthly_qol_q');
@@ -425,7 +429,6 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
         ))
             .closed
             .then((value) {
-          // animationController.stop();
           setState(() {
             submitButtonState = ButtonState.success;
           });
@@ -442,16 +445,12 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
         ))
             .closed
             .then((value) {
-          // animationController.stop();
-          // animationController.reset();
           setState(() {
             submitButtonState = ButtonState.fail;
           });
         });
       }
     } catch(exp) {
-      // animationController.stop();
-      // animationController.reset();
       setState(() {
         submitButtonState = ButtonState.fail;
       });
@@ -462,5 +461,33 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
         duration: Duration(seconds: 1),
       ));
     }
+  }
+
+  void saveLocally() async {
+    List<String> values = [];
+    questionnaire.getPromisQuestions().forEach((e) => values.add(e.data));
+
+    var qol = QoL(
+      generalHealth: values[0],
+      qualityOfLife: values[1],
+      physicalHealth: values[2],
+      mentalHealth: values[3],
+      socialSatisfaction: values[4],
+      carryOutSocialActivities: values[5],
+      carryOutPhysicalActivities: values[6],
+      emotionalProblems: values[7],
+      fatigue: values[8],
+      pain: values[9],
+      dateTaken: DateTime.now()
+    );
+
+    Box<QoL> box;
+    var isBoxOpened = Hive.isBoxOpen("qolBox");
+    if (isBoxOpened) {
+      box = Hive.box("qolBox");
+    } else {
+      box = await Hive.openBox("qolBox");
+    }
+    await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), qol);
   }
 }

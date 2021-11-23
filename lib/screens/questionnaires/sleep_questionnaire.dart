@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:lbp/model/hive/sleep/PSQI.dart';
 import 'package:lbp/model/monthly/PSQIQuestion.dart';
 import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
 import 'package:lbp/utils/MyPreferences.dart';
@@ -437,6 +439,8 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       submitButtonState = ButtonState.loading;
     });
 
+    saveLocally();
+
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
     var sheet = ss.worksheetByTitle('monthly_sleep_q');
     sheet ??= await ss.addWorksheet('monthly_sleep_q');
@@ -459,7 +463,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
             ))
             .closed
             .then((value) {
-          // animationController.stop();
           setState(() {
             submitButtonState = ButtonState.success;
           });
@@ -475,16 +478,12 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
             ))
             .closed
             .then((value) {
-          // animationController.stop();
-          // animationController.reset();
           setState(() {
             submitButtonState = ButtonState.fail;
           });
         });
       }
     } catch (exp) {
-      // animationController.stop();
-      // animationController.reset();
       setState(() {
         submitButtonState = ButtonState.fail;
       });
@@ -494,5 +493,48 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         duration: Duration(seconds: 1),
       ));
     }
+  }
+
+  void saveLocally() async {
+    List<String> values = [];
+    questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
+    var psqi = PSQI(
+      timeToBed: values[0],
+      timeToSleep: values[1],
+      wakeUpTime: values[2],
+      hoursSlept: values[3],
+      sleepIn30Mins: values[4],
+      wakeUpNightOrMorning: values[5],
+      bathroomUse: values[6],
+      cannotBreathe: values[7],
+      coughOrSnoreLoudly: values[8],
+      feelCold: values[9],
+      feelHot: values[10],
+      badDreams: values[11],
+      havePain: values[12],
+      otherReasonsUnableToSleep: values[13],
+      troubleSleepingDueToOtherReason: values[14],
+      sleepQuality: values[15],
+      medicineToSleep: values[16],
+      troubleStayingAwake: values[17],
+      enthusiasm: values[18],
+      partnerOrRoommate: values[19],
+      loudSnoring: values[20],
+      pausesInBreath: values[21],
+      legTwitching: values[22],
+      disorientation: values[23],
+      restlessnessInSleep: values[24],
+      numberOfTimesOfRestlessness: values[25],
+      dateTaken: DateTime.now(),
+    );
+
+    Box<PSQI> box;
+    var isBoxOpened = Hive.isBoxOpen("psqiBox");
+    if (isBoxOpened) {
+      box = Hive.box("psqiBox");
+    } else {
+      box = await Hive.openBox("psqiBox");
+    }
+    await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), psqi);
   }
 }
