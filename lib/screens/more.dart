@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:lbp/screens/rss/rssfeed_screen.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
+import 'package:lbp/screens/settings/profile.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
 
 class MoreScreen extends StatefulWidget {
@@ -67,6 +68,20 @@ class MoreState extends State<MoreScreen> {
             //   },
             // ),
             // Divider(),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile"),
+              trailing: Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen()
+                  )
+                );
+              },
+            ),
+            Divider(),
             ListTile(
               leading: Icon(Icons.rss_feed),
               title: Text("Online information"),

@@ -37,7 +37,6 @@ class SleepQuestionnaire extends StatefulWidget {
 class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   PSQIQuestionnaire questionnaire = PSQIQuestionnaire();
   GSheets gSheets;
-  final _formKey = GlobalKey<FormState>();
 
   ButtonState submitButtonState = ButtonState.idle;
 
@@ -88,7 +87,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
                       size: Size.square(12),
                       activeSize: Size(15, 15),
                       activeColor: Colors.white70,
-                      //Theme.of(context).primaryColor,
                       color: Colors.black54 //Theme.of(context).disabledColor,
                       ),
                 ),
@@ -278,47 +276,47 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         time = ["1-15", '16-30', '30-60', '60+'];
         break;
       case 'GETTING UP TIME':
-        // time = [
-        //   '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
-        //   '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
-        //   '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
         time = [
-          '00:00',
-          '01:00',
-          '02:00',
-          '03:00',
-          '04:00',
-          '05:00',
-          '06:00',
-          '07:00',
-          '08:00',
-          '09:00',
-          '10:00',
-          '11:00',
-          '12:00+'
-        ];
+          '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
+          '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
+          '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+        // time = [
+        //   '00:00',
+        //   '01:00',
+        //   '02:00',
+        //   '03:00',
+        //   '04:00',
+        //   '05:00',
+        //   '06:00',
+        //   '07:00',
+        //   '08:00',
+        //   '09:00',
+        //   '10:00',
+        //   '11:00',
+        //   '12:00+'
+        // ];
         break;
       case 'HOURS OF SLEEP PER NIGHT':
-        // time = ["1 hour", "2 hours", "3 hours", "4 hours",
-        //   "5 hours", "6 hours", "7 hours", "8 hours", "9 hours", "10 hours",
-        //   "11 hours", "12 hours", "13 hours", "14 hours", "15 hours", "16 hours",
-        //   "17 hours", "18 hours", "19 hours", "20 hours", "21 hours", "22 hours",
-        //   "23 hours", "24 hours"];
-        time = [
-          "1 hour",
-          "2 hours",
-          "3 hours",
-          "4 hours",
-          "5 hours",
-          "6 hours",
-          "7 hours",
-          "8 hours",
-          "9 hours",
-          "10 hours",
-          "11 hours",
-          "12 hours",
-          "13+ hours"
-        ];
+        time = ["1 hour", "2 hours", "3 hours", "4 hours",
+          "5 hours", "6 hours", "7 hours", "8 hours", "9 hours", "10 hours",
+          "11 hours", "12 hours", "13 hours", "14 hours", "15 hours", "16 hours",
+          "17 hours", "18 hours", "19 hours", "20 hours", "21 hours", "22 hours",
+          "23 hours", "24 hours"];
+        // time = [
+        //   "1 hour",
+        //   "2 hours",
+        //   "3 hours",
+        //   "4 hours",
+        //   "5 hours",
+        //   "6 hours",
+        //   "7 hours",
+        //   "8 hours",
+        //   "9 hours",
+        //   "10 hours",
+        //   "11 hours",
+        //   "12 hours",
+        //   "13+ hours"
+        // ];
         break;
       default:
     }

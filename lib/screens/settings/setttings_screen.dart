@@ -157,7 +157,7 @@ class MapScreenState extends State<SettingsScreen> {
     return new Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: Color(0xff000000),
+        backgroundColor: Colors.black,
         // systemOverlayStyle: SystemUiOverlayStyle.dark,
         brightness: Brightness.dark,
       ),

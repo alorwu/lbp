@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
+import 'package:lbp/model/hive/qol/QoL.dart';
 import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
 import 'package:lbp/model/monthly/QoLQuestionnaire.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
@@ -23,12 +24,14 @@ const DATE_FORMAT_AM_PM = " a";
 
 class SleepRecordState extends State<SleepRecordScreen> {
 
-  Box<DailyQ> list;
+  Box<DailyQ> dailyRecords;
+  Box<QoL> qolRecords;
 
   @override
   initState() {
     super.initState();
-    list = Hive.box('dailyBox');
+    dailyRecords = Hive.box('dailyBox');
+    qolRecords = Hive.box('qolBox');
   }
 
   Widget emptyDailyCard() {
@@ -496,7 +499,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text('Survey records'),
-          backgroundColor: Color(0xff000000),
+          backgroundColor: Colors.black,
           elevation: 0.0,
           // systemOverlayStyle: SystemUiOverlayStyle.dark,
           brightness: Brightness.dark,
@@ -513,7 +516,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
         backgroundColor: Colors.black,
         body: TabBarView(
           children: [
-            dailySurvey(list),
+            dailySurvey(dailyRecords),
             qualityOfLifeSurvey(),
             pSQISurvey(),
           ],

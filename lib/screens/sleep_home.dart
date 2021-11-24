@@ -34,7 +34,7 @@ class SleepHomeState extends State<SleepHome> {
   String userId;
   String oneSignalPlayerId;
 
-  String username;
+  String nickname;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class SleepHomeState extends State<SleepHome> {
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
     setState(() {
-      showMonthlySurveys = 1 <= today && today <= 17;
+      showMonthlySurveys = 1 <= today && today <= 30;
     });
     super.initState();
   }
@@ -60,7 +60,6 @@ class SleepHomeState extends State<SleepHome> {
 
     OneSignal.shared.setInAppMessageClickedHandler((action) async {
       if (action != null && action.clickName == "buttonClick") {
-        // https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=appId
         var url =
             "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$userId";
         await launch(url,
@@ -113,7 +112,7 @@ class SleepHomeState extends State<SleepHome> {
     }
     user = box.get('user');
     setState(() {
-      username = user.username;
+      nickname = user.nickname;
     });
   }
 
@@ -121,12 +120,12 @@ class SleepHomeState extends State<SleepHome> {
 
     var hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good morning $username';
+      return 'Good morning $nickname';
     }
     if (hour < 17) {
-      return 'Good afternoon $username';
+      return 'Good afternoon $nickname';
     }
-    return 'Good evening $username';
+    return 'Good evening $nickname';
   }
 
   void _getTime() {

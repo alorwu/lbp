@@ -21,7 +21,6 @@ class NewHomeState extends State<NewHomeScreen> {
   }
 
   static List<Widget> _widgetOptions = <Widget> [
-    // MyHomePage(),
     SleepHome(),
     SleepRecordScreen(),
     TrendScreen(),

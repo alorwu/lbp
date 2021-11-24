@@ -27,7 +27,7 @@ class OnBoarding extends StatefulWidget {
 }
 
 class OnBoardingState extends State<OnBoarding> {
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController nicknameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController durationController = TextEditingController();
@@ -231,7 +231,7 @@ class OnBoardingState extends State<OnBoarding> {
                       hintStyle: TextStyle(color: Colors.grey),
                     ),
                     keyboardType: TextInputType.text,
-                    controller: usernameController,
+                    controller: nicknameController,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter a nickname';
@@ -684,7 +684,7 @@ class OnBoardingState extends State<OnBoarding> {
 
     List values = [];
     values.add(appId);
-    values.add(usernameController.value.text);
+    values.add(nicknameController.value.text);
     values.add(ageController.value.text);
     values.add(gender);
     values.add(employment);
@@ -776,7 +776,7 @@ class OnBoardingState extends State<OnBoarding> {
 
   void saveDataLocally() async {
     var user = User(
-      username: usernameController.value.text,
+      nickname: nicknameController.value.text,
       age: int.parse(ageController.value.text),
       gender: gender,
       employment: employment,

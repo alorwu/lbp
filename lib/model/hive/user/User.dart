@@ -5,7 +5,7 @@ part 'User.g.dart';
 @HiveType(typeId: 0)
 class User {
   @HiveField(0)
-  String username;
+  String nickname;
 
   @HiveField(1)
   int age;
@@ -46,8 +46,12 @@ class User {
   @HiveField(13)
   String date;
 
+  @HiveField(14)
+  String aboutMe;
+
+
   User({
-    this.username,
+    this.nickname,
     this.age,
     this.gender,
     this.employment,
@@ -60,7 +64,8 @@ class User {
     this.hasHadLbpFor,
     this.diagnosedOfLbp,
     this.lbpTreatment,
-    this.date
+    this.date,
+    this.aboutMe,
   });
 
 }
