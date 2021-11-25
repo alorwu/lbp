@@ -61,28 +61,28 @@ class PSQI {
   @HiveField(18)
   String enthusiasm;
 
+  // @HiveField(19)
+  // String partnerOrRoommate;
+  //
+  // @HiveField(20)
+  // String loudSnoring;
+  //
+  // @HiveField(21)
+  // String pausesInBreath;
+  //
+  // @HiveField(22)
+  // String legTwitching;
+  //
+  // @HiveField(23)
+  // String disorientation;
+  //
+  // @HiveField(24)
+  // String restlessnessInSleep;
+  //
+  // @HiveField(25)
+  // String numberOfTimesOfRestlessness;
+
   @HiveField(19)
-  String partnerOrRoommate;
-
-  @HiveField(20)
-  String loudSnoring;
-
-  @HiveField(21)
-  String pausesInBreath;
-
-  @HiveField(22)
-  String legTwitching;
-
-  @HiveField(23)
-  String disorientation;
-
-  @HiveField(24)
-  String restlessnessInSleep;
-
-  @HiveField(25)
-  String numberOfTimesOfRestlessness;
-
-  @HiveField(26)
   DateTime dateTaken;
 
   PSQI({
@@ -105,13 +105,13 @@ class PSQI {
     this.medicineToSleep,
     this.troubleStayingAwake,
     this.enthusiasm,
-    this.partnerOrRoommate,
-    this.loudSnoring,
-    this.pausesInBreath,
-    this.legTwitching,
-    this.disorientation,
-    this.restlessnessInSleep,
-    this.numberOfTimesOfRestlessness,
+    // this.partnerOrRoommate,
+    // this.loudSnoring,
+    // this.pausesInBreath,
+    // this.legTwitching,
+    // this.disorientation,
+    // this.restlessnessInSleep,
+    // this.numberOfTimesOfRestlessness,
     this.dateTaken,
   });
 }

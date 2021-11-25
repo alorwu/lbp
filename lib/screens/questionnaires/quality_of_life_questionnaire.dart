@@ -488,6 +488,6 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     } else {
       box = await Hive.openBox("qolBox");
     }
-    await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), qol);
+    await box.put(DateFormat("yyyy-MM").format(DateTime.now()), qol);
   }
 }

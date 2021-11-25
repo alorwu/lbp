@@ -273,7 +273,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         ];
         break;
       case 'NUMBER OF MINUTES':
-        time = ["1-15", '16-30', '30-60', '60+'];
+        time = ["≤15 minutes", '16-30 minutes', '31-60 minutes', '>60 minutes'];
         break;
       case 'GETTING UP TIME':
         time = [
@@ -516,13 +516,13 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       medicineToSleep: values[16],
       troubleStayingAwake: values[17],
       enthusiasm: values[18],
-      partnerOrRoommate: values[19],
-      loudSnoring: values[20],
-      pausesInBreath: values[21],
-      legTwitching: values[22],
-      disorientation: values[23],
-      restlessnessInSleep: values[24],
-      numberOfTimesOfRestlessness: values[25],
+      // partnerOrRoommate: values[19],
+      // loudSnoring: values[20],
+      // pausesInBreath: values[21],
+      // legTwitching: values[22],
+      // disorientation: values[23],
+      // restlessnessInSleep: values[24],
+      // numberOfTimesOfRestlessness: values[25],
       dateTaken: DateTime.now(),
     );
 
@@ -533,6 +533,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     } else {
       box = await Hive.openBox("psqiBox");
     }
-    await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), psqi);
+    await box.put(DateFormat("yyyy-MM").format(DateTime.now()), psqi);
   }
 }
