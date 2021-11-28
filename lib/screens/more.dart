@@ -68,19 +68,6 @@ class MoreState extends State<MoreScreen> {
             //   },
             // ),
             // Divider(),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Profile"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen()
-                  )
-                );
-              },
-            ),
             Divider(),
             ListTile(
               leading: Icon(Icons.rss_feed),

@@ -39,6 +39,7 @@ dependencies:
   # Date picker
   flutter_datetime_picker: ^1.5.1
   dots_indicator: ^2.0.0
+  fl_chart: ^0.40.2
 
 
 

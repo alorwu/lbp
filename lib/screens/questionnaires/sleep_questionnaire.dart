@@ -7,6 +7,7 @@ import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/sleep/PSQI.dart';
+import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
 import 'package:lbp/model/monthly/PSQIQuestion.dart';
 import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
 import 'package:lbp/utils/MyPreferences.dart';
@@ -202,16 +203,14 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
 
   void prevButtonClickHandler() {
     setState(() {
-      if (questionnaire.prevQuestion() == false) {
-      }
+      if (questionnaire.prevQuestion() == false) {}
     });
   }
 
   void nextButtonClickHandler() {
     if (questionnaire.getPSQIQuestion().data != null) {
       setState(() {
-        if (questionnaire.nextPSQIQuestion() == true) {
-        }
+        if (questionnaire.nextPSQIQuestion() == true) {}
       });
     } else
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -277,9 +276,31 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         break;
       case 'GETTING UP TIME':
         time = [
-          '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
-          '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
-          '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+          '00:00',
+          '01:00',
+          '02:00',
+          '03:00',
+          '04:00',
+          '05:00',
+          '06:00',
+          '07:00',
+          '08:00',
+          '09:00',
+          '10:00',
+          '11:00',
+          '12:00',
+          '13:00',
+          '14:00',
+          '15:00',
+          '16:00',
+          '17:00',
+          '18:00',
+          '19:00',
+          '20:00',
+          '21:00',
+          '22:00',
+          '23:00'
+        ];
         // time = [
         //   '00:00',
         //   '01:00',
@@ -297,11 +318,32 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         // ];
         break;
       case 'HOURS OF SLEEP PER NIGHT':
-        time = ["1 hour", "2 hours", "3 hours", "4 hours",
-          "5 hours", "6 hours", "7 hours", "8 hours", "9 hours", "10 hours",
-          "11 hours", "12 hours", "13 hours", "14 hours", "15 hours", "16 hours",
-          "17 hours", "18 hours", "19 hours", "20 hours", "21 hours", "22 hours",
-          "23 hours", "24 hours"];
+        time = [
+          "1 hour",
+          "2 hours",
+          "3 hours",
+          "4 hours",
+          "5 hours",
+          "6 hours",
+          "7 hours",
+          "8 hours",
+          "9 hours",
+          "10 hours",
+          "11 hours",
+          "12 hours",
+          "13 hours",
+          "14 hours",
+          "15 hours",
+          "16 hours",
+          "17 hours",
+          "18 hours",
+          "19 hours",
+          "20 hours",
+          "21 hours",
+          "22 hours",
+          "23 hours",
+          "24 hours"
+        ];
         // time = [
         //   "1 hour",
         //   "2 hours",
@@ -472,7 +514,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
               content: Text(
                   "Unable to save data. Check your internet connection and try again.",
                   style: TextStyle(color: Colors.red)),
-                  duration: Duration(seconds: 1),
+              duration: Duration(seconds: 1),
             ))
             .closed
             .then((value) {
@@ -504,7 +546,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       sleepIn30Mins: values[4],
       wakeUpNightOrMorning: values[5],
       bathroomUse: values[6],
-      cannotBreathe: values[7],
+      cannotBreatheComfortably: values[7],
       coughOrSnoreLoudly: values[8],
       feelCold: values[9],
       feelHot: values[10],
@@ -526,6 +568,8 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       dateTaken: DateTime.now(),
     );
 
+    calculateSleepComponentScore(psqi);
+
     Box<PSQI> box;
     var isBoxOpened = Hive.isBoxOpen("psqiBox");
     if (isBoxOpened) {
@@ -534,5 +578,201 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       box = await Hive.openBox("psqiBox");
     }
     await box.put(DateFormat("yyyy-MM").format(DateTime.now()), psqi);
+  }
+
+  void calculateSleepComponentScore(PSQI psqi) async {
+    int dayTimeDysfunctionComponent = calculateDayTimeDysfunction(psqi);
+    int sleepMedicationComponent = weekMonthDefault(psqi.medicineToSleep);
+    int sleepDisturbanceComponent = sleepDisturbance(psqi);
+    int sleepEfficiencyComponent = sleepEfficiency(psqi);
+    int sleepDurationComponent = sleepDuration(psqi.hoursSlept);
+    int sleepLatencyComponent = sleepLatency(psqi);
+    int sleepQualityComponent = sleepQuality(psqi.sleepQuality);
+    print("Quality: $sleepQualityComponent");
+    print("Latency: $sleepLatencyComponent");
+    print("Duration: $sleepDurationComponent");
+    print("Efficiency: $sleepEfficiencyComponent");
+    print("Disturbance: $sleepDisturbanceComponent");
+    print("Medication: $sleepMedicationComponent");
+    print("Day time dysfunction: $dayTimeDysfunctionComponent");
+
+    int pSQIScore = dayTimeDysfunctionComponent +
+        sleepMedicationComponent +
+        sleepDisturbanceComponent +
+        sleepEfficiencyComponent +
+        sleepDurationComponent +
+        sleepLatencyComponent +
+        sleepQualityComponent;
+    var sleepComponentScore = SleepComponentScores(
+        sleepQuality: sleepQualityComponent,
+        sleepLatency: sleepLatencyComponent,
+        sleepDuration: sleepDurationComponent,
+        sleepEfficiency: sleepEfficiencyComponent,
+        sleepDisturbance: sleepDisturbanceComponent,
+        sleepMedication: sleepMedicationComponent,
+        dayTimeDysfunction: dayTimeDysfunctionComponent,
+        pSQIScore: pSQIScore,
+        dateTaken: DateTime.now());
+
+    Box<SleepComponentScores> box;
+    var isBoxOpened = Hive.isBoxOpen("psqiScore");
+    if (isBoxOpened) {
+      box = Hive.box("psqiScore");
+    } else {
+      box = await Hive.openBox("psqiScore");
+    }
+    await box.put(
+        DateFormat("yyyy-MM").format(DateTime.now()), sleepComponentScore);
+  }
+
+  int calculateDayTimeDysfunction(PSQI pSQI) {
+    int q8 = -1;
+    switch (pSQI.troubleStayingAwake.trim()) {
+      case "Never":
+        q8 = 0;
+        break;
+      case "Once or twice":
+        q8 = 1;
+        break;
+      case "Once or twice each week":
+        q8 = 2;
+        break;
+      default:
+        q8 = 3;
+    }
+
+    int q9 = -1;
+    switch (pSQI.troubleStayingAwake.trim()) {
+      case "No problem at all":
+        q8 = 0;
+        break;
+      case "Only a very slight problem":
+        q8 = 1;
+        break;
+      case "Somewhat of a problem":
+        q8 = 2;
+        break;
+      default:
+        q8 = 3;
+    }
+
+    int sum = q8 + q9;
+    print("Sum of q8 and q9: $sum");
+    if (sum == 0)
+      return 0;
+    else if (sum <= 2)
+      return 1;
+    else if (sum <= 4)
+      return 2;
+    else
+      return 3;
+  }
+
+  int weekMonthDefault(String str) {
+    switch (str.trim()) {
+      case "Not during the past month":
+        return 0;
+      case "Less than once a week":
+        return 1;
+      case "Once or twice a week":
+        return 2;
+      default:
+        return 3;
+    }
+  }
+
+  int sleepDisturbance(PSQI pSQI) {
+    int q5b = weekMonthDefault(pSQI.wakeUpNightOrMorning);
+    int q5c = weekMonthDefault(pSQI.bathroomUse);
+    int q5d = weekMonthDefault(pSQI.cannotBreatheComfortably);
+    int q5e = weekMonthDefault(pSQI.coughOrSnoreLoudly);
+    int q5f = weekMonthDefault(pSQI.feelCold);
+    int q5g = weekMonthDefault(pSQI.feelHot);
+    int q5h = weekMonthDefault(pSQI.badDreams);
+    int q5i = weekMonthDefault(pSQI.havePain);
+    int q5j = weekMonthDefault(pSQI.troubleSleepingDueToOtherReason);
+    int sum = q5b + q5c + q5d + q5e + q5f + q5g + q5h + q5i + q5j;
+
+    if (sum == 0)
+      return 0;
+    else if (sum <= 9)
+      return 1;
+    else if (sum <= 18)
+      return 2;
+    else
+      return 3;
+  }
+
+  int sleepEfficiency(PSQI pSQI) {
+    int hoursSlept = int.parse(pSQI.hoursSlept.substring(0, 2).trim());
+    int getUpTime = int.parse(pSQI.wakeUpTime.substring(0, 2).trim());
+    int bedTime = int.parse(pSQI.timeToBed.substring(0, 2).trim());
+    int hoursInBed;
+    if ((bedTime - getUpTime) > 0) {
+      hoursInBed = 24 - (bedTime - getUpTime);
+    } else {
+      hoursInBed = getUpTime - bedTime;
+    }
+    var habitualSleepEfficiency = ((hoursSlept / hoursInBed) * 100).round();
+    if (habitualSleepEfficiency > 85)
+      return 0;
+    else if (habitualSleepEfficiency >= 75)
+      return 1;
+    else if (habitualSleepEfficiency >= 65)
+      return 2;
+    else
+      return 3;
+  }
+
+  int sleepDuration(String hoursSlept) {
+    int hours = int.parse(hoursSlept.substring(0, 2).trim());
+    if (hours > 7)
+      return 0;
+    else if (hours >= 6)
+      return 1;
+    else if (hours >= 5)
+      return 2;
+    else
+      return 3;
+  }
+
+  int sleepLatency(PSQI psqi) {
+    int q5a = weekMonthDefault(psqi.sleepIn30Mins);
+    int q2 = 0;
+    switch (psqi.timeToSleep.trim()) {
+      case "≤15 minutes":
+        q2 = 0;
+        break;
+      case "16-30 minutes":
+        q2 = 1;
+        break;
+      case "31-60 minutes":
+        q2 = 2;
+        break;
+      default:
+        q2 = 3;
+    }
+    int sum = q5a + q2;
+    if (sum == 0)
+      return 0;
+    else if (sum <= 2)
+      return 1;
+    else if (sum <= 4)
+      return 2;
+    else
+      return 3;
+  }
+
+  int sleepQuality(String sleepQuality) {
+    switch (sleepQuality.trim()) {
+      case "Very good":
+        return 0;
+      case "Fairly good":
+        return 1;
+      case "Fairly bad":
+        return 2;
+      default:
+        return 3;
+    }
   }
 }

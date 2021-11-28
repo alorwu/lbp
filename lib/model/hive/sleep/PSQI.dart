@@ -26,7 +26,7 @@ class PSQI {
   String bathroomUse;
 
   @HiveField(7)
-  String cannotBreathe;
+  String cannotBreatheComfortably;
 
   @HiveField(8)
   String coughOrSnoreLoudly;
@@ -93,7 +93,7 @@ class PSQI {
     this.sleepIn30Mins,
     this.wakeUpNightOrMorning,
     this.bathroomUse,
-    this.cannotBreathe,
+    this.cannotBreatheComfortably,
     this.coughOrSnoreLoudly,
     this.feelCold,
     this.feelHot,

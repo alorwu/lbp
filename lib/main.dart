@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
 import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,11 +20,13 @@ void initializeHiveDependencies() async {
   Hive.registerAdapter(UserAdapter());
   Hive.registerAdapter(PSQIAdapter());
   Hive.registerAdapter(QoLAdapter());
+  Hive.registerAdapter(SleepComponentScoresAdapter());
 
   await Hive.openBox<DailyQ>("dailyBox");
   await Hive.openBox<User>("userBox");
   await Hive.openBox<PSQI>("psqiBox");
   await Hive.openBox<QoL>("qolBox");
+  await Hive.openBox<SleepComponentScores>("psqiScore");
 }
 
 void main() async {

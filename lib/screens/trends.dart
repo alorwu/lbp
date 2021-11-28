@@ -1,3 +1,5 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:fl_chart/src/extensions/color_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:lbp/constants/Constants.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
+import 'package:lbp/utils/sleep_time_charts.dart';
 
 class TrendScreen extends StatefulWidget {
   @override
@@ -17,6 +20,14 @@ class TrendScreenState extends State<TrendScreen> {
   List<DailyQ> weekData;
   List<DailyQ> monthData;
   List<DailyQ> allData;
+
+  List<BarChartGroupData> sleepQualityBarChartWeekData = [];
+  List<BarChartGroupData> sleepQualityBarChartMonthData = [];
+
+  List<BarChartGroupData> sleepDurationBarChartWeekData = [];
+  List<BarChartGroupData> sleepDurationBarChartMonthData = [];
+
+  var firstDayOfWeek;
 
   var avgWeekSleepTime;
   var avgWeekWakeTime;
@@ -35,12 +46,13 @@ class TrendScreenState extends State<TrendScreen> {
   @override
   initState() {
     super.initState();
-    week = now.subtract(Duration(days: 7));
+    firstDayOfWeek = DateTime(now.year, now.month, now.day).subtract(new Duration(days: now.weekday)).add(Duration(days: 1));
     month = DateTime(now.year, now.month, 1);
 
     box = Hive.box('dailyBox');
     allData = box.values.toList();
-    weekData = allData.where((element) => element.sleepTime.isAfter(week)).toList();
+    weekData = allData.where((element) => element.dateTaken.isAfter(firstDayOfWeek)).toList();
+
     monthData = allData.where((element) => element.sleepTime.isAfter(month)).toList();
 
     avgWeekSleepTime = averageSleepDateTime(weekData);
@@ -52,6 +64,11 @@ class TrendScreenState extends State<TrendScreen> {
     avgAllSleepTime = averageSleepDateTime(allData);
     avgAllWakeTime = averageWakeDateTime(allData);
 
+    showWeekGroups();
+    showMonthGroups();
+
+    showWeekSleepDuration();
+    showMonthSleepDuration();
   }
 
   averageSleepDateTime(List<DailyQ> data) {
@@ -294,66 +311,38 @@ class TrendScreenState extends State<TrendScreen> {
             ),
 
             // Row 3
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Expanded(
-            //       flex: 2,
-            //       child: Card(
-            //           elevation: 3.0,
-            //           color: Color(0xff1F1F1F),
-            //           shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10)),
-            //           margin: EdgeInsets.all(8),
-            //           child: Padding(
-            //             padding: EdgeInsets.all(10),
-            //             child: Column(
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 Text("Sleep Duration",
-            //                     style: TextStyle(color: Colors.white)),
-            //                 SizedBox(height: 10),
-            //                 Container(
-            //                   color: Colors.purpleAccent,
-            //                   height: 200.0,
-            //                 )
-            //               ],
-            //             ),
-            //           )),
-            //     ),
-            //   ],
-            // ),
-            //
-            // // Row 4
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Expanded(
-            //       flex: 2,
-            //       child: Card(
-            //           elevation: 3.0,
-            //           color: Color(0xff1F1F1F),
-            //           shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10)),
-            //           margin: EdgeInsets.all(8),
-            //           child: Padding(
-            //             padding: EdgeInsets.all(10),
-            //             child: Column(
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 Text("Sleep at", style: TextStyle(color: Colors
-            //                     .white)),
-            //                 SizedBox(height: 10),
-            //                 Container(
-            //                   color: Colors.blueAccent,
-            //                   height: 200.0,
-            //                 )
-            //               ],
-            //             ),
-            //           )),
-            //     ),
-            //   ],
-            // ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: plotBarChartWith(
+                      sleepQualityBarChartWeekData,
+                      "Sleep score",
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Row 4
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: SleepTimeChart(
+                            data: sleepDurationBarChartWeekData,
+                            title: "Sleep duration"
+                        ),
+                        ),
+                ),
+              ],
+            ),
             //
             // // Row 5
             // Row(
@@ -390,7 +379,7 @@ class TrendScreenState extends State<TrendScreen> {
       );
     }
     else {
-      return Container();
+      return emptyTrendScreen();
     }
   }
 
@@ -633,66 +622,39 @@ class TrendScreenState extends State<TrendScreen> {
               ),
 
               // Row 3
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       flex: 2,
-              //       child: Card(
-              //           elevation: 3.0,
-              //           color: Color(0xff1F1F1F),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(10)),
-              //           margin: EdgeInsets.all(8),
-              //           child: Padding(
-              //             padding: EdgeInsets.all(10),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text("Sleep Duration",
-              //                     style: TextStyle(color: Colors.white)),
-              //                 SizedBox(height: 10),
-              //                 Container(
-              //                   color: Colors.purpleAccent,
-              //                   height: 200.0,
-              //                 )
-              //               ],
-              //             ),
-              //           )),
-              //     ),
-              //   ],
-              // ),
-              //
-              // // Row 4
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       flex: 2,
-              //       child: Card(
-              //           elevation: 3.0,
-              //           color: Color(0xff1F1F1F),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(10)),
-              //           margin: EdgeInsets.all(8),
-              //           child: Padding(
-              //             padding: EdgeInsets.all(10),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text("Sleep at", style: TextStyle(color: Colors.white)),
-              //                 SizedBox(height: 10),
-              //                 Container(
-              //                   color: Colors.blueAccent,
-              //                   height: 200.0,
-              //                 )
-              //               ],
-              //             ),
-              //           )),
-              //     ),
-              //   ],
-              // ),
-              //
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: plotBarChartWith(
+                          sleepQualityBarChartMonthData,
+                          "Sleep score",
+                      ),
+                  ),
+                  ),
+                ],
+              ),
+
+              // Row 4
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: SleepTimeChart(
+                            data: sleepDurationBarChartMonthData,
+                            title: "Sleep duration",
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+
               // // Row 5
               // Row(
               //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -728,7 +690,7 @@ class TrendScreenState extends State<TrendScreen> {
         );
       }
       else {
-        return Container();
+        return emptyTrendScreen();
       }
     }
 
@@ -966,31 +928,18 @@ class TrendScreenState extends State<TrendScreen> {
               //   children: [
               //     Expanded(
               //       flex: 2,
-              //       child: Card(
-              //           elevation: 3.0,
-              //           color: Color(0xff1F1F1F),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(10)),
-              //           margin: EdgeInsets.all(8),
-              //           child: Padding(
+              //       child: Padding(
               //             padding: EdgeInsets.all(10),
               //             child: Column(
               //               crossAxisAlignment: CrossAxisAlignment.start,
               //               children: [
-              //                 Text("Sleep Duration",
-              //                     style: TextStyle(color: Colors.white)),
-              //                 SizedBox(height: 10),
-              //                 Container(
-              //                   color: Colors.purpleAccent,
-              //                   height: 200.0,
-              //                 )
               //               ],
               //             ),
-              //           )),
+              //           ),
               //     ),
               //   ],
               // ),
-              //
+
               // // Row 4
               // Row(
               //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1190,4 +1139,237 @@ class TrendScreenState extends State<TrendScreen> {
                 : emptyTrendScreen())
       );
     }
+
+  Widget plotBarChartWith(List<BarChartGroupData> data, String title) {
+    return AspectRatio(
+      aspectRatio: 1.5,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          color: Color(0xff81e5cd),
+        ),
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                        color: Color(0xff379982),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: BarChart(
+                      mainBarData(data),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+
+  BarChartGroupData makeGroupData(
+      int x,
+      double y,
+      int length, {
+        bool isTouched = false,
+        Color barColor = Colors.white,
+        double width = 15,
+        List<int> showTooltips = const [],
+      }) {
+    return BarChartGroupData(
+      x: x,
+      barRods: [
+        BarChartRodData(
+          y: y,
+          colors: [barColor],
+          width: length == 7 ? width : 5,
+          borderSide: BorderSide(color: Colors.white, width: 1),
+          backDrawRodData: BackgroundBarChartRodData(
+            show: true,
+            y: 10,
+            colors: [Color(0xff72d8bf)],
+          ),
+        ),
+      ],
+      showingTooltipIndicators: showTooltips,
+    );
+  }
+
+  showWeekSleepDuration() {
+    var lastDayOfWeek = firstDayOfWeek.add(Duration(days: 7));
+    final daysToGenerate = lastDayOfWeek.difference(firstDayOfWeek).inDays;
+    var sleepDurationData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(firstDayOfWeek.add(Duration(days: index)))), 0));
+
+    for(var d in sleepDurationData) {
+      for(var x in weekData) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
+          d.value = int.parse(x.sleepPeriod[0]) + double.parse((double.parse(x.sleepPeriod[1])/60).toStringAsFixed(2));
+          break;
+        }
+      }
+    }
+
+    for(int i = 0; i<sleepDurationData.length; i++) {
+      sleepDurationBarChartWeekData.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+                width: 15, y: sleepDurationData[i].value, colors: [Colors.lightBlueAccent, Colors.greenAccent])
+          ],
+          showingTooltipIndicators: [0],
+        ),
+      );
+      // sleepQualityBarChartWeekData.add(makeGroupData(i, sleepDurationData[i].value.toDouble(), sleepDurationData.length),);
+    }
+  }
+
+  showMonthSleepDuration() {
+    var lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    final daysToGenerate = lastDayOfMonth.add(Duration(days: 1)).difference(month).inDays;
+    var sleepDurationData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(month.add(Duration(days: index)))), 0));
+
+    for(var d in sleepDurationData) {
+      for(var x in weekData) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
+          d.value = int.parse(x.sleepPeriod[0]) + double.parse((double.parse(x.sleepPeriod[1])/60).toStringAsFixed(2));
+          break;
+        }
+      }
+    }
+
+    for(int i = 0; i<sleepDurationData.length; i++) {
+      sleepDurationBarChartMonthData.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+                width: sleepDurationData.length == 7 ? 15 : 5,
+                y: sleepDurationData[i].value,
+                colors: [Colors.lightBlueAccent, Colors.greenAccent],
+            )
+          ],
+          showingTooltipIndicators: [0],
+        ),
+      );
+    }
+  }
+
+  showWeekGroups() {
+    var lastDayOfWeek = firstDayOfWeek.add(Duration(days: 7));
+    final daysToGenerate = lastDayOfWeek.difference(firstDayOfWeek).inDays;
+    var sleepQualityData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(firstDayOfWeek.add(Duration(days: index)))), 0));
+
+    for(var d in sleepQualityData) {
+      for(var x in weekData) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
+          d.value = x.qualityOfSleep.toDouble();
+          break;
+        }
+      }
+    }
+
+    for(int i = 0; i<sleepQualityData.length; i++) {
+      sleepQualityBarChartWeekData.add(makeGroupData(i, sleepQualityData[i].value.toDouble(), sleepQualityData.length),);
+    }
+  }
+
+  showMonthGroups() {
+    var lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    final daysToGenerate = lastDayOfMonth.add(Duration(days: 1)).difference(month).inDays;
+    var sleepQualityData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(month.add(Duration(days: index)))), 0));
+
+    for(var d in sleepQualityData) {
+      for(var x in monthData) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
+          d.value = x.qualityOfSleep.toDouble();
+          break;
+        }
+      }
+    }
+
+    for(int i = 0; i<sleepQualityData.length; i++) {
+      sleepQualityBarChartMonthData.add(makeGroupData(i, sleepQualityData[i].value.toDouble(), sleepQualityData.length));
+    }
+  }
+
+
+  BarChartData mainBarData(List<BarChartGroupData> groupData) {
+    return BarChartData(
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: SideTitles(showTitles: false),
+        topTitles: SideTitles(showTitles: false),
+        bottomTitles: SideTitles(
+          showTitles: true,
+          getTextStyles: (context, value) => TextStyle(
+              color: Color(0xff379982), fontWeight: FontWeight.bold, fontSize: 14),
+          margin: 16,
+          getTitles: (double value) {
+            if (groupData.length == 7) {
+              switch (value.toInt()) {
+                case 0:
+                  return 'M';
+                case 1:
+                  return 'T';
+                case 2:
+                  return 'W';
+                case 3:
+                  return 'T';
+                case 4:
+                  return 'F';
+                case 5:
+                  return 'S';
+                case 6:
+                  return 'S';
+                default:
+                  return '';
+              }
+            } else {
+              return (value + 1) % 2 == 0 ? '' : (value + 1).toInt().toString();
+            }
+          },
+        ),
+        leftTitles: SideTitles(
+          showTitles: true,
+          getTextStyles: (context, values) => TextStyle(
+            color: Color(0xff379982), fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: false,
+      ),
+      barGroups: groupData, //showingGroups(),
+      gridData: FlGridData(show: false),
+    );
+  }
+
+}
+
+class DummyData {
+  int index;
+  double value;
+
+  DummyData(this.index, this.value);
+}

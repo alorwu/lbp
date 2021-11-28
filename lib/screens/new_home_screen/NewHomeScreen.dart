@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lbp/screens/more.dart';
-import 'package:lbp/screens/records.dart';
+import 'package:lbp/screens/survey_records.dart';
 import 'package:lbp/screens/trends.dart';
 
 import '../sleep_home.dart';
@@ -22,7 +22,7 @@ class NewHomeState extends State<NewHomeScreen> {
 
   static List<Widget> _widgetOptions = <Widget> [
     SleepHome(),
-    SleepRecordScreen(),
+    SurveyRecordScreen(),
     TrendScreen(),
     MoreScreen()
   ];
@@ -34,7 +34,7 @@ class NewHomeState extends State<NewHomeScreen> {
       body: Stack(
         children: <Widget>[
           Scaffold(
-            backgroundColor: Color(0xff000000),
+            backgroundColor: Colors.black,
             bottomNavigationBar: new Theme(
               data: Theme.of(context).copyWith(canvasColor: Color(0xff000000) ), //Color.fromRGBO(58, 66, 86, 1.0)),
               child: BottomNavigationBar(

@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -7,31 +8,54 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/model/hive/qol/QoL.dart';
-import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
-import 'package:lbp/model/monthly/QoLQuestionnaire.dart';
+import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
+import 'package:lbp/utils/survey_records_line_chart.dart';
 import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
 import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 
-class SleepRecordScreen extends StatefulWidget {
+class SurveyRecordScreen extends StatefulWidget {
   @override
-  SleepRecordState createState() => SleepRecordState();
+  SurveyRecordState createState() => SurveyRecordState();
 }
 
 const DATE_FORMAT_DAY = "yMMMMd";
 const DATE_FORMAT_DAY_TIME = "hh:mm";
 const DATE_FORMAT_AM_PM = " a";
 
-class SleepRecordState extends State<SleepRecordScreen> {
+class SurveyRecordState extends State<SurveyRecordScreen> {
 
   Box<DailyQ> dailyRecords;
   Box<QoL> qolRecords;
+  Box<SleepComponentScores> sleepComponentScores;
 
   @override
   initState() {
     super.initState();
-    dailyRecords = Hive.box('dailyBox');
-    qolRecords = Hive.box('qolBox');
+    initBoxes();
+  }
+
+  initBoxes() async {
+
+    var isDailyBoxOpened = Hive.isBoxOpen("dailyBox");
+    if (isDailyBoxOpened) {
+      dailyRecords = Hive.box("dailyBox");
+    } else {
+      dailyRecords = await Hive.openBox("dailyBox");
+    }
+    var isQoLBoxOpened = Hive.isBoxOpen("qolBox");
+    if (isQoLBoxOpened) {
+      qolRecords = Hive.box("qolBox");
+    } else {
+      qolRecords = await Hive.openBox("qolBox");
+    }
+
+    var isPSQIBoxOpened = Hive.isBoxOpen("psqiScore");
+    if (isPSQIBoxOpened) {
+      sleepComponentScores = Hive.box("psqiScore");
+    } else {
+      sleepComponentScores = await Hive.openBox("psqiScore");
+    }
   }
 
   Widget emptyDailyCard() {
@@ -429,65 +453,174 @@ class SleepRecordState extends State<SleepRecordScreen> {
     );
   }
 
-    // @override
-    // Widget build(BuildContext context) {
-    //   return Scaffold(
-    //       appBar: AppBar(
-    //         centerTitle: true,
-    //         title: Text('Sleep records'),
-    //         backgroundColor: Color(0xff000000),
-    //         elevation: 0.0,
-    //         // systemOverlayStyle: SystemUiOverlayStyle.dark,
-    //         brightness: Brightness.dark,
-    //       ),
-    //       backgroundColor: Color(0xff000000),
-    //       body: ValueListenableBuilder(
-    //         valueListenable: list.listenable(),
-    //         builder: (context, Box<DailyQ> box, _) {
-    //           if (list.isNotEmpty) {
-    //             return ListView.builder(
-    //                 itemCount: list.length,
-    //                 itemBuilder: (context, listIndex) {
-    //                     return dailyCard(listIndex, list.getAt(listIndex));
-    //                 }
-    //             );
-    //           } else {
-    //             return emptyRecordsCard();
-    //           }
-    //         },
-    //       ),
-    //   );
-    // }
-
   Widget dailySurvey(Box<DailyQ> list) {
-    return SingleChildScrollView(
-        child: ValueListenableBuilder(
-        valueListenable: list.listenable(),
-        builder: (context, Box<DailyQ> box, _) {
-          if (list.isNotEmpty) {
-            return ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (context, listIndex) {
-                  return dailyCard(listIndex, list.getAt(listIndex));
-                }
-            );
-          } else {
-            return emptyDailyCard();
+    if (list.isNotEmpty) {
+      return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, listIndex) {
+            return dailyCard(listIndex, list.getAt(listIndex));
           }
-        },
-        ),
       );
+    } else {
+      return emptyDailyCard();
+    }
+    // return SingleChildScrollView(
+    //     child: ValueListenableBuilder(
+    //     valueListenable: list.listenable(),
+    //     builder: (context, Box<DailyQ> box, _) {
+    //       if (list.isNotEmpty) {
+    //         return ListView.builder(
+    //             itemCount: list.length,
+    //             itemBuilder: (context, listIndex) {
+    //               return dailyCard(listIndex, list.getAt(listIndex));
+    //             }
+    //         );
+    //       } else {
+    //         return emptyDailyCard();
+    //       }
+    //     },
+    //     ),
+    //   );
   }
 
   Widget qualityOfLifeSurvey() {
+    return emptyQoLCard();
+  }
+
+  Widget pSQISurvey(Box<SleepComponentScores> scores) {
     return SingleChildScrollView(
-      child: emptyQoLCard()
+        child: ValueListenableBuilder(
+          valueListenable: scores.listenable(),
+          builder: (context, Box<SleepComponentScores> box, _) {
+            if (scores.isNotEmpty) {
+              return sleepPlots(scores.values);
+            } else {
+              return emptyPSQICard();
+            }
+          },
+        ),
     );
   }
 
-  Widget pSQISurvey() {
-    return SingleChildScrollView(
-      child: emptyPSQICard()
+  Widget sleepPlots(Iterable<SleepComponentScores> scores) {
+    return Padding(
+        padding: EdgeInsets.only(left: 20, top: 20, right: 20),
+        child: Column(
+      children: [
+        sleepLatencyPlot(scores),
+        SizedBox(height: 10),
+        sleepDurationPlot(scores),
+        SizedBox(height: 10),
+        sleepQualityPlot(scores),
+        SizedBox(height: 10),
+        sleepDisturbancePlot(scores),
+        SizedBox(height: 10),
+        sleepEfficiencyPlot(scores),
+        SizedBox(height: 10),
+        sleepMedicationPlot(scores),
+        SizedBox(height: 10),
+        dayTimeDysfunctionPlot(scores),
+        SizedBox(height: 10),
+      ],
+        ),
+    );
+  }
+
+  Widget sleepLatencyPlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.sleepLatency.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Sleep latency",
+        spots: spots,
+      backgroundColor: Colors.deepOrangeAccent //Color(0xff379982),
+    );
+  }
+
+  Widget sleepDurationPlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.sleepDuration.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Sleep duration",
+        spots: spots,
+      backgroundColor: Colors.pink,
+    );
+  }
+
+  Widget sleepQualityPlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.sleepQuality.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Sleep quality",
+        spots: spots,
+      backgroundColor: Colors.teal //Color(0xff379982),
+    );
+  }
+
+  Widget sleepDisturbancePlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.sleepDisturbance.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Sleep disturbance",
+        spots: spots,
+      backgroundColor: Colors.green//Color(0xff81e5cd),
+    );
+  }
+
+  Widget sleepEfficiencyPlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.sleepEfficiency.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Sleep efficiency",
+        spots: spots,
+      backgroundColor: Colors.blueAccent //Color(0xff379982),
+    );
+  }
+
+  Widget sleepMedicationPlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.sleepMedication.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Sleep medication",
+        spots: spots,
+      backgroundColor: Colors.purple,
+    );
+  }
+
+  Widget dayTimeDysfunctionPlot(Iterable<SleepComponentScores> scores) {
+    List<FlSpot> spots = [];
+    for(var score in scores) {
+      var date = int.parse(DateFormat("MM").format(score.dateTaken));
+      spots.add(FlSpot(date.toDouble(), score.dayTimeDysfunction.toDouble()));
+    }
+
+    return ComponentScoresLineChart(
+        title: "Day time dysfunction",
+        spots: spots,
+      backgroundColor: Colors.amber,
     );
   }
 
@@ -518,7 +651,7 @@ class SleepRecordState extends State<SleepRecordScreen> {
           children: [
             dailySurvey(dailyRecords),
             qualityOfLifeSurvey(),
-            pSQISurvey(),
+            pSQISurvey(sleepComponentScores),
           ],
         )
         // ValueListenableBuilder(
