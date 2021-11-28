@@ -8,8 +8,8 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/sleep/PSQI.dart';
 import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
-import 'package:lbp/model/monthly/PSQIQuestion.dart';
-import 'package:lbp/model/monthly/PSQIQuestionnaire.dart';
+import 'package:lbp/model/questionnaires/monthly/PSQIQuestion.dart';
+import 'package:lbp/model/questionnaires/monthly/PSQIQuestionnaire.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -118,7 +118,10 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
               child: Padding(
                 padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
                 child: Center(
-                  child: this.answerWidget(questionnaire.getPSQIQuestion()),
+
+                  child: questionnaire.lastQuestion()
+                      ? Container()
+                      : this.answerWidget(questionnaire.getPSQIQuestion()),
                 ),
               ),
             ),
@@ -212,12 +215,17 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       setState(() {
         if (questionnaire.nextPSQIQuestion() == true) {}
       });
-    } else
+    } else if (questionnaire.getPSQIQuestion().number == "5j-i") {
+      setState(() {
+        if (questionnaire.nextPSQIQuestion() == true) {}
+      });
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("You must answer the question to proceed"),
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         duration: Duration(seconds: 1),
       ));
+    }
   }
 
   Widget answerWidget(PSQIQuestion question) {
@@ -538,6 +546,9 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   void saveLocally() async {
     List<String> values = [];
     questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
+    for(var d in values) {
+      print(d);
+    }
     var psqi = PSQI(
       timeToBed: values[0],
       timeToSleep: values[1],
@@ -558,15 +569,19 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       medicineToSleep: values[16],
       troubleStayingAwake: values[17],
       enthusiasm: values[18],
-      // partnerOrRoommate: values[19],
-      // loudSnoring: values[20],
-      // pausesInBreath: values[21],
-      // legTwitching: values[22],
-      // disorientation: values[23],
-      // restlessnessInSleep: values[24],
-      // numberOfTimesOfRestlessness: values[25],
       dateTaken: DateTime.now(),
     );
+
+    // var me = [psqi];
+
+    // for(var d in me) {
+    //   print(d.timeToBed);
+    //   print(d.timeToSleep);
+    //   print(d.wakeUpTime);
+    //   print(d.hoursSlept);
+    //   print(d.sleepIn30Mins);
+    //   print(d.wakeUpNightOrMorning);
+    // }
 
     calculateSleepComponentScore(psqi);
 

@@ -20,19 +20,20 @@ class DailyQAdapter extends TypeAdapter<DailyQ> {
       dateTaken: fields[0] as DateTime,
       sleepTime: fields[1] as DateTime,
       wakeupTime: fields[2] as DateTime,
-      timeToSleep: fields[3] as String,
       numberOfWakeupTimes: fields[4] as int,
-      wellRestedness: fields[5] as String,
       qualityOfSleep: fields[6] as int,
       painIntensity: fields[7] as int,
-      notes: fields[8] as String,
-    );
+      painAffectSleep: fields[8] as String,
+      notes: fields[9] as String,
+    )
+      ..timeToSleep = fields[3] as String
+      ..wellRestedness = fields[5] as String;
   }
 
   @override
   void write(BinaryWriter writer, DailyQ obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.dateTaken)
       ..writeByte(1)
@@ -50,6 +51,8 @@ class DailyQAdapter extends TypeAdapter<DailyQ> {
       ..writeByte(7)
       ..write(obj.painIntensity)
       ..writeByte(8)
+      ..write(obj.painAffectSleep)
+      ..writeByte(9)
       ..write(obj.notes);
   }
 

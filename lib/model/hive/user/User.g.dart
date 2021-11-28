@@ -17,58 +17,61 @@ class UserAdapter extends TypeAdapter<User> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return User(
-      nickname: fields[0] as String,
-      age: fields[1] as int,
-      gender: fields[2] as String,
-      employment: fields[3] as String,
-      academic: fields[4] as String,
-      activeLifeStyleLevel: fields[5] as double,
-      hasHadLowBackPain: fields[6] as String,
-      sciatica: fields[7] as String,
-      painIntensity: fields[8] as String,
-      hasHadBackSurgery: fields[9] as String,
-      hasHadLbpFor: fields[10] as String,
-      diagnosedOfLbp: fields[11] as String,
-      lbpTreatment: fields[12] as String,
-      date: fields[13] as String,
-      aboutMe: fields[14] as String,
+      deviceId: fields[0] as String,
+      oneSignalId: fields[1] as String,
+      nickname: fields[2] as String,
+      age: fields[3] as int,
+      gender: fields[4] as String,
+      employment: fields[5] as String,
+      academic: fields[6] as String,
+      activeLifeStyleLevel: fields[7] as double,
+      hasHadLowBackPain: fields[8] as String,
+      sciatica: fields[9] as String,
+      painIntensity: fields[10] as String,
+      hasHadBackSurgery: fields[11] as String,
+      hasHadLbpFor: fields[12] as String,
+      diagnosedOfLbp: fields[13] as String,
+      lbpTreatment: fields[14] as String,
+      date: fields[15] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
-      ..write(obj.nickname)
+      ..write(obj.deviceId)
       ..writeByte(1)
-      ..write(obj.age)
+      ..write(obj.oneSignalId)
       ..writeByte(2)
-      ..write(obj.gender)
+      ..write(obj.nickname)
       ..writeByte(3)
-      ..write(obj.employment)
+      ..write(obj.age)
       ..writeByte(4)
-      ..write(obj.academic)
+      ..write(obj.gender)
       ..writeByte(5)
-      ..write(obj.activeLifeStyleLevel)
+      ..write(obj.employment)
       ..writeByte(6)
-      ..write(obj.hasHadLowBackPain)
+      ..write(obj.academic)
       ..writeByte(7)
-      ..write(obj.sciatica)
+      ..write(obj.activeLifeStyleLevel)
       ..writeByte(8)
-      ..write(obj.painIntensity)
+      ..write(obj.hasHadLowBackPain)
       ..writeByte(9)
-      ..write(obj.hasHadBackSurgery)
+      ..write(obj.sciatica)
       ..writeByte(10)
-      ..write(obj.hasHadLbpFor)
+      ..write(obj.painIntensity)
       ..writeByte(11)
-      ..write(obj.diagnosedOfLbp)
+      ..write(obj.hasHadBackSurgery)
       ..writeByte(12)
-      ..write(obj.lbpTreatment)
+      ..write(obj.hasHadLbpFor)
       ..writeByte(13)
-      ..write(obj.date)
+      ..write(obj.diagnosedOfLbp)
       ..writeByte(14)
-      ..write(obj.aboutMe);
+      ..write(obj.lbpTreatment)
+      ..writeByte(15)
+      ..write(obj.date);
   }
 
   @override

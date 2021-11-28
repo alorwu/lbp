@@ -33,6 +33,7 @@ class OnBoardingState extends State<OnBoarding> {
   TextEditingController durationController = TextEditingController();
 
   String appId;
+  String oneSignalId;
 
   int diagnosedOfLbp = -1;
   String username;
@@ -684,6 +685,7 @@ class OnBoardingState extends State<OnBoarding> {
 
     List values = [];
     values.add(appId);
+    values.add(oneSignalId);
     values.add(nicknameController.value.text);
     values.add(ageController.value.text);
     values.add(gender);
@@ -698,7 +700,6 @@ class OnBoardingState extends State<OnBoarding> {
     values.add(diagnosedOfLbp == 0 ? "No" : "Yes");
     values.add(lbpTreatment);
     values.add(DateTime.now().toString());
-    print(values);
     try {
       var result = await sheet.values.appendRow(values);
       if (result) {
@@ -765,17 +766,22 @@ class OnBoardingState extends State<OnBoarding> {
   }
 
   Future<void> getOneSignalId() async {
-    String oneSignalId =
+    String oSignalId =
     await OneSignal.shared.getDeviceState().then((value) => value.userId);
     if(oneSignalId == null) {
       getOneSignalId();
     }
+    setState(() {
+      oneSignalId = oSignalId;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("one_signal_id", oneSignalId);
   }
 
   void saveDataLocally() async {
     var user = User(
+      deviceId: appId,
+      oneSignalId: oneSignalId,
       nickname: nicknameController.value.text,
       age: int.parse(ageController.value.text),
       gender: gender,

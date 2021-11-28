@@ -6,9 +6,9 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/daily/Question.dart';
-import 'package:lbp/model/daily/Questionnaire.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
+import 'package:lbp/model/questionnaires/daily/Question.dart';
+import 'package:lbp/model/questionnaires/daily/Questionnaire.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
@@ -241,284 +241,318 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       case "slider":
         return answerSliderWidget(question);
       case "likert":
-        return answerRadioWidget(question);
+        return answerLikertWidget(question);
       case "date_picker":
         return answerDatePickerWidget();
+      case "radio":
+        return answerRadioWidget(question);
       default:
         return answerNotesWidget();
     }
   }
 
-  Widget answerNotesWidget() {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: Center(
-        child: Container(
-          child: TextFormField(
-            initialValue: questionnaire.getQuestion().data != null ? questionnaire.getQuestion().data : "",
-            decoration: new InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      color: Colors.white, width: 1.0)),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-              ),
-              hintStyle: TextStyle(color: Colors.grey),
-              hintText: "Enter free form text here",
-              helperText: "No answer is wrong. Write freely.",
-              helperStyle: TextStyle(color: Colors.white),
+  Widget answerRadioWidget(Question question) {
+    var list = ["Sleep affected back pain", "Back pain affected sleep", "I do not know"];
+    return ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: 3,
+        itemBuilder: (BuildContext context, index) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+                unselectedWidgetColor: Colors.white,
+                disabledColor: Colors.white),
+            child: RadioListTile(
+              title: Text(
+                  '${index == 0
+                      ? list[index]
+                      : index == 1
+                      ? list[index]
+                      : list[index] }',
+                  style: TextStyle(color: Colors.white)),
+              value: "${list[index]}",
+              groupValue: question.data,
+              activeColor: Colors.white,
+              onChanged: (String value) {
+                setState(() {
+                  question.data = value;
+                });
+              },
             ),
-            keyboardType: TextInputType.text,
-            maxLines: 12,
-            onChanged: (String value) {
-              setState(() {
-                questionnaire.getQuestion().data = value;
-              });
-            },
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 
-  Widget answerDatePickerWidget() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        questionnaire.getQuestion().data != null
-            ? Text(
-                DateFormat("hh:mm a").format(DateTime.parse(questionnaire.getQuestion().data)),
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              )
-            : Container(),
-        SizedBox(
-          height: 20.0,
+    Widget answerNotesWidget() {
+      return Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Center(
+          child: Container(
+            child: TextFormField(
+              initialValue: questionnaire.getQuestion().data != null ? questionnaire.getQuestion().data : "",
+              decoration: new InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: const BorderSide(
+                        color: Colors.white, width: 1.0)),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                hintStyle: TextStyle(color: Colors.grey),
+                hintText: "Enter free form text here",
+                helperText: "No answer is wrong. Write freely.",
+                helperStyle: TextStyle(color: Colors.white),
+              ),
+              keyboardType: TextInputType.text,
+              maxLines: 12,
+              onChanged: (String value) {
+                setState(() {
+                  questionnaire.getQuestion().data = value;
+                });
+              },
+            ),
+          ),
         ),
+      );
+    }
+
+    Widget answerDatePickerWidget() {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          questionnaire.getQuestion().data != null
+              ? Text(
+            DateFormat("hh:mm a").format(DateTime.parse(questionnaire.getQuestion().data)),
+            style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: Colors.white),
+          )
+              : Container(),
+          SizedBox(
+            height: 20.0,
+          ),
           OutlinedButton.icon(
-              onPressed: () => showDate(context),
-              icon: Icon(Icons.access_alarm),
-              label: Text(questionnaire.getQuestion().data != null ? 'Change time' : 'Select time', style: TextStyle(color: Colors.white70)),
+            onPressed: () => showDate(context),
+            icon: Icon(Icons.access_alarm),
+            label: Text(questionnaire.getQuestion().data != null ? 'Change time' : 'Select time', style: TextStyle(color: Colors.white70)),
             style: OutlinedButton.styleFrom(primary: Colors.white70, side: BorderSide(color: Colors.white70)),
           ),
-      ],
-    );
-  }
+        ],
+      );
+    }
 
-  showDate(BuildContext context) async {
-    DatePicker.showTimePicker(
-      context,
-      showTitleActions: true,
-      onConfirm: (date) {
-        setState(() {
-          questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm").format(date);
-        });
-      },
-      currentTime: DateTime.now(),
-    );
-  }
+    showDate(BuildContext context) async {
+      DatePicker.showTimePicker(
+        context,
+        showTitleActions: true,
+        onConfirm: (date) {
+          setState(() {
+            questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm").format(date);
+          });
+        },
+        currentTime: DateTime.now(),
+      );
+    }
 
-  Widget answerSliderWidget(Question question) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: (this.widget.sliderHeight),
-            decoration: new BoxDecoration(
-              borderRadius: new BorderRadius.all(
-                Radius.circular((this.widget.sliderHeight * .3)),
+    Widget answerSliderWidget(Question question) {
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              height: (this.widget.sliderHeight),
+              decoration: new BoxDecoration(
+                borderRadius: new BorderRadius.all(
+                  Radius.circular((this.widget.sliderHeight * .3)),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(1.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      '${this.widget.min}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: this.widget.sliderHeight * .3,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      width: this.widget.sliderHeight * .1,
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            activeTrackColor: Colors.blue.withOpacity(1),
+                            trackHeight: 4.0,
+                            thumbShape: CustomSliderThumbCircle(
+                              thumbRadius: this.widget.sliderHeight * .4,
+                              min: this.widget.min,
+                              max: this.widget.max,
+                            ),
+                            // overlayColor: Colors.white.withOpacity(.4),
+                            activeTickMarkColor: Colors.blue,
+                            inactiveTickMarkColor: Colors.white,
+                          ),
+                          child: Slider(
+                              value: double.parse(question.data ?? "0"),
+                              min: 0,
+                              max: 10,
+                              divisions: 10,
+                              onChanged: (double value) {
+                                setState(() {
+                                  question.data = value.toInt().toString();
+                                });
+                              }),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${this.widget.max}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: this.widget.sliderHeight * .3,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Padding(
+            Padding(
               padding: EdgeInsets.all(1.0),
               child: Row(
-                children: <Widget>[
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Text(
-                    '${this.widget.min}',
+                    '${question.low}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: this.widget.sliderHeight * .3,
-                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(
-                    width: this.widget.sliderHeight * .1,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.blue.withOpacity(1),
-                          trackHeight: 4.0,
-                          thumbShape: CustomSliderThumbCircle(
-                            thumbRadius: this.widget.sliderHeight * .4,
-                            min: this.widget.min,
-                            max: this.widget.max,
-                          ),
-                          // overlayColor: Colors.white.withOpacity(.4),
-                          activeTickMarkColor: Colors.blue,
-                          inactiveTickMarkColor: Colors.white,
-                        ),
-                        child: Slider(
-                            value: double.parse(question.data ?? "0"),
-                            min: 0,
-                            max: 10,
-                            divisions: 10,
-                            onChanged: (double value) {
-                              setState(() {
-                                questionnaire.getQuestion().data = value.toInt().toString();
-                              });
-                            }),
-                      ),
-                    ),
-                  ),
                   Text(
-                    '${this.widget.max}',
+                    '${question.high}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: this.widget.sliderHeight * .3,
-                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(1.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${question.low}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: this.widget.sliderHeight * .3,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  '${question.high}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: this.widget.sliderHeight * .3,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ]);
-  }
+          ]);
+    }
 
-  Widget answerRadioWidget(Question question) => ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: 5,
-      itemBuilder: (BuildContext context, index) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-              unselectedWidgetColor: Colors.white, disabledColor: Colors.white),
-          child: RadioListTile(
-            title: Text(
-                '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
-                style: TextStyle(color: Colors.white)),
-            value: '${index + 1}',
-            groupValue: question.data,
-            activeColor: Colors.white,
-            onChanged: (String value) {
-              setState(() {
-                questionnaire.getQuestion().data = value;
-              });
-            },
-          ),
-        );
-      });
-
-  sendData() async {
-    setState(() {
-      submitButtonState = ButtonState.loading;
-    });
-    await MyPreferences.saveDateTaken(
-        DateFormat("yyyy-MM-dd").format(DateTime.now()));
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString("app_id");
-
-    List values = [];
-    questionnaire.getQuestions().forEach((e) => values.add(e.data));
-    values.insert(0, DateTime.now().millisecondsSinceEpoch.toString());
-    values.insert(1, id);
-    values.add(DateTime.now().toString());
-
-    saveDataLocally(values);
-
-    final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-    var sheet = ss.worksheetByTitle('daily_q');
-    sheet ??= await ss.addWorksheet('daily_q');
-
-    try {
-      var result = await sheet.values.appendRow(values);
-      if (result) {
-        setState(() {
-          submitButtonState = ButtonState.success;
-        });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(
-              content: Text("Your entry has been saved.",
+    Widget answerLikertWidget(Question question) => ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: 5,
+        itemBuilder: (BuildContext context, index) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+                unselectedWidgetColor: Colors.white, disabledColor: Colors.white),
+            child: RadioListTile(
+              title: Text(
+                  '${index + 1 == 1 ? " ${index + 1} ${question.low}" : index + 1 == 5 ? "${index + 1} ${question.high}" : "${index + 1}"}',
                   style: TextStyle(color: Colors.white)),
-              duration: Duration(seconds: 1),
-            ))
-            .closed
-            .then((value) {
-          Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+              value: '${index + 1}',
+              groupValue: question.data,
+              activeColor: Colors.white,
+              onChanged: (String value) {
+                setState(() {
+                  question.data = value;
+                });
+              },
+            ),
+          );
         });
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(
-              content: Text(
-                  "Unable to save data. Check your internet connection and try again.",
-                  style: TextStyle(color: Colors.red)),
-              duration: Duration(seconds: 1),
-            ))
-            .closed
-            .then((value) {
+
+    sendData() async {
+      setState(() {
+        submitButtonState = ButtonState.loading;
+      });
+      await MyPreferences.saveDateTaken(
+          DateFormat("yyyy-MM-dd").format(DateTime.now()));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var id = prefs.getString("app_id");
+
+      List values = [];
+      questionnaire.getQuestions().forEach((e) => values.add(e.data));
+      values.insert(0, DateTime.now().millisecondsSinceEpoch.toString());
+      values.insert(1, id);
+      values.add(DateTime.now().toString());
+
+      saveDataLocally(values);
+
+      final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
+      var sheet = ss.worksheetByTitle('daily_q');
+      sheet ??= await ss.addWorksheet('daily_q');
+
+      try {
+        var result = await sheet.values.appendRow(values);
+        if (result) {
+          setState(() {
+            submitButtonState = ButtonState.success;
+          });
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(
+            content: Text("Your entry has been saved.",
+                style: TextStyle(color: Colors.white)),
+            duration: Duration(seconds: 1),
+          ))
+              .closed
+              .then((value) {
+            Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+          });
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(
+            content: Text(
+                "Unable to save data. Check your internet connection and try again.",
+                style: TextStyle(color: Colors.red)),
+            duration: Duration(seconds: 1),
+          ))
+              .closed
+              .then((value) {
             setState(() {
               submitButtonState = ButtonState.fail;
             });
+          });
+        }
+      } catch (exp) {
+        setState(() {
+          submitButtonState = ButtonState.fail;
         });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("An error occurred. Please try again.",
+              style: TextStyle(color: Colors.red)),
+          duration: Duration(seconds: 1),
+        ));
       }
-    } catch (exp) {
-      setState(() {
-        submitButtonState = ButtonState.fail;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("An error occurred. Please try again.",
-            style: TextStyle(color: Colors.red)),
-        duration: Duration(seconds: 1),
-      ));
+    }
+
+    void saveDataLocally(List<dynamic> values) async {
+      var dailyQ = DailyQ(
+          dateTaken: DateTime.now(),
+          sleepTime: DateTime.parse(values[2]),
+          wakeupTime: DateTime.parse(values[3]),
+          numberOfWakeupTimes: int.parse(values[4]),
+          qualityOfSleep: int.parse(values[5]),
+          painIntensity: int.parse(values[6]),
+          painAffectSleep: values[7],
+          notes: values[8]);
+      Box<DailyQ> box = Hive.box("dailyBox");
+      await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
     }
   }
 
-  void saveDataLocally(List<dynamic> values) async {
-    var dailyQ = DailyQ(
-        dateTaken: DateTime.now(),
-        sleepTime: DateTime.parse(values[2]),
-        wakeupTime: DateTime.parse(values[3]),
-        timeToSleep: values[4],
-        numberOfWakeupTimes: int.parse(values[5]),
-        wellRestedness: values[6],
-        qualityOfSleep: int.parse(values[7]),
-        painIntensity: int.parse(values[8]),
-        notes: values[9]);
-    Box<DailyQ> box = Hive.box("dailyBox");
-    await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
-  }
-}

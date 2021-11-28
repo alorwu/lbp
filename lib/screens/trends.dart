@@ -317,7 +317,7 @@ class TrendScreenState extends State<TrendScreen> {
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                     child: plotBarChartWith(
                       sleepQualityBarChartWeekData,
                       "Sleep score",
@@ -334,7 +334,7 @@ class TrendScreenState extends State<TrendScreen> {
                 Expanded(
                   flex: 2,
                   child: Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                         child: SleepTimeChart(
                             data: sleepDurationBarChartWeekData,
                             title: "Sleep duration"
@@ -628,7 +628,7 @@ class TrendScreenState extends State<TrendScreen> {
                   Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: EdgeInsets.all(10),
+                      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                       child: plotBarChartWith(
                           sleepQualityBarChartMonthData,
                           "Sleep score",
@@ -645,7 +645,7 @@ class TrendScreenState extends State<TrendScreen> {
                   Expanded(
                     flex: 2,
                     child: Padding(
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                           child: SleepTimeChart(
                             data: sleepDurationBarChartMonthData,
                             title: "Sleep duration",
@@ -1142,7 +1142,7 @@ class TrendScreenState extends State<TrendScreen> {
 
   Widget plotBarChartWith(List<BarChartGroupData> data, String title) {
     return AspectRatio(
-      aspectRatio: 1.5,
+      aspectRatio: 1.7,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)),

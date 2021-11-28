@@ -5,52 +5,57 @@ part 'User.g.dart';
 @HiveType(typeId: 0)
 class User {
   @HiveField(0)
-  String nickname;
+  String deviceId;
 
   @HiveField(1)
-  int age;
+  String oneSignalId;
 
   @HiveField(2)
-  String gender;
+  String nickname;
 
   @HiveField(3)
-  String employment;
+  int age;
 
   @HiveField(4)
-  String academic;
+  String gender;
 
   @HiveField(5)
-  double activeLifeStyleLevel;
+  String employment;
 
   @HiveField(6)
-  String hasHadLowBackPain;
+  String academic;
 
   @HiveField(7)
-  String sciatica;
+  double activeLifeStyleLevel;
 
   @HiveField(8)
-  String painIntensity;
+  String hasHadLowBackPain;
 
   @HiveField(9)
-  String hasHadBackSurgery;
+  String sciatica;
 
   @HiveField(10)
-  String hasHadLbpFor;
+  String painIntensity;
 
   @HiveField(11)
-  String diagnosedOfLbp;
+  String hasHadBackSurgery;
 
   @HiveField(12)
-  String lbpTreatment;
+  String hasHadLbpFor;
 
   @HiveField(13)
-  String date;
+  String diagnosedOfLbp;
 
   @HiveField(14)
-  String aboutMe;
+  String lbpTreatment;
+
+  @HiveField(15)
+  String date;
 
 
   User({
+    this.deviceId,
+    this.oneSignalId,
     this.nickname,
     this.age,
     this.gender,
@@ -65,7 +70,6 @@ class User {
     this.diagnosedOfLbp,
     this.lbpTreatment,
     this.date,
-    this.aboutMe,
   });
 
 }

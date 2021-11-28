@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:lbp/screens/rss/rssfeed_screen.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
-import 'package:lbp/screens/settings/profile.dart';
 import 'package:lbp/screens/settings/setttings_screen.dart';
 
 class MoreScreen extends StatefulWidget {

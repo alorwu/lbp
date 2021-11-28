@@ -1,4 +1,5 @@
-import 'package:lbp/model/monthly/PSQIQuestion.dart';
+
+import 'PSQIQuestion.dart';
 
 class PSQIQuestionnaire {
 
@@ -212,6 +213,18 @@ class PSQIQuestionnaire {
         subtitle: '',
         status: false,
         type: 'likert',
+        notInPastMonth: 'No problem at all',
+        lessThanOnceAWeek: 'Only a very slight problem',
+        onceOrTwiceAWeek: 'Somewhat of a problem',
+        threeOrMoreAWeek: 'A very big problem',
+        data: null
+    ),
+    PSQIQuestion(
+        number: '10',
+        question: 'You have completed this survey. Click submit to save and see your results.',
+        subtitle: '',
+        status: false,
+        type: 'empty',
         notInPastMonth: 'No problem at all',
         lessThanOnceAWeek: 'Only a very slight problem',
         onceOrTwiceAWeek: 'Somewhat of a problem',

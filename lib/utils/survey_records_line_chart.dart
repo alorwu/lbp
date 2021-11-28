@@ -174,7 +174,7 @@ class ComponentScoresLineChart extends StatelessWidget {
         colors: [backgroundColor],
         barWidth: 6,
         isStrokeCapRound: true,
-        dotData: FlDotData(show: false),
+        dotData: FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: this.spots
       );

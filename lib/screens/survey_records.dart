@@ -454,7 +454,7 @@ class SurveyRecordState extends State<SurveyRecordScreen> {
   }
 
   Widget dailySurvey(Box<DailyQ> list) {
-    if (list.isNotEmpty) {
+    if (list != null && list.isNotEmpty) {
       return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, listIndex) {
@@ -488,18 +488,16 @@ class SurveyRecordState extends State<SurveyRecordScreen> {
   }
 
   Widget pSQISurvey(Box<SleepComponentScores> scores) {
-    return SingleChildScrollView(
-        child: ValueListenableBuilder(
-          valueListenable: scores.listenable(),
-          builder: (context, Box<SleepComponentScores> box, _) {
-            if (scores.isNotEmpty) {
-              return sleepPlots(scores.values);
-            } else {
-              return emptyPSQICard();
-            }
-          },
-        ),
-    );
+    if (scores != null && scores.isNotEmpty) {
+      return SingleChildScrollView(
+          child: ValueListenableBuilder(
+            valueListenable: scores.listenable(),
+            builder: (context, Box<SleepComponentScores> box, _) => sleepPlots(scores.values),
+          ),
+      );
+    } else {
+      return emptyPSQICard();
+    }
   }
 
   Widget sleepPlots(Iterable<SleepComponentScores> scores) {

@@ -30,17 +30,19 @@ class DailyQ {
   int painIntensity;
 
   @HiveField(8)
+  String painAffectSleep;
+
+  @HiveField(9)
   String notes;
 
   DailyQ({
     this.dateTaken,
     this.sleepTime,
     this.wakeupTime,
-    this.timeToSleep,
     this.numberOfWakeupTimes,
-    this.wellRestedness,
     this.qualityOfSleep,
     this.painIntensity,
+    this.painAffectSleep,
     this.notes
   });
 
