@@ -40,7 +40,7 @@ class OnBoardingState extends State<OnBoarding> {
   String appId;
   String oneSignalId;
 
-  int diagnosedOfLbp = -1;
+  String diagnosedOfLbp;
   String username;
   String gender;
   String employment;
@@ -61,6 +61,7 @@ class OnBoardingState extends State<OnBoarding> {
   var fullWidth = false;
 
   var consentCheck = false;
+  var diagnosedOfLbpByDoctor = ["No", "Yes"];
 
   double sliderValue = 0;
 
@@ -503,26 +504,28 @@ class OnBoardingState extends State<OnBoarding> {
                           'Have you been clinically diagnosed with Low Back Pain by a doctor?',
                           style: TextStyle(color: Colors.blue),
                         ),
-                          RadioListTile(
-                            title: Text('No'),
-                            value: 0,
-                            groupValue: diagnosedOfLbp,
-                            onChanged: (int value) {
-                              setState(() {
-                                diagnosedOfLbp = value;
-                              });
-                            },
-                        ),
-                          RadioListTile(
-                            title: Text('Yes'),
-                            value: 1,
-                            groupValue: diagnosedOfLbp,
-                            onChanged: (int value) {
-                              setState(() {
-                                diagnosedOfLbp = value;
-                              });
-                            },
-                        ),
+                        //   RadioListTile(
+                        //     title: Text('No'),
+                        //     value: 0,
+                        //     groupValue: diagnosedOfLbp,
+                        //     onChanged: (int value) {
+                        //       setState(() {
+                        //         diagnosedOfLbp = value;
+                        //       });
+                        //     },
+                        // ),
+                        //   RadioListTile(
+                        //     title: Text('Yes'),
+                        //     value: 1,
+                        //     groupValue: diagnosedOfLbp,
+                        //     onChanged: (int value) {
+                        //       setState(() {
+                        //         diagnosedOfLbp = value;
+                        //       });
+                        //     },
+                        // ),
+
+                      radioWidget(),
                       ],
                     ),
                   ),
@@ -543,7 +546,7 @@ class OnBoardingState extends State<OnBoarding> {
                       helperText: "No answer is wrong. Write freely.",
                       helperStyle: TextStyle(color: Colors.grey),
                       errorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: BorderSide(color: Colors.red),
                       ),
                       focusedErrorBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
@@ -555,12 +558,6 @@ class OnBoardingState extends State<OnBoarding> {
                       setState(() {
                         lbpTreatment = value;
                       });
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return "Tell us how you treat or maintain your low back pain";
-                      }
-                      return null;
                     },
                   ),
                   SizedBox(height: 20.0),
@@ -648,21 +645,48 @@ class OnBoardingState extends State<OnBoarding> {
     );
   }
 
+  Widget radioWidget() {
+    return ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: 2,
+        itemBuilder: (BuildContext context, index) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+                unselectedWidgetColor: Colors.grey,),
+            child: RadioListTile(
+              title: Text(
+                  '${index == 0 ? diagnosedOfLbpByDoctor[index] : diagnosedOfLbpByDoctor[index]}',
+                  style: TextStyle(color: Colors.black),
+              ),
+              value: "${diagnosedOfLbpByDoctor[index]}",
+              groupValue: "$diagnosedOfLbp",
+              activeColor: Colors.blue,
+              onChanged: (String value) {
+                setState(() {
+                  diagnosedOfLbp = value;
+                });
+              },
+            ),
+          );
+        });
+  }
+
   validateAndSend() {
-    if (_formKey.currentState.validate()) {
       if (activeLifeStyleLevel < 0) {
         // If user doesn't touch slider, use default of 0
         setState(() {
-          sliderValue = 0.0;
+          activeLifeStyleLevel = 0.0;
         });
         // showSnackBar('Please select an answer on how active is your lifestyle', context);
-      } else if (diagnosedOfLbp < 0) {
+      }
+      if (diagnosedOfLbp == null || diagnosedOfLbp == "null") {
         showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
-      } else {
+      } else if (_formKey.currentState.validate()) {
         sendData(context);
       }
-    }
   }
+
   showSnackBar(String message, BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
@@ -702,14 +726,14 @@ class OnBoardingState extends State<OnBoarding> {
     values.add(painIntensity);
     values.add(hasHadBackSurgery);
     values.add(durationController.value.text);
-    values.add(diagnosedOfLbp == 0 ? "No" : "Yes");
+    values.add(diagnosedOfLbp);
     values.add(lbpTreatment);
     values.add(DateTime.now().toString());
     try {
       var defaultNotificationTimeString = "07:00";
       var result = await sheet.values.appendRow(values);
       if (result) {
-        await registerUser(defaultNotificationTimeString);
+        await registerUser(defaultNotificationTimeString.substring(0,2));
         await MyPreferences.updateOnboarding(false);
         await MyPreferences.saveNotificationTime(defaultNotificationTimeString);
         ScaffoldMessenger.of(context)
