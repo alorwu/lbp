@@ -497,35 +497,13 @@ class OnBoardingState extends State<OnBoarding> {
                   ),
                   SizedBox(height: 20.0),
                   Container(
-                    // padding: EdgeInsets.fr(10.0),
                     child: Column(
                       children: <Widget>[
                         Text(
                           'Have you been clinically diagnosed with Low Back Pain by a doctor?',
                           style: TextStyle(color: Colors.blue),
                         ),
-                        //   RadioListTile(
-                        //     title: Text('No'),
-                        //     value: 0,
-                        //     groupValue: diagnosedOfLbp,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         diagnosedOfLbp = value;
-                        //       });
-                        //     },
-                        // ),
-                        //   RadioListTile(
-                        //     title: Text('Yes'),
-                        //     value: 1,
-                        //     groupValue: diagnosedOfLbp,
-                        //     onChanged: (int value) {
-                        //       setState(() {
-                        //         diagnosedOfLbp = value;
-                        //       });
-                        //     },
-                        // ),
-
-                      radioWidget(),
+                        radioWidget(),
                       ],
                     ),
                   ),
