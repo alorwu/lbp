@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lbp/model/hive/qol/QoLScore.dart';
 import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
 import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
 import 'package:lbp/screens/onBoarding.dart';
@@ -14,25 +15,27 @@ import 'model/hive/qol/QoL.dart';
 import 'model/hive/sleep/PSQI.dart';
 import 'model/hive/user/User.dart';
 
-void initializeHiveDependencies() async {
+Future<void> initializeHiveDependencies() async {
   await Hive.initFlutter();
   Hive.registerAdapter(DailyQAdapter());
   Hive.registerAdapter(UserAdapter());
   Hive.registerAdapter(PSQIAdapter());
   Hive.registerAdapter(QoLAdapter());
   Hive.registerAdapter(SleepComponentScoresAdapter());
+  Hive.registerAdapter(QoLScoreAdapter());
 
   await Hive.openBox<DailyQ>("dailyBox");
   await Hive.openBox<User>("userBox");
   await Hive.openBox<PSQI>("psqiBox");
   await Hive.openBox<QoL>("qolBox");
   await Hive.openBox<SleepComponentScores>("psqiScore");
+  await Hive.openBox<QoLScore>("qolScoreBox");
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  initializeHiveDependencies();
+  await initializeHiveDependencies();
 
   await Firebase.initializeApp();
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);

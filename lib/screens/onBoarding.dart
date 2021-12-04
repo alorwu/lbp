@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/user/User.dart';
 import 'package:lbp/screens/settings/consent.dart';
 import 'package:lbp/screens/settings/privacy_policy.dart';
@@ -17,6 +19,9 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
+
 
 import '../env/.env.dart';
 
@@ -701,10 +706,12 @@ class OnBoardingState extends State<OnBoarding> {
     values.add(lbpTreatment);
     values.add(DateTime.now().toString());
     try {
+      var defaultNotificationTimeString = "07:00";
       var result = await sheet.values.appendRow(values);
       if (result) {
+        await registerUser(defaultNotificationTimeString);
         await MyPreferences.updateOnboarding(false);
-        await MyPreferences.saveNotificationTime("07:00");
+        await MyPreferences.saveNotificationTime(defaultNotificationTimeString);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
               content: Text(
@@ -776,6 +783,23 @@ class OnBoardingState extends State<OnBoarding> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("one_signal_id", oneSignalId);
+  }
+
+  Future<http.Response> registerUser(String segment) async {
+    var now = DateTime.now();
+    var d = DateTime(now.year, now.month, now.day, int.parse(segment)).toUtc();
+    segment = DateFormat("HH").format(d);
+    return http.post(
+      Uri.parse('${environment['remote_url']}/api/users'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'id': this.appId,
+        'playerId': this.oneSignalId,
+        'segment': segment
+      }),
+    );
   }
 
   void saveDataLocally() async {

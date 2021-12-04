@@ -1,13 +1,19 @@
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lbp/utils/MyPreferences.dart';
+import 'package:intl/intl.dart';
 import 'package:preferences/preference_page.dart';
 import 'package:preferences/preference_title.dart';
 import 'package:preferences/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:http/http.dart' as http;
+
+import '../../env/.env.dart';
 
 import 'about.dart';
 import 'donate_data.dart';
@@ -24,7 +30,6 @@ class MapScreenState extends State<SettingsScreen> {
   String appId;
   String oneSignalPlayerId;
   String time;
-  // String dropdownValue = 'One';
 
   @override
   void initState() {
@@ -85,7 +90,7 @@ class MapScreenState extends State<SettingsScreen> {
                   this.time = newValue;
                 });
                 saveSelectedTime(newValue);
-                var res = await MyPreferences.saveNotificationTimeOnBackend(newValue.substring(0, 2), appId);
+                var res = await saveNotificationTimeOnBackend(newValue.substring(0, 2), appId);
                 if (res.statusCode == 200) {
                   this.showSnackBar(context, newValue);
                 }
@@ -198,18 +203,20 @@ class MapScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  // Future<http.Response> saveNotificationTimeOnBackend(String time)  async {
-  //   return http.put(
-  //     '${environment['remote_url']}/api/users/${this.appId}',
-  //     // 'http://10.0.2.2:8080/api/users/${this.appId}',
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode({
-  //       'segment': time
-  //     }),
-  //   );
-  // }
+  static Future<http.Response> saveNotificationTimeOnBackend(String time, String appId)  async {
+    var now = DateTime.now();
+    var d = DateTime(now.year, now.month, now.day, int.parse(time)).toUtc();
+    time = DateFormat("HH").format(d);
+    return http.put(
+      Uri.parse('${environment['remote_url']}/api/users/$appId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'segment': time
+      }),
+    );
+  }
 
   void saveSelectedTime(String time) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

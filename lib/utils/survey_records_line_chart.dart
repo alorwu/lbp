@@ -1,17 +1,20 @@
 import 'package:fl_chart/fl_chart.dart';
-import './color_extensions.dart';
 import 'package:flutter/material.dart';
+
+import './color_extensions.dart';
 
 class ComponentScoresLineChart extends StatelessWidget {
   const ComponentScoresLineChart({
     this.title,
     this.spots,
     this.backgroundColor,
+    this.toolTip,
   });
 
   final String title;
   final List spots;
   final Color backgroundColor;
+  final String toolTip;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class ComponentScoresLineChart extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: backgroundColor.darken(), //Color(0xff81e5cd),
+          color: backgroundColor.darken(),
         ),
         child: Stack(
           children: <Widget>[
@@ -30,16 +33,35 @@ class ComponentScoresLineChart extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child: Tooltip(
+                        margin: EdgeInsets.fromLTRB(24, 0, 24, 0),
+                        padding: EdgeInsets.all(10.0),
+                        message: toolTip,
+                        triggerMode: TooltipTriggerMode.tap,
+                        verticalOffset: 30,
+                        child: Icon(
+                            Icons.info,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 20,

@@ -96,7 +96,7 @@ class QoLQuestionnaire {
     ),
     QoLQuestion(
         number: '9',
-        question: 'How would you rate your fatigue on average?',
+        question: 'In the past 7 days, how would you rate your fatigue on average?',
         type: 'likert',
         data: null,
         one: 'Very severe',
@@ -107,7 +107,7 @@ class QoLQuestionnaire {
     ),
     QoLQuestion(
         number: '10',
-        question: 'How would you rate your pain on average?',
+        question: 'In the past 7 days, how would you rate your pain on average?',
         type: 'slider',
         data: '0',
         low: 'No pain',

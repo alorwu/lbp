@@ -252,11 +252,11 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   Widget answerRadioWidget(Question question) {
-    var list = ["Sleep affected back pain", "Back pain affected sleep", "I do not know"];
+    var list = ["Both affected each other", "Sleep affected back pain", "Back pain affected sleep", "Neither sleep nor pain affected the other", "I do not know"];
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: 3,
+        itemCount: 5,
         itemBuilder: (BuildContext context, index) {
           return Theme(
             data: Theme.of(context).copyWith(
@@ -267,6 +267,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   '${index == 0
                       ? list[index]
                       : index == 1
+                      ? list[index]
+                  : index == 2
+                      ? list[index]
+                  : index == 3
                       ? list[index]
                       : list[index] }',
                   style: TextStyle(color: Colors.white)),

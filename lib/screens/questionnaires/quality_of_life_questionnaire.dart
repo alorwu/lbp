@@ -8,6 +8,7 @@ import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/qol/QoL.dart';
+import 'package:lbp/model/hive/qol/QoLScore.dart';
 import 'package:lbp/model/questionnaires/monthly/QoLQuestion.dart';
 import 'package:lbp/model/questionnaires/monthly/QoLQuestionnaire.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
@@ -480,6 +481,8 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       dateTaken: DateTime.now()
     );
 
+    calculateQoLScore(qol);
+
     Box<QoL> box;
     var isBoxOpened = Hive.isBoxOpen("qolBox");
     if (isBoxOpened) {
@@ -488,5 +491,111 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       box = await Hive.openBox("qolBox");
     }
     await box.put(DateFormat("yyyy-MM").format(DateTime.now()), qol);
+  }
+
+  void calculateQoLScore(QoL qol) async {
+    int global03 = poorToExcellentResponse(qol.physicalHealth);
+    int global07 = notAtAllToCompletely(qol.carryOutPhysicalActivities);
+    int global09 = severeToNone(qol.fatigue);
+    int global10 = calculatePain(qol.pain);
+
+    int global02 = poorToExcellentResponse(qol.qualityOfLife);
+    int global04 = poorToExcellentResponse(qol.mentalHealth);
+    int global05 = poorToExcellentResponse(qol.socialSatisfaction);
+    int global08 = alwaysToNever(qol.emotionalProblems);
+
+    int globalPhysicalHealth = global03 + global07 + global09 + global10;
+    int globalMentalHealth = global02 + global04 + global05 + global08;
+
+    var qolScore = QoLScore(
+      physicalHealth: globalPhysicalHealth,
+      mentalHealth: globalMentalHealth,
+      dateTaken: DateTime.now(),
+    );
+
+    Box<QoLScore> box;
+    var isBoxOpened = Hive.isBoxOpen("qolScoreBox");
+    if (isBoxOpened) {
+      box = Hive.box("qolScoreBox");
+    } else {
+      box = await Hive.openBox("qolScoreBox");
+    }
+    await box.put(DateFormat("yyyy-MM").format(DateTime.now()), qolScore);
+  }
+
+  int poorToExcellentResponse(String str) {
+    switch (str.trim()) {
+      case "Poor":
+        return 1;
+      case "Fair":
+        return 2;
+      case "Good":
+        return 3;
+      case "Very good":
+        return 4;
+      default:
+        return 5;
+    }
+  }
+
+  int notAtAllToCompletely(String str) {
+    switch (str.trim()) {
+      case "Not at all":
+        return 1;
+      case "A little":
+        return 2;
+      case "Moderately":
+        return 3;
+      case "Mostly":
+        return 4;
+      default:
+        return 5;
+    }
+  }
+
+  int alwaysToNever(String str) {
+    switch (str.trim()) {
+      case "Always":
+        return 1;
+      case "Often":
+        return 2;
+      case "Sometimes":
+        return 3;
+      case "Rarely":
+        return 4;
+      default:
+        return 5;
+    }
+  }
+
+  int severeToNone(String str) {
+    switch (str.trim()) {
+      case "Very severe":
+        return 1;
+      case "Severe":
+        return 2;
+      case "Moderate":
+        return 3;
+      case "Mild":
+        return 4;
+      default:
+        return 5;
+    }
+  }
+
+  int calculatePain(String str) {
+    switch(str.trim()) {
+      case "0": return 5;
+      case "1": return 4;
+      case "2": return 4;
+      case "3": return 4;
+      case "4": return 3;
+      case "5": return 3;
+      case "6": return 3;
+      case "7": return 2;
+      case "8": return 2;
+      case "9": return 2;
+      default: return 1;
+    }
   }
 }

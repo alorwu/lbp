@@ -1250,7 +1250,7 @@ class TrendScreenState extends State<TrendScreen> {
     var sleepDurationData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(month.add(Duration(days: index)))), 0));
 
     for(var d in sleepDurationData) {
-      for(var x in weekData) {
+      for(var x in monthData) {
         if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
           d.value = int.parse(x.sleepPeriod[0]) + double.parse((double.parse(x.sleepPeriod[1])/60).toStringAsFixed(2));
           break;
