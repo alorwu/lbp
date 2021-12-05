@@ -108,9 +108,15 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                 decorator: DotsDecorator(
                     size: Size.square(12),
                     activeSize: Size(15, 15),
-                    activeColor: Colors.white70, //Theme.of(context).primaryColor,
-                    color: Colors.black54 //Theme.of(context).disabledColor,
+                    activeColor: Colors.white70,
+                    color: Colors.black54,
                 ),
+              ),
+            ),
+            Center(
+              child: Text(
+                "${questionnaire.questionNumber() + 1} / ${questionnaire.getQuestionnaireLength().toString()}",
+                style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
             Expanded(

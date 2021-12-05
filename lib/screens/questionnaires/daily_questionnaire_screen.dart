@@ -98,6 +98,12 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   ),
                 ),
               ),
+              Center(
+                child: Text(
+                  "${questionnaire.questionNumber() + 1} / ${questionnaire.getQuestionnaireLength().toString()}",
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+              ),
               SizedBox(
                 height: 24,
               ),

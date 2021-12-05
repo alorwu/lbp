@@ -85,13 +85,19 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
                   dotsCount: questionnaire.getQuestionnaireLength(),
                   position: questionnaire.getPSQIQuestionNumber().toDouble(),
                   decorator: DotsDecorator(
-                      size: Size.square(12),
-                      activeSize: Size(15, 15),
-                      activeColor: Colors.white70,
-                      color: Colors.black54 //Theme.of(context).disabledColor,
-                      ),
+                    size: Size.square(12),
+                    activeSize: Size(15, 15),
+                    activeColor: Colors.white70,
+                    color: Colors.black54,
+                  ),
                 ),
                 scrollDirection: Axis.horizontal,
+              ),
+            ),
+            Center(
+              child: Text(
+                "${questionnaire.getPSQIQuestionNumber() + 1} / ${questionnaire.getQuestionnaireLength().toString()}",
+                style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
             SizedBox(
@@ -309,21 +315,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
           '22:00',
           '23:00'
         ];
-        // time = [
-        //   '00:00',
-        //   '01:00',
-        //   '02:00',
-        //   '03:00',
-        //   '04:00',
-        //   '05:00',
-        //   '06:00',
-        //   '07:00',
-        //   '08:00',
-        //   '09:00',
-        //   '10:00',
-        //   '11:00',
-        //   '12:00+'
-        // ];
         break;
       case 'HOURS OF SLEEP PER NIGHT':
         time = [
@@ -352,21 +343,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
           "23 hours",
           "24 hours"
         ];
-        // time = [
-        //   "1 hour",
-        //   "2 hours",
-        //   "3 hours",
-        //   "4 hours",
-        //   "5 hours",
-        //   "6 hours",
-        //   "7 hours",
-        //   "8 hours",
-        //   "9 hours",
-        //   "10 hours",
-        //   "11 hours",
-        //   "12 hours",
-        //   "13+ hours"
-        // ];
         break;
       default:
     }
