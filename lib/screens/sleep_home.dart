@@ -55,7 +55,6 @@ class SleepHomeState extends State<SleepHome> {
     OneSignal.shared.setAppId(environment['onesignal_app_id']);
 
     OneSignal.shared.setNotificationOpenedHandler((openedResult) {
-      // MyPreferences.checkAndDisplayNotificationToday();
     });
 
     OneSignal.shared.setInAppMessageClickedHandler((action) async {
@@ -120,12 +119,12 @@ class SleepHomeState extends State<SleepHome> {
 
     var hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good morning $nickname';
+      return 'Good morning, $nickname';
     }
     if (hour < 17) {
-      return 'Good afternoon $nickname';
+      return 'Good afternoon, $nickname';
     }
-    return 'Good evening $nickname';
+    return 'Good evening, $nickname';
   }
 
   void _getTime() {
@@ -148,8 +147,6 @@ class SleepHomeState extends State<SleepHome> {
   Future<String> getPlayerId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String playerId = prefs.getString("one_signal_id");
-    // String playerId =
-    //     await OneSignal.shared.getDeviceState().then((value) => value.userId);
     setState(() {
       oneSignalPlayerId = playerId;
     });

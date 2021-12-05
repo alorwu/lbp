@@ -51,7 +51,7 @@ void main() async {
   }
 
   runApp(new MaterialApp(
-    title: 'Sleep Better with Back Pain',
+    title: 'SloPain',
     theme: ThemeData(
       primaryColor: Colors.black,
       visualDensity: VisualDensity.adaptivePlatformDensity,
