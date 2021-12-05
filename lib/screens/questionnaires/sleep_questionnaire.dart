@@ -522,9 +522,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   void saveLocally() async {
     List<String> values = [];
     questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
-    for(var d in values) {
-      print(d);
-    }
     var psqi = PSQI(
       timeToBed: values[0],
       timeToSleep: values[1],
@@ -548,17 +545,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       dateTaken: DateTime.now(),
     );
 
-    // var me = [psqi];
-
-    // for(var d in me) {
-    //   print(d.timeToBed);
-    //   print(d.timeToSleep);
-    //   print(d.wakeUpTime);
-    //   print(d.hoursSlept);
-    //   print(d.sleepIn30Mins);
-    //   print(d.wakeUpNightOrMorning);
-    // }
-
     calculateSleepComponentScore(psqi);
 
     Box<PSQI> box;
@@ -579,13 +565,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     int sleepDurationComponent = sleepDuration(psqi.hoursSlept);
     int sleepLatencyComponent = sleepLatency(psqi);
     int sleepQualityComponent = sleepQuality(psqi.sleepQuality);
-    print("Quality: $sleepQualityComponent");
-    print("Latency: $sleepLatencyComponent");
-    print("Duration: $sleepDurationComponent");
-    print("Efficiency: $sleepEfficiencyComponent");
-    print("Disturbance: $sleepDisturbanceComponent");
-    print("Medication: $sleepMedicationComponent");
-    print("Day time dysfunction: $dayTimeDysfunctionComponent");
 
     int pSQIScore = dayTimeDysfunctionComponent +
         sleepMedicationComponent +
@@ -648,7 +627,6 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     }
 
     int sum = q8 + q9;
-    print("Sum of q8 and q9: $sum");
     if (sum == 0)
       return 0;
     else if (sum <= 2)

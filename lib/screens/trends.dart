@@ -1,5 +1,4 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/extensions/color_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,9 +16,9 @@ class TrendScreen extends StatefulWidget {
 
 class TrendScreenState extends State<TrendScreen> {
   Box<DailyQ> box;
-  List<DailyQ> weekData;
-  List<DailyQ> monthData;
-  List<DailyQ> allData;
+  List<DailyQ> weekData = [];
+  List<DailyQ> monthData = [];
+  List<DailyQ> allData =[];
 
   List<BarChartGroupData> sleepQualityBarChartWeekData = [];
   List<BarChartGroupData> sleepQualityBarChartMonthData = [];
@@ -38,22 +37,31 @@ class TrendScreenState extends State<TrendScreen> {
   var avgAllSleepTime;
   var avgAllWakeTime;
 
-  var now = new DateTime.now();
-
+  var now;
   var week;
   var month;
 
   @override
   initState() {
     super.initState();
+    now = new DateTime.now();
     firstDayOfWeek = DateTime(now.year, now.month, now.day).subtract(new Duration(days: now.weekday)).add(Duration(days: 1));
     month = DateTime(now.year, now.month, 1);
 
     box = Hive.box('dailyBox');
     allData = box.values.toList();
-    weekData = allData.where((element) => element.dateTaken.isAfter(firstDayOfWeek)).toList();
-
-    monthData = allData.where((element) => element.sleepTime.isAfter(month)).toList();
+    weekData = allData
+        .where((element) => element.dateTaken.isAfter(firstDayOfWeek))
+        .toList()
+        .where(
+            (e) => e.dateTaken.isBefore(firstDayOfWeek.add(Duration(days: 8))))
+        .toList();
+    monthData = allData
+        .where((element) => element.sleepTime.isAfter(month))
+        .toList()
+        .where(
+            (e) => e.sleepTime.isBefore(DateTime(now.year, now.month + 1, 1)))
+        .toList();
 
     avgWeekSleepTime = averageSleepDateTime(weekData);
     avgWeekWakeTime = averageWakeDateTime(weekData);
@@ -343,37 +351,6 @@ class TrendScreenState extends State<TrendScreen> {
                 ),
               ],
             ),
-            //
-            // // Row 5
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Expanded(
-            //       flex: 2,
-            //       child: Card(
-            //           elevation: 3.0,
-            //           color: Color(0xff1F1F1F),
-            //           shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10)),
-            //           margin: EdgeInsets.all(8),
-            //           child: Padding(
-            //             padding: EdgeInsets.all(10),
-            //             child: Column(
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 Text("Wake up at",
-            //                     style: TextStyle(color: Colors.white)),
-            //                 SizedBox(height: 10),
-            //                 Container(
-            //                   color: Colors.greenAccent,
-            //                   height: 200.0,
-            //                 )
-            //               ],
-            //             ),
-            //           )),
-            //     ),
-            //   ],
-            // )
           ],
         ),
       );
@@ -654,37 +631,6 @@ class TrendScreenState extends State<TrendScreen> {
                   ),
                 ],
               ),
-
-              // // Row 5
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       flex: 2,
-              //       child: Card(
-              //           elevation: 3.0,
-              //           color: Color(0xff1F1F1F),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(10)),
-              //           margin: EdgeInsets.all(8),
-              //           child: Padding(
-              //             padding: EdgeInsets.all(10),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text("Wake up at",
-              //                     style: TextStyle(color: Colors.white)),
-              //                 SizedBox(height: 10),
-              //                 Container(
-              //                   color: Colors.greenAccent,
-              //                   height: 200.0,
-              //                 )
-              //               ],
-              //             ),
-              //           )),
-              //     ),
-              //   ],
-              // )
             ],
           ),
         );
@@ -921,85 +867,6 @@ class TrendScreenState extends State<TrendScreen> {
                   ),
                 ],
               ),
-
-              // Row 3
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       flex: 2,
-              //       child: Padding(
-              //             padding: EdgeInsets.all(10),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //               ],
-              //             ),
-              //           ),
-              //     ),
-              //   ],
-              // ),
-
-              // // Row 4
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       flex: 2,
-              //       child: Card(
-              //           elevation: 3.0,
-              //           color: Color(0xff1F1F1F),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(10)),
-              //           margin: EdgeInsets.all(8),
-              //           child: Padding(
-              //             padding: EdgeInsets.all(10),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text("Sleep at", style: TextStyle(color: Colors.white)),
-              //                 SizedBox(height: 10),
-              //                 Container(
-              //                   color: Colors.blueAccent,
-              //                   height: 200.0,
-              //                 )
-              //               ],
-              //             ),
-              //           )),
-              //     ),
-              //   ],
-              // ),
-              //
-              // // Row 5
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       flex: 2,
-              //       child: Card(
-              //           elevation: 3.0,
-              //           color: Color(0xff1F1F1F),
-              //           shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(10)),
-              //           margin: EdgeInsets.all(8),
-              //           child: Padding(
-              //             padding: EdgeInsets.all(10),
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text("Wake up at",
-              //                     style: TextStyle(color: Colors.white)),
-              //                 SizedBox(height: 10),
-              //                 Container(
-              //                   color: Colors.greenAccent,
-              //                   height: 200.0,
-              //                 )
-              //               ],
-              //             ),
-              //           )),
-              //     ),
-              //   ],
-              // )
             ],
           ),
         );
