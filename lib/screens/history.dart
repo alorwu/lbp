@@ -15,16 +15,16 @@ import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
 import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
 import 'package:lbp/utils/survey_records_line_chart.dart';
 
-class SurveyRecordScreen extends StatefulWidget {
+class SurveyHistoryScreen extends StatefulWidget {
   @override
-  SurveyRecordState createState() => SurveyRecordState();
+  SurveyHistoryState createState() => SurveyHistoryState();
 }
 
 const DATE_FORMAT_DAY = "yMMMMd";
 const DATE_FORMAT_DAY_TIME = "hh:mm";
 const DATE_FORMAT_AM_PM = " a";
 
-class SurveyRecordState extends State<SurveyRecordScreen> {
+class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Box<DailyQ> dailyRecords;
   Box<QoL> qolRecords;
   Box<SleepComponentScores> sleepComponentScores;
@@ -100,7 +100,7 @@ class SurveyRecordState extends State<SurveyRecordScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "You have no logged records yet",
+                    "You have no logged data",
                     style:
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   )

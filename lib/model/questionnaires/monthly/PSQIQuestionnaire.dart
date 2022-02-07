@@ -221,14 +221,14 @@ class PSQIQuestionnaire {
     ),
     PSQIQuestion(
         number: '10',
-        question: 'You have completed this survey. Click submit to save and see your results.',
+        question: 'You have completed this survey. Click submit to save and go back to the home screen. Your results can be seen on the History tab',
         subtitle: '',
         status: false,
         type: 'empty',
-        notInPastMonth: 'No problem at all',
-        lessThanOnceAWeek: 'Only a very slight problem',
-        onceOrTwiceAWeek: 'Somewhat of a problem',
-        threeOrMoreAWeek: 'A very big problem',
+        notInPastMonth: '',
+        lessThanOnceAWeek: '',
+        onceOrTwiceAWeek: '',
+        threeOrMoreAWeek: '',
         data: null
     ),
     // PSQIQuestion(

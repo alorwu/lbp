@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,11 +7,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/sleep/PSQI.dart';
 import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
 import 'package:lbp/model/questionnaires/monthly/PSQIQuestion.dart';
 import 'package:lbp/model/questionnaires/monthly/PSQIQuestionnaire.dart';
+import 'package:lbp/model/remote/PsqiSurvey.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -40,11 +44,20 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   GSheets gSheets;
 
   ButtonState submitButtonState = ButtonState.idle;
+  String appId;
 
   @override
   initState() {
     super.initState();
     gSheets = GSheets(environment['credentials']);
+    getAppId();
+  }
+
+  void getAppId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      appId = prefs.getString("app_id");
+    });
   }
 
   @override
@@ -470,11 +483,10 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     sheet ??= await ss.addWorksheet('monthly_sleep_q');
 
     List values = [];
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString("app_id");
+
     questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
     values.insert(0, DateTime.now().toString());
-    values.insert(1, id);
+    values.insert(1, appId);
 
     try {
       var result = await sheet.values.appendRow(values);
@@ -573,6 +585,21 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         sleepDurationComponent +
         sleepLatencyComponent +
         sleepQualityComponent;
+
+    savePsqiSurveyToRemoteDb(
+      PsqiSurvey(
+        sleepQualityComponent: sleepQualityComponent,
+        sleepLatencyComponent: sleepLatencyComponent,
+        sleepDurationComponent: sleepDurationComponent,
+        sleepEfficiencyComponent: sleepEfficiencyComponent,
+        sleepDisturbanceComponent: sleepDisturbanceComponent,
+        sleepMedicationComponent: sleepMedicationComponent,
+        dayTimeDysfunctionComponent: dayTimeDysfunctionComponent,
+        psqiScore: pSQIScore,
+        dateTaken: DateTime.now(),
+        userId: appId
+      )
+    );
     var sleepComponentScore = SleepComponentScores(
         sleepQuality: sleepQualityComponent,
         sleepLatency: sleepLatencyComponent,
@@ -743,5 +770,15 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
       default:
         return 3;
     }
+  }
+
+  Future<http.Response> savePsqiSurveyToRemoteDb(PsqiSurvey survey) async {
+    return http.post(
+      Uri.parse('${environment['remote_url']}/api/surveys/psqi'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(survey.toJson()),
+    );
   }
 }

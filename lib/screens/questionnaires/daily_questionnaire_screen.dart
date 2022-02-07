@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/daily/DailyQ.dart';
 import 'package:lbp/model/questionnaires/daily/Question.dart';
 import 'package:lbp/model/questionnaires/daily/Questionnaire.dart';
+import 'package:lbp/model/remote/DailySurvey.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
@@ -344,7 +348,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
             height: 20.0,
           ),
           OutlinedButton.icon(
-            onPressed: () => showDate(context),
+            onPressed: () => showCupertinoDatePicker(),//showDate(context),
             icon: Icon(Icons.access_alarm),
             label: Text(questionnaire.getQuestion().data != null ? 'Change time' : 'Select time', style: TextStyle(color: Colors.white70)),
             style: OutlinedButton.styleFrom(primary: Colors.white70, side: BorderSide(color: Colors.white70)),
@@ -363,6 +367,31 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           });
         },
         currentTime: DateTime.now(),
+      );
+    }
+
+    showCupertinoDatePicker() {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext builder) {
+            return Container(
+              height: MediaQuery
+                  .of(context)
+                  .copyWith()
+                  .size
+                  .height * 0.25,
+              color: Colors.white,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                onDateTimeChanged: (value) {
+                  setState(() {
+                    questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm").format(value);
+                  });
+                },
+                initialDateTime: DateTime.now(),
+              ),
+            );
+          }
       );
     }
 
@@ -509,6 +538,34 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       sheet ??= await ss.addWorksheet('daily_q');
 
       try {
+
+        var dailyQ = DailyQ(
+            dateTaken: DateTime.now(),
+            sleepTime: DateTime.parse(values[2]),
+            wakeupTime: DateTime.parse(values[3]),
+            numberOfWakeupTimes: int.parse(values[4]),
+            qualityOfSleep: int.parse(values[5]),
+            painIntensity: int.parse(values[6]),
+            painAffectSleep: values[7],
+            notes: values[8]);
+        values.add(dailyQ.sleepPeriod.toString());
+
+        var surveyData = DailySurvey(
+          sleepTime: DateTime.parse(values[2]),
+          wakeupTime: DateTime.parse(values[3]),
+          numberOfWakeupTimes: int.parse(values[4]),
+          qualityOfSleep: int.parse(values[5]),
+          painIntensity: int.parse(values[6]),
+          painSleepRelationship: values[7],
+          notes: values[8],
+          sleepDuration: dailyQ.sleepPeriod.toString(),
+          dateTaken: DateTime.now(),
+          userId: id
+        );
+        saveDailySurveyToRemoteDb(surveyData);
+
+
+
         var result = await sheet.values.appendRow(values);
         if (result) {
           setState(() {
@@ -564,5 +621,16 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       Box<DailyQ> box = Hive.box("dailyBox");
       await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
     }
+
+  Future<http.Response> saveDailySurveyToRemoteDb(DailySurvey survey) async {
+    return http.post(
+      Uri.parse('${environment['remote_url']}/api/surveys/daily'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(survey.toJson()),
+    );
   }
+}
+
 

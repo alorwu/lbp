@@ -52,6 +52,9 @@ class User {
   @HiveField(15)
   String date;
 
+  @HiveField(16)
+  String segment;
+
 
   User({
     this.deviceId,
@@ -70,6 +73,29 @@ class User {
     this.diagnosedOfLbp,
     this.lbpTreatment,
     this.date,
+    this.segment,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': deviceId,
+      'playerId': oneSignalId,
+      'nickname': nickname,
+      'age': age,
+      'gender': gender,
+      'employment': employment,
+      'academic': academic,
+      'activeLifeStyleLevel': activeLifeStyleLevel,
+      'hasHadLowBackPain': hasHadLowBackPain,
+      'sciatica': sciatica,
+      'painIntensity': painIntensity,
+      'hasHadBackSurgery': hasHadBackSurgery,
+      'hasHadLbpFor': hasHadLbpFor,
+      'diagnosedOfLbp': diagnosedOfLbp,
+      'lbpTreatment': lbpTreatment,
+      'segment': segment,
+    };
+  }
+
 
 }

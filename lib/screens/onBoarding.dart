@@ -62,6 +62,7 @@ class OnBoardingState extends State<OnBoarding> {
 
   var consentCheck = false;
   var diagnosedOfLbpByDoctor = ["No", "Yes"];
+  var defaultNotificationTimeString = "07:00";
 
   double sliderValue = 0;
 
@@ -354,7 +355,7 @@ class OnBoardingState extends State<OnBoarding> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          "In your own words, how active is your lifestyle in general?",
+                          "How active is your lifestyle in general?",
                           style: TextStyle(color: Colors.blue),
                         ),
                         SizedBox(height: 5.0),
@@ -687,8 +688,28 @@ class OnBoardingState extends State<OnBoarding> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var id = prefs.getString("app_id");
     prefs.setString('segment', '07:00');
+    var segment = getSegment(defaultNotificationTimeString.substring(0,2));
+    var user = User(
+      deviceId: appId,
+      oneSignalId: oneSignalId,
+      nickname: nicknameController.value.text,
+      age: int.parse(ageController.value.text),
+      gender: gender,
+      employment: employment,
+      academic: academic,
+      activeLifeStyleLevel: activeLifeStyleLevel,
+      hasHadLowBackPain: hasHadLowBackPain,
+      sciatica: sciatica,
+      painIntensity: painIntensity,
+      hasHadBackSurgery: hasHadBackSurgery,
+      hasHadLbpFor: durationController.value.text,
+      diagnosedOfLbp: diagnosedOfLbp == 0 ? "No" : "Yes",
+      lbpTreatment: lbpTreatment,
+      date: DateTime.now().toIso8601String(),
+      segment: segment,
+    );
 
-    saveDataLocally();
+    saveDataLocally(user);
 
     List values = [];
     values.add(appId);
@@ -708,10 +729,10 @@ class OnBoardingState extends State<OnBoarding> {
     values.add(lbpTreatment);
     values.add(DateTime.now().toString());
     try {
-      var defaultNotificationTimeString = "07:00";
+
       var result = await sheet.values.appendRow(values);
       if (result) {
-        await registerUser(defaultNotificationTimeString.substring(0,2));
+        await registerUser(user);
         await MyPreferences.updateOnboarding(false);
         await MyPreferences.saveNotificationTime(defaultNotificationTimeString);
         ScaffoldMessenger.of(context)
@@ -787,42 +808,26 @@ class OnBoardingState extends State<OnBoarding> {
     prefs.setString("one_signal_id", oneSignalId);
   }
 
-  Future<http.Response> registerUser(String segment) async {
+  String getSegment(String segmentString) {
     var now = DateTime.now();
-    var d = DateTime(now.year, now.month, now.day, int.parse(segment)).toUtc();
-    segment = DateFormat("HH").format(d);
+    var d = DateTime(now.year, now.month, now.day, int.parse(segmentString)).toUtc();
+    return DateFormat("HH").format(d);
+  }
+
+  Future<http.Response> registerUser(User user) async {
+    print("User id: ${user.deviceId}");
+    print("User onesignal: ${user.oneSignalId}");
+    print(user.toJson());
     return http.post(
       Uri.parse('${environment['remote_url']}/api/users'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({
-        'id': this.appId,
-        'playerId': this.oneSignalId,
-        'segment': segment
-      }),
+      body: jsonEncode(user.toJson())
     );
   }
 
-  void saveDataLocally() async {
-    var user = User(
-      deviceId: appId,
-      oneSignalId: oneSignalId,
-      nickname: nicknameController.value.text,
-      age: int.parse(ageController.value.text),
-      gender: gender,
-      employment: employment,
-      academic: academic,
-      activeLifeStyleLevel: activeLifeStyleLevel,
-      hasHadLowBackPain: hasHadLowBackPain,
-      sciatica: sciatica,
-      painIntensity: painIntensity,
-      hasHadBackSurgery: hasHadBackSurgery,
-      hasHadLbpFor: durationController.value.text,
-      diagnosedOfLbp: diagnosedOfLbp == 0 ? "No" : "Yes",
-      lbpTreatment: lbpTreatment,
-      date: DateTime.now().toString(),
-    );
+  void saveDataLocally(User user) async {
     Box<User> box = Hive.box("userBox");
     await box.put("user", user);
   }

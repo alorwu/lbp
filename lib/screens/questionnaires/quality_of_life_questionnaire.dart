@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +8,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lbp/model/hive/qol/QoL.dart';
 import 'package:lbp/model/hive/qol/QoLScore.dart';
 import 'package:lbp/model/questionnaires/monthly/QoLQuestion.dart';
 import 'package:lbp/model/questionnaires/monthly/QoLQuestionnaire.dart';
+import 'package:lbp/model/remote/QolSurvey.dart';
 import 'package:lbp/utils/CustomSliderThumbCircle.dart';
 import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
@@ -48,13 +52,20 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
   double sliderValue = 0;
   double realSliderValue = -1;
 
+  String appId;
+
   @override
   initState() {
     super.initState();
     gSheets = GSheets(environment['credentials']);
-    // answers.length = questionnaire
-    //     .getPromisQuestions()
-    //     .length;
+    getAppId();
+  }
+
+  void getAppId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      appId = prefs.getString("app_id");
+    });
   }
 
 
@@ -416,11 +427,10 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     sheet ??= await ss.addWorksheet('monthly_qol_q');
 
     List values = [];
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString("app_id");
+
     questionnaire.getPromisQuestions().forEach((e) => values.add(e.data));
     values.insert(0, DateTime.now().toString());
-    values.insert(1, id);
+    values.insert(1, appId);
 
     try {
       var result = await sheet.values.appendRow(values);
@@ -513,6 +523,23 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     int globalPhysicalHealth = global03 + global07 + global09 + global10;
     int globalMentalHealth = global02 + global04 + global05 + global08;
 
+    var qolSurvey = QolSurvey(
+      global02: global02,
+      global03: global03,
+      global04: global04,
+      global05: global05,
+      global07: global07,
+      global08: global08,
+      global09: global09,
+      global10: global10,
+      globalPhysicalHealth: globalPhysicalHealth,
+      globalMentalHealth: globalMentalHealth,
+      dateTaken: DateTime.now(),
+      userId: appId
+    );
+
+    saveQolSurveyToRemoteDb(qolSurvey);
+
     var qolScore = QoLScore(
       physicalHealth: globalPhysicalHealth,
       mentalHealth: globalMentalHealth,
@@ -603,5 +630,15 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       case "9": return 2;
       default: return 1;
     }
+  }
+
+  Future<http.Response> saveQolSurveyToRemoteDb(QolSurvey survey) async {
+    return http.post(
+      Uri.parse('${environment['remote_url']}/api/surveys/qol'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(survey.toJson()),
+    );
   }
 }

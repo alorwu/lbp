@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lbp/screens/more.dart';
-import 'package:lbp/screens/survey_records.dart';
+import 'package:lbp/screens/history.dart';
 import 'package:lbp/screens/trends.dart';
 
 import '../sleep_home.dart';
@@ -22,7 +22,7 @@ class NewHomeState extends State<NewHomeScreen> {
 
   static List<Widget> _widgetOptions = <Widget> [
     SleepHome(),
-    SurveyRecordScreen(),
+    SurveyHistoryScreen(),
     TrendScreen(),
     MoreScreen()
   ];
@@ -40,7 +40,7 @@ class NewHomeState extends State<NewHomeScreen> {
               child: BottomNavigationBar(
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                  BottomNavigationBarItem(icon: Icon(Icons.event_note_outlined), label: 'Records'),
+                  BottomNavigationBarItem(icon: Icon(Icons.event_note_outlined), label: 'History'),
                   BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Trends'),
                   BottomNavigationBarItem(icon: Icon(Icons.add), label: 'More',),
                 ],

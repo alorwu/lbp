@@ -33,13 +33,14 @@ class UserAdapter extends TypeAdapter<User> {
       diagnosedOfLbp: fields[13] as String,
       lbpTreatment: fields[14] as String,
       date: fields[15] as String,
+      segment: fields[16] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.deviceId)
       ..writeByte(1)
@@ -71,7 +72,9 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(14)
       ..write(obj.lbpTreatment)
       ..writeByte(15)
-      ..write(obj.date);
+      ..write(obj.date)
+      ..writeByte(16)
+      ..write(obj.segment);
   }
 
   @override

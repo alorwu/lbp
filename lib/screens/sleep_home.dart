@@ -116,15 +116,14 @@ class SleepHomeState extends State<SleepHome> {
   }
 
   String greeting() {
-
     var hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good morning, $nickname';
+      return 'Good morning ${nickname ?? ""}';
     }
     if (hour < 17) {
-      return 'Good afternoon, $nickname';
+      return 'Good afternoon ${nickname ?? ""}';
     }
-    return 'Good evening, $nickname';
+    return 'Good evening ${nickname ?? ""}';
   }
 
   void _getTime() {
@@ -185,8 +184,10 @@ class SleepHomeState extends State<SleepHome> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Good job!! You've completed today's survey.",
-            style: TextStyle(color: Colors.white, fontSize: 14.0)),
+        Flexible(
+          child: Text("You've completed today's survey. Tap to retake.",
+            style: TextStyle(color: Colors.white, fontSize: 14.0, overflow: TextOverflow.clip)),
+        ),
         Icon(
           Icons.blur_circular,
           color: Colors.orange
@@ -224,10 +225,7 @@ class SleepHomeState extends State<SleepHome> {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => QuestionnairePage()));
+                          takeTodaySurveyClick(context);
                         },
                         child: Card(
                           elevation: 3.0,
@@ -282,7 +280,7 @@ class SleepHomeState extends State<SleepHome> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text("Monthly sleep survey",
+                                              Text("Monthly sleep quality survey",
                                                   style: TextStyle(
                                                       color: Colors.white54)),
                                               SizedBox(height: 10),
@@ -334,7 +332,7 @@ class SleepHomeState extends State<SleepHome> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text("Quality of life survey",
+                                              Text("Monthly quality of life survey",
                                                   style: TextStyle(
                                                       color: Colors.white54)),
                                               SizedBox(height: 10),
@@ -411,5 +409,43 @@ class SleepHomeState extends State<SleepHome> {
         ],
       ),
     );
+  }
+
+  showDialog(BuildContext context) {
+    showCupertinoDialog<void>(
+        context: context,
+        builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: Text("Retake today's survey?"),
+              content: Text(
+                  "You've completed today's survey. Taking this survey again today will override your previous response."),
+              actions: [
+                CupertinoDialogAction(child: Text("Dismiss"), onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+                CupertinoDialogAction(child: Text("Proceed"), onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              QuestionnairePage()));
+                }),
+              ],
+            )
+    );
+  }
+
+
+  takeTodaySurveyClick(BuildContext context) {
+    if (todayTakenDate == DateFormat("yyyy-MM-dd").format(DateTime.now())) {
+      showDialog(context);
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  QuestionnairePage()));
+    }
   }
 }
