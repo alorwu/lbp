@@ -1,19 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:footer/footer.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:lbp/model/notifications.dart';
-import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
-import 'package:lbp/utils/MyPreferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../env/.env.dart';
+import '../domain/entity/notifications.dart';
+import '../utils/preferences.dart';
+
+import 'questionnaires/daily_questionnaire_screen.dart';
 import 'questionnaires/quality_of_life_questionnaire.dart';
 import 'questionnaires/sleep_questionnaire.dart';
 
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     initializeVariables();
-    initPlatformState();
+    // initPlatformState();
     getId();
     pingServer();
   }
@@ -67,35 +68,35 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<void> initPlatformState() async {
-    OneSignal.shared.setAppId(environment['onesignal_app_id']);
-    // OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
-    //   OSiOSSettings.autoPrompt: false,
-    //   OSiOSSettings.promptBeforeOpeningPushUrl: true
-    // });
-
-    // OneSignal.shared
-    //     .setInFocusDisplayType(OSNotificationDisplayType.notification);
-
-    // OneSignal.shared.setNotificationReceivedHandler((notification) {
-    //   // refactorNotification(notification);
-    // });
-
-    OneSignal.shared.setNotificationOpenedHandler((openedResult) {
-      // MyPreferences.checkAndDisplayNotificationToday();
-    });
-
-    // var status = await OneSignal.shared.getPermissionSubscriptionState();
-    //
-    // if (!status.permissionStatus.hasPrompted) {
-    //   OneSignal.shared.addTrigger("prompt_ios", "true");
-    // }
-  }
+  // Future<void> initPlatformState() async {
+  //   OneSignal.shared.setAppId(environment['onesignal_app_id']);
+  //   // OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
+  //   //   OSiOSSettings.autoPrompt: false,
+  //   //   OSiOSSettings.promptBeforeOpeningPushUrl: true
+  //   // });
+  //
+  //   // OneSignal.shared
+  //   //     .setInFocusDisplayType(OSNotificationDisplayType.notification);
+  //
+  //   // OneSignal.shared.setNotificationReceivedHandler((notification) {
+  //   //   // refactorNotification(notification);
+  //   // });
+  //
+  //   OneSignal.shared.setNotificationOpenedHandler((openedResult) {
+  //     // MyPreferences.checkAndDisplayNotificationToday();
+  //   });
+  //
+  //   // var status = await OneSignal.shared.getPermissionSubscriptionState();
+  //   //
+  //   // if (!status.permissionStatus.hasPrompted) {
+  //   //   OneSignal.shared.addTrigger("prompt_ios", "true");
+  //   // }
+  // }
 
   startTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    MyPreferences.saveNotificationTimeOnBackend(
+    Preferences.saveNotificationTimeOnBackend(
         prefs.getString("segment").substring(0, 2), appId);
 
     if (await connection()) {
@@ -433,28 +434,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      // appBar: AppBar(
-      //   title: Text('Sleep Better with Back Pain'),
-      //   elevation: 5,
-      // actions: <Widget>[
-      //   Padding(
-      //     padding: EdgeInsets.only(right: 20.0),
-      //     child: GestureDetector(
-      //       onTap: () {
-      //         Navigator.push(context,
-      //             MaterialPageRoute(builder: (context) => SettingsScreen()));
-      //       },
-      //       child: Icon(
-      //         Icons.settings,
-      //         size: 24.0,
-      //         color: Colors.white,
-      //       ),
-      //     ),
-      //   ),
-      // ],
-      // ),
-      // backgroundColor: Colors.white,
-      //Color.fromRGBO(58, 66, 86, 1.0),
       body: FutureBuilder(
           future: getSurveys(),
           builder: (context, snapshot) {
@@ -470,65 +449,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             }
           }),
-      // drawer: Drawer(
-      //   child: ListView(
-      //     padding: EdgeInsets.zero,
-      //     children: <Widget>[
-      //       DrawerHeader(
-      //         decoration: BoxDecoration(
-      //           color: Color.fromRGBO(64, 75, 96, 0.9),
-      //         ),
-      //         child: Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           crossAxisAlignment: CrossAxisAlignment.start,
-      //           children: [
-      //             ClipRRect(
-      //               borderRadius: BorderRadius.circular(50.0),
-      //               child: Image.asset(
-      //                 'images/logo.png',
-      //                 height: 100.0,
-      //                 fit: BoxFit.fill,
-      //               ),
-      //             ),
-      //             SizedBox(height: 10.0),
-      //             Text("Sleep Better with Back Pain",
-      //                 style: TextStyle(color: Colors.white, fontSize: 18.0)),
-      //           ],
-      //         ),
-      //       ),
-      //       ListTile(
-      //         title: Text("Home"),
-      //         onTap: () {
-      //           Navigator.push(context,
-      //               MaterialPageRoute(builder: (context) => MyHomePage()));
-      //         },
-      //       ),
-      //       ListTile(
-      //         title: Text("RSS Feed"),
-      //         onTap: () {
-      //           Navigator.push(context,
-      //               MaterialPageRoute(builder: (context) => RssFeedScreen()));
-      //         },
-      //       ),
-      //       ListTile(
-      //         title: Text("Pain Relief Exercises"),
-      //         onTap: () {
-      //           Navigator.push(
-      //               context,
-      //               MaterialPageRoute(
-      //                   builder: (context) => BackPainReliefScreen()));
-      //         },
-      //       ),
-      //       ListTile(
-      //         title: Text("Settings"),
-      //         onTap: () {
-      //           Navigator.push(context,
-      //               MaterialPageRoute(builder: (context) => SettingsScreen()));
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
+
     );
   }
 
@@ -544,10 +465,10 @@ class _MyHomePageState extends State<MyHomePage> {
       monthlySleepLastDateTaken = sleepSurveyDate;
     });
 
-    var survey = await MyPreferences.displayTodayNotification();
+    var survey = await Preferences.displayTodayNotification();
     var monthlySleepSurvey =
-        await MyPreferences.displayMonthlySleepNotification();
-    var monthlyPainSurvey = await MyPreferences.displayMonthlyPromis10();
+        await Preferences.displayMonthlySleepNotification();
+    var monthlyPainSurvey = await Preferences.displayMonthlyPromis10();
     notificationsList.clear();
 
     if (survey != null) {

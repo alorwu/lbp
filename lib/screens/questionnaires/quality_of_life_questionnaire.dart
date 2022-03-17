@@ -2,26 +2,24 @@
 import 'dart:convert';
 
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/qol/QoL.dart';
-import 'package:lbp/model/hive/qol/QoLScore.dart';
-import 'package:lbp/model/questionnaires/monthly/QoLQuestion.dart';
-import 'package:lbp/model/questionnaires/monthly/QoLQuestionnaire.dart';
-import 'package:lbp/model/remote/QolSurvey.dart';
-import 'package:lbp/utils/CustomSliderThumbCircle.dart';
-import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/entity/qol/quality_of_life.dart';
+import '../../data/entity/qol/quality_of_life_score.dart';
 import '../../env/.env.dart';
+import '../../domain/entity/questionnaires/monthly/qol_question.dart';
+import '../../domain/entity/questionnaires/monthly/qol_questionnaire.dart';
+import '../../domain/entity/remote/QolSurvey.dart';
+import '../../utils/custom_slider_thumb_circle.dart';
+import '../../utils/preferences.dart';
+
 
 class QualityOfLifeQuestionnaire extends StatefulWidget {
 
@@ -200,7 +198,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
         },
         progressIndicatorSize: 15.0,
         onPressed: () async {
-          await MyPreferences.saveLastMonthlyPainSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+          await Preferences.saveLastMonthlyPainSurveyDate(DateFormat("yyyy-MM-dd").format(DateTime.now()));
           sendData();
         },
         state: submitButtonState,
@@ -423,8 +421,8 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
     saveLocally();
 
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-    var sheet = ss.worksheetByTitle('monthly_qol_q');
-    sheet ??= await ss.addWorksheet('monthly_qol_q');
+    var sheet = ss.worksheetByTitle('monthly_qol_survey');
+    sheet ??= await ss.addWorksheet('monthly_qol_survey');
 
     List values = [];
 

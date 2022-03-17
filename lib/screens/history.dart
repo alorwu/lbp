@@ -1,21 +1,25 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/daily/DailyQ.dart';
-import 'package:lbp/model/hive/qol/QoL.dart';
-import 'package:lbp/model/hive/qol/QoLScore.dart';
-import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
-import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
-import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
-import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
-import 'package:lbp/utils/survey_records_line_chart.dart';
+import 'package:mobility_features/mobility_features.dart';
+
+import '../data/entity/daily/daily_q.dart';
+import '../data/entity/qol/quality_of_life.dart';
+import '../data/entity/qol/quality_of_life_score.dart';
+import '../data/entity/sleep/sleep_component_score.dart';
+import '../utils/survey_records_line_chart.dart';
+
+import 'questionnaires/daily_questionnaire_screen.dart';
+import 'questionnaires/sleep_questionnaire.dart';
+import 'questionnaires/quality_of_life_questionnaire.dart';
+
 
 class SurveyHistoryScreen extends StatefulWidget {
+  final MobilityContext context;
+  final String steps, status;
+  const SurveyHistoryScreen(this.context, this.steps, this.status);
+
   @override
   SurveyHistoryState createState() => SurveyHistoryState();
 }
@@ -29,11 +33,13 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Box<QoL> qolRecords;
   Box<SleepComponentScores> sleepComponentScores;
   Box<QoLScore> qolScores;
+  MobilityContext _mobilityContext;
 
   @override
   initState() {
     super.initState();
     initBoxes();
+    _mobilityContext = widget.context;
   }
 
   initBoxes() async {
@@ -453,6 +459,74 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
                 ])),
               ],
             ),
+
+            SizedBox(height: 15.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Distance travelled",
+                  style: TextStyle(color: Colors.white54),
+                ),
+                Text("Places visited", style: TextStyle(color: Colors.white54))
+              ],
+            ),
+            _mobilityContext != null ?
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: _mobilityContext.distanceTravelled.toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 16.0)),
+                        TextSpan(
+                            text: " km",
+                            style: TextStyle(color: Colors.white54, fontSize: 16.0))
+                      ])),
+                  Text(
+                    _mobilityContext.numberOfSignificantPlaces.toString(),
+                    style: TextStyle(color: Colors.white, fontSize: 16.0)
+                  ),
+                ],
+              )
+            : Container(),
+            SizedBox(height: 15.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Steps taken",
+                  style: TextStyle(color: Colors.white54),
+                ),
+                Text("Current status", style: TextStyle(color: Colors.white54))
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    widget.steps,
+                    style: TextStyle(color: Colors.white, fontSize: 16.0)
+                ),
+                Row(
+                  children: <Widget>[
+                    Icon(widget.status == 'walking'
+                        ? Icons.directions_walk
+                        : widget.status == 'stopped'
+                            ? Icons.accessibility_new
+                            : Icons.error),
+                    SizedBox(width: 10),
+                    Text(
+                        widget.status,
+                        style: TextStyle(color: Colors.white, fontSize: 16.0)
+                    ),
+                  ],
+                )
+              ],
+            )
           ],
         ),
       ),

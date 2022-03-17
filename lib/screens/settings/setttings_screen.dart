@@ -1,20 +1,14 @@
 
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:preferences/preference_page.dart';
-import 'package:preferences/preference_title.dart';
-import 'package:preferences/preferences.dart';
+import 'package:pref/pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:http/http.dart' as http;
-
 import '../../env/.env.dart';
-
 import 'about.dart';
 import 'donate_data.dart';
 
@@ -176,14 +170,24 @@ class MapScreenState extends State<SettingsScreen> {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
-                  child: PreferencePage([
-                    PreferenceTitle("Notification time", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
+                  child: PrefPage(children: [
+                    PrefTitle(
+                        title: Text("Notification time",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w700))),
                     notificationTime(context),
-                    // PreferenceTitle("Donate data", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
-                    // donateData(),
-                    PreferenceTitle("About app", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
+                    PrefTitle(
+                        title: Text("About app",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w700))),
                     aboutUs(),
-                    PreferenceTitle("Other studies", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700)),
+                    PrefTitle(
+                        title: Text("Other studies",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w700))),
                     otherStudies()
                   ]),
                 ),

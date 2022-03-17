@@ -2,18 +2,17 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lbp/model/hive/qol/QoLScore.dart';
-import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
-import 'package:lbp/screens/new_home_screen/NewHomeScreen.dart';
-import 'package:lbp/screens/onBoarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'model/hive/daily/DailyQ.dart';
-import 'model/hive/qol/QoL.dart';
-import 'model/hive/sleep/PSQI.dart';
-import 'model/hive/user/User.dart';
+import 'data/entity/daily/daily_q.dart';
+import 'data/entity/qol/quality_of_life.dart';
+import 'data/entity/qol/quality_of_life_score.dart';
+import 'data/entity/sleep/psqi.dart';
+import 'data/entity/sleep/sleep_component_score.dart';
+import 'features/user/data/entity/user_dto.dart';
+import 'screens/new_home_screen/new_home_screen.dart';
+import 'screens/onboarding.dart';
 
 Future<void> initializeHiveDependencies() async {
   await Hive.initFlutter();
@@ -51,7 +50,7 @@ void main() async {
   }
 
   runApp(new MaterialApp(
-    title: 'SloPain',
+    title: 'Sleepain',
     theme: ThemeData(
       primaryColor: Colors.black,
       visualDensity: VisualDensity.adaptivePlatformDensity,

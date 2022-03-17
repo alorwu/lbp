@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:footer/footer.dart';
-import 'package:lbp/screens/rss/rssfeed_screen.dart';
-import 'package:lbp/screens/settings/consent.dart';
-import 'package:lbp/screens/settings/privacy_policy.dart';
-import 'package:lbp/screens/settings/setttings_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../screens/rss/rssfeed_screen.dart';
+import '../screens/settings/consent.dart';
+import '../screens/settings/privacy_policy.dart';
+import '../screens/settings/setttings_screen.dart';
 
 class MoreScreen extends StatefulWidget {
   @override

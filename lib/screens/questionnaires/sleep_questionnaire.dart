@@ -1,25 +1,22 @@
 import 'dart:convert';
 
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/sleep/PSQI.dart';
-import 'package:lbp/model/hive/sleep/SleepComponentScores.dart';
-import 'package:lbp/model/questionnaires/monthly/PSQIQuestion.dart';
-import 'package:lbp/model/questionnaires/monthly/PSQIQuestionnaire.dart';
-import 'package:lbp/model/remote/PsqiSurvey.dart';
-import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/entity/sleep/psqi.dart';
+import '../../data/entity/sleep/sleep_component_score.dart';
 import '../../env/.env.dart';
+import '../../domain/entity/questionnaires/monthly/psqi_question.dart';
+import '../../domain/entity/questionnaires/monthly/psqi_questionnaire.dart';
+import '../../domain/entity/remote/PsqiSurvey.dart';
+import '../../utils/preferences.dart';
 
 class SleepQuestionnaire extends StatefulWidget {
   final double sliderHeight;
@@ -188,7 +185,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
         },
         progressIndicatorSize: 15.0,
         onPressed: () async {
-          await MyPreferences.saveLastMonthlySleepSurveyDate(
+          await Preferences.saveLastMonthlySleepSurveyDate(
               DateFormat("yyyy-MM-dd").format(DateTime.now()));
           sendData();
         },
@@ -479,8 +476,8 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     saveLocally();
 
     final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-    var sheet = ss.worksheetByTitle('monthly_sleep_q');
-    sheet ??= await ss.addWorksheet('monthly_sleep_q');
+    var sheet = ss.worksheetByTitle('monthly_sleep_survey');
+    sheet ??= await ss.addWorksheet('monthly_sleep_survey');
 
     List values = [];
 

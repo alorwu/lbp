@@ -5,7 +5,7 @@ description: A new Flutter application.
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.0+33
+version: 1.0.0+1
 
 environment:
   sdk: ">=2.10.0 <3.0.0"
@@ -13,40 +13,48 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.3
-  onesignal_flutter: ^3.2.3
-  url_launcher: ^6.0.2
-  uuid: ^3.0.0
-  device_info: ^2.0.2
+  cupertino_icons: ^1.0.4
+  onesignal_flutter: ^3.3.0 #3.2.3
+  url_launcher: ^6.0.20
+  uuid: ^3.0.6
+  device_info_plus: ^3.2.2
   gsheets: ^0.3.2
-  preferences: ^5.2.0 # preference screen
-  provider: ^6.0.0
-  footer: ^0.0.3
+  pref: ^2.5.0 # used on settings screen
+  provider: ^6.0.2
+  footer: ^0.0.4
   intl: ^0.17.0
-  date_format: ^2.0.4
-  progress_indicator_button: ^0.0.3
+  date_format: ^2.0.5
   progress_state_button: ^1.0.4
-  firebase_crashlytics: ^2.1.1
+  firebase_crashlytics: ^2.5.3
   webfeed: ^0.7.0
-  http: ^0.13.0
-  hive: ^2.0.4
+  http: ^0.13.4
+  hive: ^2.0.6
   hive_flutter: ^1.1.0
   # For OS-specific directory paths
-  path_provider: ^2.0.5
+  path_provider: ^2.0.9
   # Sentry
-  sentry_flutter: ^6.0.1
+  sentry_flutter: ^6.3.0
   # Date picker
-  flutter_datetime_picker: ^1.5.1
-  dots_indicator: ^2.0.0
-  fl_chart: ^0.40.2
+  dots_indicator: ^2.1.0
+  fl_chart: ^0.46.0
+
+  # mobility features
+  mobility_features: ^3.1.0
+  carp_background_location: ^3.0.1
+  permission_handler: ^9.2.0 #^8.1.0
+  firebase_messaging_platform_interface: ^3.2.1
+  pedometer: ^3.0.0
+  uni_links: ^0.5.1
+  swipeable_button_view: ^0.0.2
+  page_transition: ^2.0.5
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator: ^1.1.1
-  build_runner: ^2.1.4
+  hive_generator: ^1.1.2
+  build_runner: ^2.1.8
 
 flutter:
   uses-material-design: true

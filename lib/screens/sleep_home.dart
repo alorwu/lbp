@@ -4,15 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/user/User.dart';
-import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
-import 'package:lbp/screens/questionnaires/quality_of_life_questionnaire.dart';
-import 'package:lbp/screens/questionnaires/sleep_questionnaire.dart';
+import 'package:lbp/features/pushnotification/domain/entity/one_signal_push_notification.dart';
+import 'package:lbp/screens/auctions/auction_screen.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 import '../env/.env.dart';
+import '../features/user/data/entity/user_dto.dart';
+import '../screens/questionnaires/daily_questionnaire_screen.dart';
+import '../screens/questionnaires/quality_of_life_questionnaire.dart';
+import '../screens/questionnaires/sleep_questionnaire.dart';
 
 class SleepHome extends StatefulWidget {
   @override
@@ -35,36 +38,84 @@ class SleepHomeState extends State<SleepHome> {
   String oneSignalPlayerId;
 
   String nickname;
+  bool isFinished = false;
+
+  OneSignalPushNotification oneSignalPushNotification;
+
 
   @override
   void initState() {
     getUserName();
-    initPlatformState();
+    // initPlatformState();
+    initOneSignal();
     initializeVariables();
     _timeString = _formatDateTime(DateTime.now());
     _amPmString = _formatTimeOfDay(DateTime.now());
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
-    var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
+    var today = DateFormat("yyyy-MM-dd")
+        .parse(DateTime.now().toString())
+        .day;
     setState(() {
       showMonthlySurveys = 1 <= today && today <= 30;
     });
     super.initState();
   }
 
-  Future<void> initPlatformState() async {
+  // Future<void> initPlatformState() async {
+  //   OneSignal.shared.setAppId(environment['onesignal_app_id']);
+  //
+  //   OneSignal.shared.setNotificationOpenedHandler((openedResult) {});
+  //
+  //   OneSignal.shared.setInAppMessageClickedHandler((action) async {
+  //     // if (action != null && action.clickName == "buttonClick") {
+  //     //   var url =
+  //     //       "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$userId";
+  //     //   await launch(url,
+  //     //       forceWebView: false, forceSafariVC: false, enableJavaScript: true);
+  //     // }
+  //   });
+  // }
+
+  Future<void> initOneSignal() async {
     OneSignal.shared.setAppId(environment['onesignal_app_id']);
+    // OneSignal.shared.init(environment['onesignal_app_id'], iOSSettings: {
+    //   OSiOSSettings.autoPrompt: false,
+    //   OSiOSSettings.promptBeforeOpeningPushUrl: true
+    // });
+
+    // OneSignal.shared
+    //     .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+    // OneSignal.shared.setNotificationReceivedHandler((notification) {
+    //   // refactorNotification(notification);
+    // });
+
+    OneSignal.shared.setNotificationWillShowInForegroundHandler((event) {
+      print("RECEIVED NOTIFICATION");
+      print(event.notification.jsonRepresentation().replaceAll("\\n", "\n"));
+      print(event.notification.rawPayload);
+      var notification = OneSignalPushNotification.fromJson(event.notification.rawPayload);
+      setState(() {
+        oneSignalPushNotification = notification;
+      });
+      event.complete(event.notification);
+    });
 
     OneSignal.shared.setNotificationOpenedHandler((openedResult) {
+      print("OPENED NOTIFICATION");
+      var notification = OneSignalPushNotification.fromJson(openedResult.notification.rawPayload);
+      setState(() {
+        oneSignalPushNotification = notification;
+      });
+      print(openedResult.notification.jsonRepresentation().replaceAll("\\n", "\n"));
+
     });
 
-    OneSignal.shared.setInAppMessageClickedHandler((action) async {
-      if (action != null && action.clickName == "buttonClick") {
-        var url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSej7wPpDtO63oLT8wB-elDKIudmot9CIqRSBNVXyc7UhIt1RA/viewform?usp=pp_url&entry.1342332266=$userId";
-        await launch(url,
-            forceWebView: false, forceSafariVC: false, enableJavaScript: true);
-      }
-    });
+    // var status = await OneSignal.shared.getPermissionSubscriptionState();
+    //
+    // if (!status.permissionStatus.hasPrompted) {
+    //   OneSignal.shared.addTrigger("prompt_ios", "true");
+    // }
   }
 
   Future<void> initializeVariables() async {
@@ -73,7 +124,9 @@ class SleepHomeState extends State<SleepHome> {
     var sleepSurveyDate = prefs.getString("monthly_sleep_survey_taken_date");
     var promis10Date = prefs.getString("monthly_pain_survey_taken_date");
 
-    var today = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString()).day;
+    var today = DateFormat("yyyy-MM-dd")
+        .parse(DateTime.now().toString())
+        .day;
 
     var id = prefs.getString("app_id");
     var playerId = await getPlayerId();
@@ -89,13 +142,13 @@ class SleepHomeState extends State<SleepHome> {
 
       if (qolLastDateTaken != null) {
         showQOLSurvey = //(1 <= today && today <= 17) &&
-            DateFormat("yyyy-MM").parse(qolLastDateTaken) !=
-                DateFormat("yyyy-MM").parse(DateTime.now().toString());
+        DateFormat("yyyy-MM").parse(qolLastDateTaken) !=
+            DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
       if (sleepLastDateTaken != null) {
         showSleepSurvey = //(1 <= today && today <= 17) &&
-            DateFormat("yyyy-MM").parse(sleepLastDateTaken) !=
-                DateFormat("yyyy-MM").parse(DateTime.now().toString());
+        DateFormat("yyyy-MM").parse(sleepLastDateTaken) !=
+            DateFormat("yyyy-MM").parse(DateTime.now().toString());
       }
     });
   }
@@ -116,7 +169,9 @@ class SleepHomeState extends State<SleepHome> {
   }
 
   String greeting() {
-    var hour = DateTime.now().hour;
+    var hour = DateTime
+        .now()
+        .hour;
     if (hour < 12) {
       return 'Good morning ${nickname ?? ""}';
     }
@@ -172,10 +227,7 @@ class SleepHomeState extends State<SleepHome> {
       children: [
         Text("Not completed yet. Click to open",
             style: TextStyle(color: Colors.white, fontSize: 14.0)),
-        Icon(
-            Icons.question_answer_outlined,
-            color: Colors.orange
-        ),
+        Icon(Icons.question_answer_outlined, color: Colors.orange),
       ],
     );
   }
@@ -186,12 +238,12 @@ class SleepHomeState extends State<SleepHome> {
       children: [
         Flexible(
           child: Text("You've completed today's survey. Tap to retake.",
-            style: TextStyle(color: Colors.white, fontSize: 14.0, overflow: TextOverflow.clip)),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.0,
+                  overflow: TextOverflow.clip)),
         ),
-        Icon(
-          Icons.blur_circular,
-          color: Colors.orange
-        ),
+        Icon(Icons.blur_circular, color: Colors.orange),
       ],
     );
   }
@@ -217,6 +269,9 @@ class SleepHomeState extends State<SleepHome> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                oneSignalPushNotification != null
+                    ? showAuctionModal(oneSignalPushNotification)
+                    : Container(),
                 // Daily survey
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,112 +308,114 @@ class SleepHomeState extends State<SleepHome> {
                 // Monthly surveys
                 this.showMonthlySurveys
                     ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Sleep survey
-                          this.showSleepSurvey
-                              ? Expanded(
-                                  flex: 2,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SleepQuestionnaire()));
-                                    },
-                                    child: Card(
-                                        elevation: 3.0,
-                                        color: Colors.grey[850],
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        margin: EdgeInsets.all(8),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("Monthly sleep quality survey",
-                                                  style: TextStyle(
-                                                      color: Colors.white54)),
-                                              SizedBox(height: 10),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("Click to open",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12.0)),
-                                                  Icon(
-                                                    Icons.alarm,
-                                                    color: Colors.blue,
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                  ),
-                                )
-                              : Container(),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Sleep survey
+                    this.showSleepSurvey
+                        ? Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SleepQuestionnaire()));
+                        },
+                        child: Card(
+                            elevation: 3.0,
+                            color: Colors.grey[850],
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10)),
+                            margin: EdgeInsets.all(8),
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "Monthly sleep quality survey",
+                                      style: TextStyle(
+                                          color: Colors.white54)),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text("Click to open",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12.0)),
+                                      Icon(
+                                        Icons.alarm,
+                                        color: Colors.blue,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )),
+                      ),
+                    )
+                        : Container(),
 
-                          // Quality of life survey
-                          this.showQOLSurvey
-                              ? Expanded(
-                                  flex: 2,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                QualityOfLifeQuestionnaire()),
-                                      );
-                                    },
-                                    child: Card(
-                                        elevation: 3.0,
-                                        color: Colors.grey[850],
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        margin: EdgeInsets.all(8),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("Monthly quality of life survey",
-                                                  style: TextStyle(
-                                                      color: Colors.white54)),
-                                              SizedBox(height: 10),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("Click to open",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12.0)),
-                                                  Icon(
-                                                    Icons.alarm,
-                                                    color: Colors.green,
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      )
+                    // Quality of life survey
+                    this.showQOLSurvey
+                        ? Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    QualityOfLifeQuestionnaire()),
+                          );
+                        },
+                        child: Card(
+                            elevation: 3.0,
+                            color: Colors.grey[850],
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10)),
+                            margin: EdgeInsets.all(8),
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "Monthly quality of life survey",
+                                      style: TextStyle(
+                                          color: Colors.white54)),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text("Click to open",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12.0)),
+                                      Icon(
+                                        Icons.alarm,
+                                        color: Colors.green,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )),
+                      ),
+                    )
+                        : Container(),
+                  ],
+                )
                     : Container(),
               ],
             ),
@@ -420,32 +477,80 @@ class SleepHomeState extends State<SleepHome> {
               content: Text(
                   "You've completed today's survey. Taking this survey again today will override your previous response."),
               actions: [
-                CupertinoDialogAction(child: Text("Dismiss"), onPressed: () {
-                  Navigator.of(context).pop();
-                }),
-                CupertinoDialogAction(child: Text("Proceed"), onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              QuestionnairePage()));
-                }),
+                CupertinoDialogAction(
+                    child: Text("Dismiss"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                CupertinoDialogAction(
+                    child: Text("Proceed"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QuestionnairePage()));
+                    }),
               ],
-            )
-    );
+            ));
   }
 
+  Widget auctionModal() {
+    return Padding(
+        padding: EdgeInsets.all(10),
+            child: SwipeableButtonView(
+                        buttonText: 'SLIDE TO JOIN AUCTION',
+                        buttonWidget: Container(
+                          child: Icon(Icons.arrow_forward_ios_rounded,
+                            color: Colors.grey,
+                          ),),
+                        activeColor: Color(0xFF009C41),
+                        isFinished: isFinished,
+                        onWaitingProcess: () {
+                          setState(() {
+                            isFinished = true;
+                          });
+                          // Future.delayed(Duration(microseconds: 1), () {
+                          //   takeTodaySurveyClick(context);
+                          // });
+                        },
+                        onFinish: () async {
+                          await Navigator.push(context,
+                              PageTransition(
+                                  type: PageTransitionType.fade,
+                                  child: AuctionScreen()));
+
+                          // //TODO: For reverse ripple effect animation
+                          setState(() {
+                            isFinished = false;
+                          });
+
+
+                        },
+                      ),
+          );
+  }
 
   takeTodaySurveyClick(BuildContext context) {
     if (todayTakenDate == DateFormat("yyyy-MM-dd").format(DateTime.now())) {
       showDialog(context);
     } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  QuestionnairePage()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => QuestionnairePage()));
+    }
+  }
+
+  Widget showAuctionModal(OneSignalPushNotification oneSignalPushNotification) {
+    if (oneSignalPushNotification != null && DateTime.now().difference(DateTime(oneSignalPushNotification.googleSentTime)) < Duration(minutes: 10)) {
+      setState(() {
+        oneSignalPushNotification = null;
+      });
+      return auctionModal();
+    } else {
+      setState(() {
+        oneSignalPushNotification = null;
+      });
+      return Container();
     }
   }
 }

@@ -1,13 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:lbp/constants/Constants.dart';
-import 'package:lbp/model/hive/daily/DailyQ.dart';
-import 'package:lbp/screens/questionnaires/daily_questionnaire_screen.dart';
-import 'package:lbp/utils/sleep_time_charts.dart';
+
+import '../constants/constants.dart';
+import '../data/entity/daily/daily_q.dart';
+import '../screens/questionnaires/daily_questionnaire_screen.dart';
+import '../utils/sleep_time_charts.dart';
 
 class TrendScreen extends StatefulWidget {
   @override
@@ -1067,13 +1066,13 @@ class TrendScreenState extends State<TrendScreen> {
       x: x,
       barRods: [
         BarChartRodData(
-          y: y,
+          toY: y,
           colors: [barColor],
           width: length == 7 ? width : 5,
           borderSide: BorderSide(color: Colors.white, width: 1),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
-            y: 10,
+            toY: 10,
             colors: [Color(0xff72d8bf)],
           ),
         ),
@@ -1102,7 +1101,7 @@ class TrendScreenState extends State<TrendScreen> {
           x: i,
           barRods: [
             BarChartRodData(
-                width: 15, y: sleepDurationData[i].value, colors: [Colors.lightBlueAccent, Colors.greenAccent])
+                width: 15, toY: sleepDurationData[i].value, colors: [Colors.lightBlueAccent, Colors.greenAccent])
           ],
           showingTooltipIndicators: [0],
         ),
@@ -1132,7 +1131,7 @@ class TrendScreenState extends State<TrendScreen> {
           barRods: [
             BarChartRodData(
                 width: sleepDurationData.length == 7 ? 15 : 5,
-                y: sleepDurationData[i].value,
+                toY: sleepDurationData[i].value,
                 colors: [Colors.lightBlueAccent, Colors.greenAccent],
             )
           ],

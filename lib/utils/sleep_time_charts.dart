@@ -1,5 +1,4 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SleepTimeChart extends StatelessWidget {
@@ -84,7 +83,7 @@ class SleepTimeChart extends StatelessWidget {
           int rodIndex,
           ) {
         return BarTooltipItem(
-          rod.y.round() > 0 ? "${rod.y.round()}h" : "",
+          rod.toY.round() > 0 ? "${rod.toY.round()}h" : "",
           TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.normal,

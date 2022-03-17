@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lbp/constants/Constants.dart';
+
+import '../constants/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -83,11 +83,6 @@ class SplashScreenState extends State<SplashScreen>
           new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-//              new Image.asset(
-//                'images/cc-group.png',
-//                width: animation.value * 260,
-//                height: animation.value * 260,
-//              ),
               new ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Image.asset(

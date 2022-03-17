@@ -3,23 +3,22 @@ import 'dart:convert';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:lbp/model/hive/daily/DailyQ.dart';
-import 'package:lbp/model/questionnaires/daily/Question.dart';
-import 'package:lbp/model/questionnaires/daily/Questionnaire.dart';
-import 'package:lbp/model/remote/DailySurvey.dart';
-import 'package:lbp/utils/CustomSliderThumbCircle.dart';
-import 'package:lbp/utils/MyPreferences.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/entity/daily/daily_q.dart';
 import '../../env/.env.dart';
+import '../../domain/entity/questionnaires/daily/question.dart';
+import '../../domain/entity/questionnaires/daily/questionnaire.dart';
+import '../../domain/entity/remote/DailySurvey.dart';
+import '../../utils/custom_slider_thumb_circle.dart';
+import '../../utils/preferences.dart';
+
 
 class QuestionnairePage extends StatefulWidget {
   final double sliderHeight;
@@ -181,7 +180,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         },
         progressIndicatorSize: 15.0,
         onPressed: () async {
-          await MyPreferences.saveDateTaken(
+          await Preferences.saveDateTaken(
               DateFormat("yyyy-MM-dd").format(DateTime.now()));
           sendData();
         },
@@ -357,19 +356,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       );
     }
 
-    showDate(BuildContext context) async {
-      DatePicker.showTimePicker(
-        context,
-        showTitleActions: true,
-        onConfirm: (date) {
-          setState(() {
-            questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm").format(date);
-          });
-        },
-        currentTime: DateTime.now(),
-      );
-    }
-
     showCupertinoDatePicker() {
       showModalBottomSheet(
           context: context,
@@ -520,7 +506,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       setState(() {
         submitButtonState = ButtonState.loading;
       });
-      await MyPreferences.saveDateTaken(
+      await Preferences.saveDateTaken(
           DateFormat("yyyy-MM-dd").format(DateTime.now()));
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var id = prefs.getString("app_id");
@@ -534,8 +520,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       saveDataLocally(values);
 
       final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-      var sheet = ss.worksheetByTitle('daily_q');
-      sheet ??= await ss.addWorksheet('daily_q');
+      var sheet = ss.worksheetByTitle('daily_survey');
+      sheet ??= await ss.addWorksheet('daily_survey');
 
       try {
 
