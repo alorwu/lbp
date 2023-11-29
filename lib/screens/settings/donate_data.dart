@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lbp/env/.env.dart';
@@ -15,7 +14,7 @@ class DonateDataScreen extends StatefulWidget {
 class DonateDataState extends State<DonateDataScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  String email, appId;
+  String? email, appId;
 
   @override
   void initState() {
@@ -31,13 +30,13 @@ class DonateDataState extends State<DonateDataScreen> {
     super.dispose();
   }
 
-  String _validateEmail(String value) {
+  String? _validateEmail(String? value) {
     if (value == null || value == '') {
       return 'Email is required';
     }
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
+    RegExp regex = new RegExp(pattern as String);
 
     if (!regex.hasMatch(value)) {
       return 'Enter valid email address';
@@ -50,6 +49,9 @@ class DonateDataState extends State<DonateDataScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Donate Oura data"),
+        backgroundColor: Color(0xff000000),
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(
@@ -108,7 +110,7 @@ class DonateDataState extends State<DonateDataScreen> {
                             "Click here to start",
                           ),
                           onPressed: () {
-                            if (_key.currentState.validate()) {
+                            if (_key.currentState!.validate()) {
                               saveEmail(context, emailController.text);
                               launchLbpSleep();
                             }
@@ -170,11 +172,11 @@ class DonateDataState extends State<DonateDataScreen> {
     );
   }
 
-  Future<String> getCredentials() async {
+  Future<String?> getCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       email = prefs.getString('oura_email');
-      emailController.text = prefs.getString('oura_email');
+      emailController.text = prefs.getString('oura_email')!;
       emailController.selection = TextSelection.fromPosition(TextPosition(offset: emailController.text.length));
       appId = prefs.getString("app_id");
     });
@@ -195,7 +197,7 @@ class DonateDataState extends State<DonateDataScreen> {
     showSnackBar(context);
   }
 
-  Future<Widget> showAlertDialog(BuildContext context) {
+  Future<Widget?> showAlertDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -224,7 +226,7 @@ class DonateDataState extends State<DonateDataScreen> {
 
   Future<http.Response> saveEmailToRemoteDb() async {
     return http.put(
-      '${environment['remote_url']}/api/users/${this.appId}',
+      Uri.parse('${environment['remote_url']}/api/users/${this.appId}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -1,17 +1,12 @@
-import 'dart:io';
 
-import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:lbp/screens/settings/privacy_policy.dart';
-import 'package:lbp/utils/MyPreferences.dart';
-import 'package:preferences/preference_page.dart';
-import 'package:preferences/preference_title.dart';
-import 'package:preferences/preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../env/.env.dart';
 import 'about.dart';
 import 'donate_data.dart';
 
@@ -24,10 +19,9 @@ class SettingsScreen extends StatefulWidget {
 class MapScreenState extends State<SettingsScreen> {
   var url = 'https://docs.google.com/forms/d/e/1FAIpQLSfoQPG89pO_YrFOBUXzglEmGKv9AbdtWCdLInW3ZQ1-juLV2g/viewform?usp=pp_url&entry.244517143=';
 
-  String appId;
-  String oneSignalPlayerId;
-  String time;
-  // String dropdownValue = 'One';
+  String? appId;
+  String? oneSignalPlayerId;
+  String? time;
 
   @override
   void initState() {
@@ -36,29 +30,14 @@ class MapScreenState extends State<SettingsScreen> {
     getSelectedTime();
   }
 
-  void showSnackBar(BuildContext context, String value) {
-    final scaffold = Scaffold.of(context);
+  void showSnackBar(BuildContext context, String? value) {
+    final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(SnackBar(
       content: Text("Notification time updated to $value"),
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
     ));
   }
 
-  Widget disclaimer() => RichText(
-      text: TextSpan(
-          style: TextStyle(color: Colors.grey),
-          children: <TextSpan>[
-            TextSpan(text: "You can read our privacy disclaimer "),
-            TextSpan(
-                text: "here ",
-                style: TextStyle(color: Colors.blue),
-                recognizer: TapGestureRecognizer()..onTap = () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
-                }
-            ),
-          ]
-      )
-  );
 
   Widget donateData() => Container(
     child: Column(
@@ -98,17 +77,17 @@ class MapScreenState extends State<SettingsScreen> {
             // leading: Icon(Icons.language),
             trailing:  DropdownButton<String>(
               value: this.time,
-              onChanged: (String newValue) async {
+              onChanged: (String? newValue) async {
                 setState(() {
                   this.time = newValue;
                 });
-                saveSelectedTime(newValue);
-                var res = await MyPreferences.saveNotificationTimeOnBackend(newValue.substring(0, 2), appId);
+                saveSelectedTime(newValue!);
+                var res = await saveNotificationTimeOnBackend(newValue.substring(0, 2), appId);
                 if (res.statusCode == 200) {
                   this.showSnackBar(context, newValue);
                 }
               },
-              items: <String>['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
+              items: <String>['06:00', '07:00', '08:00', '09:00', '10:00', '11:00']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -131,7 +110,7 @@ class MapScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.only(top: 5.0),
           child: ListTile(
             title: Text("About this app"),
-            subtitle: Text("Get to know what this Sleep Better with Back Pain app is all about", style: TextStyle(fontSize: 12.0)),
+            subtitle: Text("Get to know what this LBP app is all about", style: TextStyle(fontSize: 12.0)),
             // leading: Icon(Icons.people_rounded),
             trailing: Icon(Icons.chevron_right),
             onTap: () async {
@@ -174,65 +153,72 @@ class MapScreenState extends State<SettingsScreen> {
 
     return new Scaffold(
       appBar: AppBar(
-        title: Text('Settings', style: TextStyle(color: Colors.white)),
+        title: Text('Settings'),
+        backgroundColor: Colors.black,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => Card(
           margin: EdgeInsets.all(10.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
-                  child: PreferencePage([
-                    PreferenceTitle("Notification time"),
-                    notificationTime(context),
-                    PreferenceTitle("Donate data"),
-                    donateData(),
-                    PreferenceTitle("About app"),
-                    aboutUs(),
-                    PreferenceTitle("Other studies"),
-                    otherStudies()
-                  ]),
-                ),
-              ),
-              Divider(),
-              Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 20.0),
-                    child: disclaimer(),
-                  )
-              ),
-
-            ],
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                notificationTime(context),
+                SizedBox(height: 10),
+                aboutUs(),
+                SizedBox(height: 10),
+                otherStudies()
+              ],
           ),
         ),
       ),
     );
   }
 
-
-
   @override
   void dispose() {
     super.dispose();
   }
 
-  // Future<http.Response> saveNotificationTimeOnBackend(String time)  async {
-  //   return http.put(
-  //     '${environment['remote_url']}/api/users/${this.appId}',
-  //     // 'http://10.0.2.2:8080/api/users/${this.appId}',
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode({
-  //       'segment': time
-  //     }),
-  //   );
-  // }
+  Future<http.Response> saveNotificationTimeOnBackend(String time, String? appId)  async {
+    var now = DateTime.now();
+    var d = DateTime(now.year, now.month, now.day, int.parse(time)).toUtc();
+    time = DateFormat("HH").format(d);
+    final response = await http.put(
+      Uri.parse('${environment['remote_url']}/api/users/$appId/segment'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: time,
+    );
+    if(!response.statusCode.toString().startsWith("2")) return showDialog(context, time, appId);
+    else return response;
+  }
+
+  showDialog(BuildContext context, String time, String? appId) {
+    showCupertinoDialog<void>(
+        context: context,
+        builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: Text("Could not save new time"),
+              content: Text(
+                  "There was an error saving your data."),
+              actions: [
+                CupertinoDialogAction(
+                    child: Text("Dismiss"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                CupertinoDialogAction(
+                    child: Text("Try again"),
+                    onPressed: () {
+                      saveNotificationTimeOnBackend(time, appId);
+                    }),
+              ],
+            ));
+  }
 
   void saveSelectedTime(String time) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -251,16 +237,9 @@ class MapScreenState extends State<SettingsScreen> {
     return setTime;
   }
 
-  Future<String> getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    var id = "";
-    if (Platform.isIOS) { // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      id = iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      id = androidDeviceInfo.androidId; // unique ID on Android
-    }
+  Future<String?> getId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString('app_id');
     setState(() {
       appId = id;
     });

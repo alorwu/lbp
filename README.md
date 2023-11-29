@@ -17,3 +17,6 @@ samples, guidance on mobile development, and a full API reference.
 
 # Run the database generator
 `flutter packages pub run build_runner build`
+
+# Fix cache issues
+`flutter pub cache repair`

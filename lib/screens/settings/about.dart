@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -6,7 +5,11 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text('About this app', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        title: Text('About this app'),
+        backgroundColor: Color(0xff000000),
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        brightness: Brightness.dark,
       ),
       body: Builder(
         builder: (context) => SingleChildScrollView(
@@ -22,7 +25,7 @@ class AboutScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                        "Do you have low back pain and trouble sleeping? The Sleep Better with Back Pain app is part of international research that will ultimately help you and people just like you to sleep better."),
+                        "Do you have low back pain and trouble sleeping? The LBP app is part of international research that will ultimately help you and people just like you to sleep better."),
                   ),
                   Padding(
                       padding: EdgeInsets.all(10.0),

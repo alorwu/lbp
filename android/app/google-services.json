@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "430606753070",
-    "project_id": "lbp-study",
-    "storage_bucket": "lbp-study.appspot.com"
+    "project_number": "630766389000",
+    "project_id": "lbp-valuation",
+    "storage_bucket": "lbp-valuation.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:430606753070:android:68235b117b9cb70b17eebf",
+        "mobilesdk_app_id": "1:630766389000:android:abb32e0a524f6990ba0ebd",
         "android_client_info": {
-          "package_name": "io.lbp"
+          "package_name": "com.codemave.lbp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "430606753070-rtk4412ovh21pblppbdi98hnh48vg9fe.apps.googleusercontent.com",
+          "client_id": "630766389000-kbsgebn1fr3b297f1t7ap1h9c3tpkf0a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codemave.lbp",
+            "certificate_hash": "5eb4155509ac0cff601cc020933c4eca920e70b9"
+          }
+        },
+        {
+          "client_id": "630766389000-prkb7r5pgb7q00euh37kaqgsos5nojmt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCpcteDi7JnjjhabU-g2-Ub35mlmcq0uGQ"
+          "current_key": "AIzaSyAC1PyD8UT2klwe267B2h74TWcJBmkQy9U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "430606753070-rtk4412ovh21pblppbdi98hnh48vg9fe.apps.googleusercontent.com",
+              "client_id": "630766389000-prkb7r5pgb7q00euh37kaqgsos5nojmt.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
