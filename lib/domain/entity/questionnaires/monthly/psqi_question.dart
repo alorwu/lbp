@@ -1,15 +1,15 @@
 
 class PSQIQuestion{
-  String number;
-  String question;
-  String subtitle;
-  bool status;
-  String type;
-  String notInPastMonth;
-  String lessThanOnceAWeek;
-  String onceOrTwiceAWeek;
-  String threeOrMoreAWeek;
-  String data;
+  String? number;
+  String? question;
+  String? subtitle;
+  bool? status;
+  String? type;
+  String? notInPastMonth;
+  String? lessThanOnceAWeek;
+  String? onceOrTwiceAWeek;
+  String? threeOrMoreAWeek;
+  String? data;
 
   PSQIQuestion(
       {

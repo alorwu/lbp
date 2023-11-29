@@ -1,17 +1,17 @@
 
 class QolSurvey {
-  int global02;
-  int global03;
-  int global04;
-  int global05;
-  int global07;
-  int global08;
-  int global09;
-  int global10;
-  int globalPhysicalHealth;
-  int globalMentalHealth;
-  DateTime dateTaken;
-  String userId;
+  int? global02;
+  int? global03;
+  int? global04;
+  int? global05;
+  int? global07;
+  int? global08;
+  int? global09;
+  int? global10;
+  int? globalPhysicalHealth;
+  int? globalMentalHealth;
+  DateTime? dateTaken;
+  String? userId;
 
   QolSurvey({
     this.global02,
@@ -40,7 +40,7 @@ class QolSurvey {
       'global10': global10,
       'globalPhysicalHealth': globalPhysicalHealth,
       'globalMentalHealth': globalMentalHealth,
-      'dateTaken': dateTaken.toIso8601String(),
+      'dateTaken': dateTaken!.toIso8601String(),
       'userId': userId
     };
   }

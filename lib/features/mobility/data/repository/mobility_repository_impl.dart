@@ -13,9 +13,9 @@ class MobilityRepositoryImpl extends MobilityRepository {
   final MobilityDataMapper mobilityDataMapper;
 
   MobilityRepositoryImpl({
-    @required this.localMobilityDataSource,
-    @required this.remoteMobilityDataSource,
-    @required this.mobilityDataMapper,
+    required this.localMobilityDataSource,
+    required this.remoteMobilityDataSource,
+    required this.mobilityDataMapper,
   });
 
 
@@ -26,7 +26,7 @@ class MobilityRepositoryImpl extends MobilityRepository {
     try {
       remoteMobilityDataSource.saveMobilityData(data);
     } on Exception {
-      return Exception();
+      throw Exception();
     }
   }
 

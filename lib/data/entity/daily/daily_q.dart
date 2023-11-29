@@ -6,34 +6,40 @@ part 'daily_q.g.dart';
 @HiveType(typeId: 1)
 class DailyQ {
   @HiveField(0)
-  DateTime dateTaken;
+  DateTime? dateTaken;
 
   @HiveField(1)
-  DateTime sleepTime;
+  DateTime? sleepTime;
 
   @HiveField(2)
-  DateTime wakeupTime;
+  DateTime? wakeupTime;
 
   @HiveField(3)
-  String timeToSleep;
+  String? timeToSleep;
 
   @HiveField(4)
-  int numberOfWakeupTimes;
+  int? numberOfWakeupTimes;
 
   @HiveField(5)
-  String wellRestedness;
+  String? wellRestedness;
 
   @HiveField(6)
-  int qualityOfSleep;
+  int? qualityOfSleep;
 
   @HiveField(7)
-  int painIntensity;
+  int? painIntensity;
 
   @HiveField(8)
-  String painAffectSleep;
+  String? painAffectSleep;
 
   @HiveField(9)
-  String notes;
+  String? notes;
+
+  @HiveField(10)
+  int? stepCount;
+
+  @HiveField(11)
+  double? distanceTravelled;
 
   DailyQ({
     this.dateTaken,
@@ -43,7 +49,9 @@ class DailyQ {
     this.qualityOfSleep,
     this.painIntensity,
     this.painAffectSleep,
-    this.notes
+    this.notes,
+    this.stepCount,
+    this.distanceTravelled,
   });
 
 }
@@ -62,12 +70,16 @@ List<String> durationToList(int minutes) {
 }
 
 int differenceInSleep(DailyQ q) {
-  return q.wakeupTime.difference(q.sleepTime).inMinutes.round();
+  return q.wakeupTime!.difference(q.sleepTime!).inMinutes.round();
 }
 
 extension DailyListExtension on List<DailyQ> {
   get averageSleepScore {
-    return (this.map((e) => e.qualityOfSleep).reduce((value, element) => value + element)/this.length).toDouble();
+    return (this.map((e) => e.qualityOfSleep).reduce((value, element) => value! + element!)!/this.length).toDouble();
+  }
+
+  get averagePainIntensityScore {
+    return (this.map((e) => e.painIntensity).reduce((value, element) => value! + element!)!/this.length).toDouble();
   }
 
   get averageSleepPeriod {

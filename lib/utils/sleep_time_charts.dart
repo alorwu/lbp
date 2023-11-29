@@ -8,8 +8,8 @@ class SleepTimeChart extends StatelessWidget {
     this.title,
   });
 
-  final List<BarChartGroupData> data;
-  final String title;
+  final List<BarChartGroupData>? data;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class SleepTimeChart extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(left: 16.0),
               child: Text(
-                title,
+                title!,
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 16,
@@ -87,14 +87,14 @@ class SleepTimeChart extends StatelessWidget {
           TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.normal,
-            fontSize: data.length == 7 ? 12 : 8,
+            fontSize: data!.length == 7 ? 12 : 8,
           ),
         );
       },
     ),
   );
 
-  FlTitlesData titlesData(List<BarChartGroupData> groupData) => FlTitlesData(
+  FlTitlesData titlesData(List<BarChartGroupData>? groupData) => FlTitlesData(
     show: true,
     bottomTitles: SideTitles(
       showTitles: true,
@@ -105,7 +105,7 @@ class SleepTimeChart extends StatelessWidget {
       ),
       margin: 20,
       getTitles: (double value) {
-        if (groupData.length == 7) {
+        if (groupData!.length == 7) {
           switch (value.toInt()) {
             case 0:
               return 'M';

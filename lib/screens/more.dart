@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:footer/footer.dart';
+import 'package:lbp/screens/auctions/auctions_won_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../screens/rss/rssfeed_screen.dart';
@@ -69,6 +70,18 @@ class MoreState extends State<MoreScreen> {
                 //   },
                 // ),
                 // Divider(),
+                Divider(),
+                ListTile(
+                  leading: Icon(Icons.celebration),
+                  title: Text("Winnings"),
+                  trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AuctionsWonScreen()));
+                  },
+                ),
                 Divider(),
                 ListTile(
                   leading: Icon(Icons.rss_feed),

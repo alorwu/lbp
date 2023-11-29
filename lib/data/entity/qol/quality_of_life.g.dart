@@ -17,17 +17,17 @@ class QoLAdapter extends TypeAdapter<QoL> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return QoL(
-      generalHealth: fields[0] as String,
-      qualityOfLife: fields[1] as String,
-      physicalHealth: fields[2] as String,
-      mentalHealth: fields[3] as String,
-      socialSatisfaction: fields[4] as String,
-      carryOutSocialActivities: fields[5] as String,
-      carryOutPhysicalActivities: fields[6] as String,
-      emotionalProblems: fields[7] as String,
-      fatigue: fields[8] as String,
-      pain: fields[9] as String,
-      dateTaken: fields[10] as DateTime,
+      generalHealth: fields[0] as String?,
+      qualityOfLife: fields[1] as String?,
+      physicalHealth: fields[2] as String?,
+      mentalHealth: fields[3] as String?,
+      socialSatisfaction: fields[4] as String?,
+      carryOutSocialActivities: fields[5] as String?,
+      carryOutPhysicalActivities: fields[6] as String?,
+      emotionalProblems: fields[7] as String?,
+      fatigue: fields[8] as String?,
+      pain: fields[9] as String?,
+      dateTaken: fields[10] as DateTime?,
     );
   }
 

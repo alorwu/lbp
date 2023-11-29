@@ -17,23 +17,25 @@ class DailyQAdapter extends TypeAdapter<DailyQ> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DailyQ(
-      dateTaken: fields[0] as DateTime,
-      sleepTime: fields[1] as DateTime,
-      wakeupTime: fields[2] as DateTime,
-      numberOfWakeupTimes: fields[4] as int,
-      qualityOfSleep: fields[6] as int,
-      painIntensity: fields[7] as int,
-      painAffectSleep: fields[8] as String,
-      notes: fields[9] as String,
+      dateTaken: fields[0] as DateTime?,
+      sleepTime: fields[1] as DateTime?,
+      wakeupTime: fields[2] as DateTime?,
+      numberOfWakeupTimes: fields[4] as int?,
+      qualityOfSleep: fields[6] as int?,
+      painIntensity: fields[7] as int?,
+      painAffectSleep: fields[8] as String?,
+      notes: fields[9] as String?,
+      stepCount: fields[10] as int?,
+      distanceTravelled: fields[11] as double?,
     )
-      ..timeToSleep = fields[3] as String
-      ..wellRestedness = fields[5] as String;
+      ..timeToSleep = fields[3] as String?
+      ..wellRestedness = fields[5] as String?;
   }
 
   @override
   void write(BinaryWriter writer, DailyQ obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.dateTaken)
       ..writeByte(1)
@@ -53,7 +55,11 @@ class DailyQAdapter extends TypeAdapter<DailyQ> {
       ..writeByte(8)
       ..write(obj.painAffectSleep)
       ..writeByte(9)
-      ..write(obj.notes);
+      ..write(obj.notes)
+      ..writeByte(10)
+      ..write(obj.stepCount)
+      ..writeByte(11)
+      ..write(obj.distanceTravelled);
   }
 
   @override

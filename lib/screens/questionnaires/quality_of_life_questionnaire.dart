@@ -29,7 +29,7 @@ class QualityOfLifeQuestionnaire extends StatefulWidget {
   final fullWidth;
 
   QualityOfLifeQuestionnaire(
-      {Key key,
+      {Key? key,
         this.sliderHeight = 48,
         this.max = 10,
         this.min = 0,
@@ -43,14 +43,14 @@ class QualityOfLifeQuestionnaire extends StatefulWidget {
 
 class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire> {
   QoLQuestionnaire questionnaire = QoLQuestionnaire();
-  GSheets gSheets;
+  late GSheets gSheets;
   final _formKey = GlobalKey<FormState>();
   ButtonState submitButtonState = ButtonState.idle;
 
   double sliderValue = 0;
   double realSliderValue = -1;
 
-  String appId;
+  String? appId;
 
   @override
   initState() {
@@ -134,7 +134,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
                 padding: EdgeInsets.all(10.0),
                 child: Center(
                   child: Text(
-                    questionnaire.getPromisQuestion().question,
+                    questionnaire.getPromisQuestion().question!,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white, fontSize: 18.0),
                   ),
@@ -258,7 +258,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
       ));
   }
 
-  Widget answerWidget(QoLQuestion question) {
+  Widget? answerWidget(QoLQuestion question) {
     switch (question.type) {
       case "likert":
         return answerRadioWidget(question); //comboWidget(question);
@@ -403,7 +403,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
             value: "$text",
             groupValue: question.data,
             activeColor: Colors.white,
-            onChanged: (String value) {
+            onChanged: (String? value) {
               setState(() {
                 questionnaire.getPromisQuestion().data = value;
               });
@@ -420,7 +420,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
 
     saveLocally();
 
-    final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
+    final ss = await gSheets.spreadsheet(environment['spreadsheetId'] as String);
     var sheet = ss.worksheetByTitle('monthly_qol_survey');
     sheet ??= await ss.addWorksheet('monthly_qol_survey');
 
@@ -478,7 +478,7 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
   }
 
   void saveLocally() async {
-    List<String> values = [];
+    List<String?> values = [];
     questionnaire.getPromisQuestions().forEach((e) => values.add(e.data));
 
     var qol = QoL(
@@ -508,15 +508,15 @@ class _QualityOfLifeQuestionnaireState extends State<QualityOfLifeQuestionnaire>
   }
 
   void calculateQoLScore(QoL qol) async {
-    int global03 = poorToExcellentResponse(qol.physicalHealth);
-    int global07 = notAtAllToCompletely(qol.carryOutPhysicalActivities);
-    int global09 = severeToNone(qol.fatigue);
-    int global10 = calculatePain(qol.pain);
+    int global03 = poorToExcellentResponse(qol.physicalHealth!);
+    int global07 = notAtAllToCompletely(qol.carryOutPhysicalActivities!);
+    int global09 = severeToNone(qol.fatigue!);
+    int global10 = calculatePain(qol.pain!);
 
-    int global02 = poorToExcellentResponse(qol.qualityOfLife);
-    int global04 = poorToExcellentResponse(qol.mentalHealth);
-    int global05 = poorToExcellentResponse(qol.socialSatisfaction);
-    int global08 = alwaysToNever(qol.emotionalProblems);
+    int global02 = poorToExcellentResponse(qol.qualityOfLife!);
+    int global04 = poorToExcellentResponse(qol.mentalHealth!);
+    int global05 = poorToExcellentResponse(qol.socialSatisfaction!);
+    int global08 = alwaysToNever(qol.emotionalProblems!);
 
     int globalPhysicalHealth = global03 + global07 + global09 + global10;
     int globalMentalHealth = global02 + global04 + global05 + global08;

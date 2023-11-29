@@ -8,13 +8,13 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.10.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.4
-  onesignal_flutter: ^3.3.0 #3.2.3
+#  onesignal_flutter: ^3.3.0 #3.2.3
   url_launcher: ^6.0.20
   uuid: ^3.0.6
   device_info_plus: ^3.2.2
@@ -26,6 +26,10 @@ dependencies:
   date_format: ^2.0.5
   progress_state_button: ^1.0.4
   firebase_crashlytics: ^2.5.3
+  firebase_core: ^1.14.0
+  firebase_messaging: ^11.2.12
+  flutter_local_notifications: ^8.2.0
+  firebase_messaging_platform_interface: ^3.2.1
   webfeed: ^0.7.0
   http: ^0.13.4
   hive: ^2.0.6
@@ -39,16 +43,11 @@ dependencies:
   fl_chart: ^0.46.0
 
   # mobility features
-  mobility_features: ^3.1.0
-  carp_background_location: ^3.0.1
   permission_handler: ^9.2.0 #^8.1.0
-  firebase_messaging_platform_interface: ^3.2.1
   pedometer: ^3.0.0
-  uni_links: ^0.5.1
+
   swipeable_button_view: ^0.0.2
   page_transition: ^2.0.5
-
-
 
 dev_dependencies:
   flutter_test:

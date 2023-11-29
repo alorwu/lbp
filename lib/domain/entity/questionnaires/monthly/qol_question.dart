@@ -1,16 +1,16 @@
 
 class QoLQuestion{
-  String number;
-  String question;
-  String type;
-  String data;
-  String one;
-  String two;
-  String three;
-  String four;
-  String five;
-  String low;
-  String high;
+  String? number;
+  String? question;
+  String? type;
+  String? data;
+  String? one;
+  String? two;
+  String? three;
+  String? four;
+  String? five;
+  String? low;
+  String? high;
 
   QoLQuestion(
       {

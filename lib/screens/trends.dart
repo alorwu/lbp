@@ -14,7 +14,7 @@ class TrendScreen extends StatefulWidget {
 }
 
 class TrendScreenState extends State<TrendScreen> {
-  Box<DailyQ> box;
+  late Box<DailyQ> box;
   List<DailyQ> weekData = [];
   List<DailyQ> monthData = [];
   List<DailyQ> allData =[];
@@ -25,20 +25,23 @@ class TrendScreenState extends State<TrendScreen> {
   List<BarChartGroupData> sleepDurationBarChartWeekData = [];
   List<BarChartGroupData> sleepDurationBarChartMonthData = [];
 
-  var firstDayOfWeek;
+  List<BarChartGroupData> painIntensityBarChartWeekData = [];
+  List<BarChartGroupData> painIntensityBarChartMonthData = [];
 
-  var avgWeekSleepTime;
-  var avgWeekWakeTime;
+  late var firstDayOfWeek;
 
-  var avgMonthSleepTime;
-  var avgMonthWakeTime;
+  late var avgWeekSleepTime;
+  late var avgWeekWakeTime;
 
-  var avgAllSleepTime;
-  var avgAllWakeTime;
+  late var avgMonthSleepTime;
+  late var avgMonthWakeTime;
 
-  var now;
+  late var avgAllSleepTime;
+  late var avgAllWakeTime;
+
+  late var now;
   var week;
-  var month;
+  late var month;
 
   @override
   initState() {
@@ -50,16 +53,16 @@ class TrendScreenState extends State<TrendScreen> {
     box = Hive.box('dailyBox');
     allData = box.values.toList();
     weekData = allData
-        .where((element) => element.dateTaken.isAfter(firstDayOfWeek))
+        .where((element) => element.dateTaken!.isAfter(firstDayOfWeek))
         .toList()
         .where(
-            (e) => e.dateTaken.isBefore(firstDayOfWeek.add(Duration(days: 8))))
+            (e) => e.dateTaken!.isBefore(firstDayOfWeek.add(Duration(days: 8))))
         .toList();
     monthData = allData
-        .where((element) => element.sleepTime.isAfter(month))
+        .where((element) => element.sleepTime!.isAfter(month))
         .toList()
         .where(
-            (e) => e.sleepTime.isBefore(DateTime(now.year, now.month + 1, 1)))
+            (e) => e.sleepTime!.isBefore(DateTime(now.year, now.month + 1, 1)))
         .toList();
 
     avgWeekSleepTime = averageSleepDateTime(weekData);
@@ -71,18 +74,21 @@ class TrendScreenState extends State<TrendScreen> {
     avgAllSleepTime = averageSleepDateTime(allData);
     avgAllWakeTime = averageWakeDateTime(allData);
 
-    showWeekGroups();
-    showMonthGroups();
+    weeklySleepQuality();
+    monthlySleepQuality();
 
-    showWeekSleepDuration();
-    showMonthSleepDuration();
+    weeklyPainIntensity();
+    monthlyPainIntensity();
+
+    weeklySleepDuration();
+    monthlySleepDuration();
   }
 
   averageSleepDateTime(List<DailyQ> data) {
     if (data.isNotEmpty) {
       double avg = data
-          .map((e) => DateTime(now.year, now.month, now.day, e.sleepTime.hour,
-                  e.sleepTime.minute)
+          .map((e) => DateTime(now.year, now.month, now.day, e.sleepTime!.hour,
+                  e.sleepTime!.minute)
               .millisecondsSinceEpoch)
           .fold(0.0, (previousValue, element) => previousValue += element);
       return DateTime.fromMillisecondsSinceEpoch((avg / data.length).round());
@@ -92,8 +98,8 @@ class TrendScreenState extends State<TrendScreen> {
   averageWakeDateTime(List<DailyQ> data) {
     if (data.isNotEmpty) {
       double avg = data
-          .map((e) => DateTime(now.year, now.month, now.day, e.wakeupTime.hour,
-                  e.wakeupTime.minute)
+          .map((e) => DateTime(now.year, now.month, now.day, e.wakeupTime!.hour,
+                  e.wakeupTime!.minute)
               .millisecondsSinceEpoch)
           .fold(0.0, (previousValue, element) => previousValue += element);
       return DateTime.fromMillisecondsSinceEpoch((avg / data.length).round());
@@ -321,6 +327,50 @@ class TrendScreenState extends State<TrendScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Sleep score
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                      elevation: 3.0,
+                      color: Color(0xff1F1F1F),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Average",
+                                style: TextStyle(color: Colors.white30)),
+                            Text("Pain intensity score",
+                                style:
+                                TextStyle(color: Colors.white, fontSize: 15.0)),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    weekData.averagePainIntensityScore.toStringAsFixed(2),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18.0)),
+                                Icon(
+                                  Icons.sick,
+                                  color: Colors.red,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      )),
+                ),
+              ],
+            ),
+
+            // Row 4
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Expanded(
                   flex: 2,
                   child: Padding(
@@ -334,7 +384,7 @@ class TrendScreenState extends State<TrendScreen> {
               ],
             ),
 
-            // Row 4
+            // Row 5
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -350,6 +400,23 @@ class TrendScreenState extends State<TrendScreen> {
                 ),
               ],
             ),
+
+            // Row 6
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                    child: plotBarChartWith(
+                      painIntensityBarChartWeekData,
+                      "Pain intensity",
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       );
@@ -359,287 +426,348 @@ class TrendScreenState extends State<TrendScreen> {
     }
   }
 
-    Widget monthTab (List<DailyQ> monthData) {
-      if(monthData.isNotEmpty) {
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              // Row 1
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Sleep score
-                  Expanded(
-                    flex: 2,
-                    child: Card(
-                        elevation: 3.0,
-                        color: Color(0xff1F1F1F),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        margin: EdgeInsets.all(8),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Average",
-                                  style: TextStyle(color: Colors.white30)),
-                              Text("Sleep score",
-                                  style:
-                                  TextStyle(
-                                      color: Colors.white, fontSize: 15.0)),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  Text(
-                                      monthData.averageSleepScore.toStringAsFixed(2),
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18.0)),
-                                  Icon(
-                                    Icons.stacked_line_chart,
-                                    color: Colors.blue,
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
+  Widget monthTab (List<DailyQ> monthData) {
+    if(monthData.isNotEmpty) {
+      return SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            // Row 1
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Sleep score
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                      elevation: 3.0,
+                      color: Color(0xff1F1F1F),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Average",
+                                style: TextStyle(color: Colors.white30)),
+                            Text("Sleep score",
+                                style:
+                                TextStyle(
+                                    color: Colors.white, fontSize: 15.0)),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                Text(
+                                    monthData.averageSleepScore.toStringAsFixed(2),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18.0)),
+                                Icon(
+                                  Icons.stacked_line_chart,
+                                  color: Colors.blue,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      )),
+                ),
 
-                  // Sleep duration
-                  Expanded(
-                    flex: 2,
-                    child: Card(
-                        elevation: 3.0,
-                        color: Color(0xff1F1F1F),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        margin: EdgeInsets.all(8),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Average",
-                                  style: TextStyle(color: Colors.white30)),
-                              Text("Sleep duration",
-                                  style:
-                                  TextStyle(
-                                      color: Colors.white, fontSize: 15.0)),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  // Text("8h 59min",
-                                  //     style: TextStyle(
-                                  //         color: Colors.white, fontSize: 18.0)),
-                                  RichText(
-                                      text: TextSpan(children: [
-                                        TextSpan(
-                                            text: monthData
-                                                .averageSleepPeriod[0]
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16.0)
-                                        ),
-                                        TextSpan(
-                                            text: "h ",
-                                            style: TextStyle(
-                                                color: Colors.white54)
-                                        ),
-                                        TextSpan(
-                                            text: monthData
-                                                .averageSleepPeriod[1]
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16.0)
-                                        ),
-                                        TextSpan(
-                                            text: " min",
-                                            style: TextStyle(
-                                                color: Colors.white54)
-                                        ),
-                                      ])),
-                                  Icon(
-                                    Icons.waterfall_chart,
-                                    color: Colors.pink,
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
-                ],
-              ),
+                // Sleep duration
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                      elevation: 3.0,
+                      color: Color(0xff1F1F1F),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Average",
+                                style: TextStyle(color: Colors.white30)),
+                            Text("Sleep duration",
+                                style:
+                                TextStyle(
+                                    color: Colors.white, fontSize: 15.0)),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                // Text("8h 59min",
+                                //     style: TextStyle(
+                                //         color: Colors.white, fontSize: 18.0)),
+                                RichText(
+                                    text: TextSpan(children: [
+                                      TextSpan(
+                                          text: monthData
+                                              .averageSleepPeriod[0]
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.0)
+                                      ),
+                                      TextSpan(
+                                          text: "h ",
+                                          style: TextStyle(
+                                              color: Colors.white54)
+                                      ),
+                                      TextSpan(
+                                          text: monthData
+                                              .averageSleepPeriod[1]
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.0)
+                                      ),
+                                      TextSpan(
+                                          text: " min",
+                                          style: TextStyle(
+                                              color: Colors.white54)
+                                      ),
+                                    ])),
+                                Icon(
+                                  Icons.waterfall_chart,
+                                  color: Colors.pink,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      )),
+                ),
+              ],
+            ),
 
-              // Row 2
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Sleep at
-                  Expanded(
-                    flex: 2,
-                    child: Card(
-                        elevation: 3.0,
-                        color: Color(0xff1F1F1F),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        margin: EdgeInsets.all(8),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Average",
-                                  style: TextStyle(color: Colors.white30)),
-                              Text("Sleep at",
-                                  style:
-                                  TextStyle(
-                                      color: Colors.white, fontSize: 15.0)),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  RichText(
-                                      text: TextSpan(children: [
-                                        TextSpan(
-                                            text: DateFormat(
-                                                DATE_FORMAT_DAY_TIME).format(
-                                                avgMonthSleepTime),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w300)),
-                                        TextSpan(
-                                            text: DateFormat(DATE_FORMAT_AM_PM)
-                                                .format(avgMonthSleepTime),
-                                            style: TextStyle(
-                                                color: Colors.white54,
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w300))
-                                      ])
-                                  ),
-                                  // Text("21:50",
-                                  //     style: TextStyle(
-                                  //         color: Colors.white, fontSize: 18.0)),
-                                  Icon(
-                                    Icons.nights_stay,
-                                    color: Colors.deepPurple,
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
+            // Row 2
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Sleep at
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                      elevation: 3.0,
+                      color: Color(0xff1F1F1F),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Average",
+                                style: TextStyle(color: Colors.white30)),
+                            Text("Sleep at",
+                                style:
+                                TextStyle(
+                                    color: Colors.white, fontSize: 15.0)),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                RichText(
+                                    text: TextSpan(children: [
+                                      TextSpan(
+                                          text: DateFormat(
+                                              DATE_FORMAT_DAY_TIME).format(
+                                              avgMonthSleepTime),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w300)),
+                                      TextSpan(
+                                          text: DateFormat(DATE_FORMAT_AM_PM)
+                                              .format(avgMonthSleepTime),
+                                          style: TextStyle(
+                                              color: Colors.white54,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w300))
+                                    ])
+                                ),
+                                // Text("21:50",
+                                //     style: TextStyle(
+                                //         color: Colors.white, fontSize: 18.0)),
+                                Icon(
+                                  Icons.nights_stay,
+                                  color: Colors.deepPurple,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      )),
+                ),
 
-                  // Wake up at
-                  Expanded(
-                    flex: 2,
-                    child: Card(
-                        elevation: 3.0,
-                        color: Color(0xff1F1F1F),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        margin: EdgeInsets.all(8),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Average",
-                                  style: TextStyle(color: Colors.white30)),
-                              Text("Wake up at",
-                                  style:
-                                  TextStyle(
-                                      color: Colors.white, fontSize: 15.0)),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  RichText(
-                                      text: TextSpan(children: [
-                                        TextSpan(
-                                            text: DateFormat(
-                                                DATE_FORMAT_DAY_TIME).format(
-                                                avgMonthWakeTime),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w300)),
-                                        TextSpan(
-                                            text: DateFormat(DATE_FORMAT_AM_PM)
-                                                .format(avgMonthWakeTime),
-                                            style: TextStyle(
-                                                color: Colors.white54,
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w300))
-                                      ])
-                                  ),
-                                  Icon(
-                                    Icons.wb_sunny,
-                                    color: Colors.yellow,
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
-                ],
-              ),
+                // Wake up at
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                      elevation: 3.0,
+                      color: Color(0xff1F1F1F),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Average",
+                                style: TextStyle(color: Colors.white30)),
+                            Text("Wake up at",
+                                style:
+                                TextStyle(
+                                    color: Colors.white, fontSize: 15.0)),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                RichText(
+                                    text: TextSpan(children: [
+                                      TextSpan(
+                                          text: DateFormat(
+                                              DATE_FORMAT_DAY_TIME).format(
+                                              avgMonthWakeTime),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w300)),
+                                      TextSpan(
+                                          text: DateFormat(DATE_FORMAT_AM_PM)
+                                              .format(avgMonthWakeTime),
+                                          style: TextStyle(
+                                              color: Colors.white54,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w300))
+                                    ])
+                                ),
+                                Icon(
+                                  Icons.wb_sunny,
+                                  color: Colors.yellow,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      )),
+                ),
+              ],
+            ),
 
-              // Row 3
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      child: plotBarChartWith(
-                          sleepQualityBarChartMonthData,
-                          "Sleep score",
-                      ),
-                  ),
-                  ),
-                ],
-              ),
+            // Row 3
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Sleep score
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                      elevation: 3.0,
+                      color: Color(0xff1F1F1F),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Average",
+                                style: TextStyle(color: Colors.white30)),
+                            Text("Pain intensity score",
+                                style:
+                                TextStyle(color: Colors.white, fontSize: 15.0)),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    monthData.averagePainIntensityScore.toStringAsFixed(2),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18.0)),
+                                Icon(
+                                  Icons.sick,
+                                  color: Colors.red,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      )),
+                ),
+              ],
+            ),
 
-              // Row 4
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                          padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                          child: SleepTimeChart(
-                            data: sleepDurationBarChartMonthData,
-                            title: "Sleep duration",
-                          ),
+            // Row 4
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                    child: plotBarChartWith(
+                        sleepQualityBarChartMonthData,
+                        "Sleep score",
+                    ),
+                ),
+                ),
+              ],
+            ),
+
+            // Row 5
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                        padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        child: SleepTimeChart(
+                          data: sleepDurationBarChartMonthData,
+                          title: "Sleep duration",
+                        ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Row 6
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                    child: plotBarChartWith(
+                      painIntensityBarChartMonthData,
+                      "Pain intensity",
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }
-      else {
-        return emptyTrendScreen();
-      }
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
     }
+    else {
+      return emptyTrendScreen();
+    }
+  }
 
-    Widget allTab (List<DailyQ> allData) {
+  Widget allTab (List<DailyQ> allData) {
       if (allData.isNotEmpty) {
         return SingleChildScrollView(
           child: Column(
@@ -866,6 +994,50 @@ class TrendScreenState extends State<TrendScreen> {
                   ),
                 ],
               ),
+
+              // Row 3
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Sleep score
+                  Expanded(
+                    flex: 2,
+                    child: Card(
+                        elevation: 3.0,
+                        color: Color(0xff1F1F1F),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        margin: EdgeInsets.all(8),
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Average",
+                                  style: TextStyle(color: Colors.white30)),
+                              Text("Pain intensity score",
+                                  style:
+                                  TextStyle(color: Colors.white, fontSize: 15.0)),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      allData.averagePainIntensityScore.toStringAsFixed(2),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18.0)),
+                                  Icon(
+                                    Icons.sick,
+                                    color: Colors.red,
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        )),
+                  ),
+                ],
+              ),
             ],
           ),
         );
@@ -1081,14 +1253,14 @@ class TrendScreenState extends State<TrendScreen> {
     );
   }
 
-  showWeekSleepDuration() {
+  weeklySleepDuration() {
     var lastDayOfWeek = firstDayOfWeek.add(Duration(days: 7));
     final daysToGenerate = lastDayOfWeek.difference(firstDayOfWeek).inDays;
     var sleepDurationData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(firstDayOfWeek.add(Duration(days: index)))), 0));
 
     for(var d in sleepDurationData) {
       for(var x in weekData) {
-        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken!))) {
           d.value = int.parse(x.sleepPeriod[0]) + double.parse((double.parse(x.sleepPeriod[1])/60).toStringAsFixed(2));
           break;
         }
@@ -1110,14 +1282,14 @@ class TrendScreenState extends State<TrendScreen> {
     }
   }
 
-  showMonthSleepDuration() {
+  monthlySleepDuration() {
     var lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     final daysToGenerate = lastDayOfMonth.add(Duration(days: 1)).difference(month).inDays;
     var sleepDurationData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(month.add(Duration(days: index)))), 0));
 
     for(var d in sleepDurationData) {
       for(var x in monthData) {
-        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken!))) {
           d.value = int.parse(x.sleepPeriod[0]) + double.parse((double.parse(x.sleepPeriod[1])/60).toStringAsFixed(2));
           break;
         }
@@ -1141,15 +1313,15 @@ class TrendScreenState extends State<TrendScreen> {
     }
   }
 
-  showWeekGroups() {
+  weeklySleepQuality() {
     var lastDayOfWeek = firstDayOfWeek.add(Duration(days: 7));
     final daysToGenerate = lastDayOfWeek.difference(firstDayOfWeek).inDays;
     var sleepQualityData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(firstDayOfWeek.add(Duration(days: index)))), 0));
 
     for(var d in sleepQualityData) {
       for(var x in weekData) {
-        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
-          d.value = x.qualityOfSleep.toDouble();
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken!))) {
+          d.value = x.qualityOfSleep!.toDouble();
           break;
         }
       }
@@ -1160,15 +1332,15 @@ class TrendScreenState extends State<TrendScreen> {
     }
   }
 
-  showMonthGroups() {
+  monthlySleepQuality() {
     var lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     final daysToGenerate = lastDayOfMonth.add(Duration(days: 1)).difference(month).inDays;
     var sleepQualityData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(month.add(Duration(days: index)))), 0));
 
     for(var d in sleepQualityData) {
       for(var x in monthData) {
-        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken))) {
-          d.value = x.qualityOfSleep.toDouble();
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken!))) {
+          d.value = x.qualityOfSleep!.toDouble();
           break;
         }
       }
@@ -1179,6 +1351,43 @@ class TrendScreenState extends State<TrendScreen> {
     }
   }
 
+  weeklyPainIntensity() {
+    var lastDayOfWeek = firstDayOfWeek.add(Duration(days: 7));
+    final daysToGenerate = lastDayOfWeek.difference(firstDayOfWeek).inDays;
+    var painIntensityData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(firstDayOfWeek.add(Duration(days: index)))), 0));
+
+    for(var d in painIntensityData) {
+      for(var x in weekData) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken!))) {
+          d.value = x.painIntensity!.toDouble();
+          break;
+        }
+      }
+    }
+
+    for(int i = 0; i<painIntensityData.length; i++) {
+      painIntensityBarChartWeekData.add(makeGroupData(i, painIntensityData[i].value.toDouble(), painIntensityData.length),);
+    }
+  }
+
+  monthlyPainIntensity() {
+    var lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    final daysToGenerate = lastDayOfMonth.add(Duration(days: 1)).difference(month).inDays;
+    var painIntensityData = List.generate(daysToGenerate, (index) => DummyData(int.parse(DateFormat("dd").format(month.add(Duration(days: index)))), 0));
+
+    for(var d in painIntensityData) {
+      for(var x in monthData) {
+        if (d.index == int.parse(DateFormat("dd").format(x.dateTaken!))) {
+          d.value = x.qualityOfSleep!.toDouble();
+          break;
+        }
+      }
+    }
+
+    for(int i = 0; i<painIntensityData.length; i++) {
+      painIntensityBarChartMonthData.add(makeGroupData(i, painIntensityData[i].value.toDouble(), painIntensityData.length));
+    }
+  }
 
   BarChartData mainBarData(List<BarChartGroupData> groupData) {
     return BarChartData(

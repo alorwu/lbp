@@ -1,16 +1,9 @@
-import 'package:hive/hive.dart';
 
-@HiveType(typeId: 6)
 class MobilityDataResponse {
-  @HiveField(0)
-  DateTime date;
+  DateTime? date;
 
-  @HiveField(1)
-  int numberOfStops;
+  int? stepsTaken;
 
-  @HiveField(2)
-  int numberOfMoves;
+  double? distanceTravelled;
 
-  @HiveField(3)
-  int numberOfSignificantPlaces;
 }

@@ -1,5 +1,4 @@
 final environment = {
-  'onesignal_app_id': '5229dd0c-005c-454d-91c1-f73387b04315', //'a973f3e2-37d5-4377-9e80-196fe7fa9d70' - old id
   'spreadsheetId': '1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ',
   'credentials': {
        "type": "service_account",
@@ -13,5 +12,5 @@ final environment = {
        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/lpb-service-account%40lbp-study.iam.gserviceaccount.com"
   },
- 'remote_url': 'https://low-back-pain.herokuapp.com',
+ 'remote_url': 'https://lbpauctions.herokuapp.com',
 };

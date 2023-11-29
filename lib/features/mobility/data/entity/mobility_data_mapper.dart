@@ -10,10 +10,9 @@ class MobilityDataMapperImpl extends MobilityDataMapper {
   @override
   MobilityData mapResponseToData(MobilityDataResponse response) {
     return MobilityData(
-        response.date,
-        response.numberOfStops,
-        response.numberOfMoves,
-        response.numberOfSignificantPlaces
+        date: response.date,
+        stepsTaken: response.stepsTaken,
+        distanceTravelled: response.distanceTravelled,
     );
   }
 

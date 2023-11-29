@@ -11,7 +11,7 @@ abstract class LocalMobilityDataSource {
 
 class LocalMobilityDataSourceImpl extends LocalMobilityDataSource {
   String _boxName = "mobilityDataBox";
-  Box<MobilityDataResponse> box;
+  late Box<MobilityDataResponse> box;
 
   LocalMobilityDataSourceImpl() {
     initBox();
@@ -27,7 +27,7 @@ class LocalMobilityDataSourceImpl extends LocalMobilityDataSource {
 
   @override
   Future<MobilityDataResponse> getMobilityData(DateTime dateTime) async {
-    return box.values.where((element) => element.date.isBefore(dateTime)).first;
+    return box.values.where((element) => element.date!.isBefore(dateTime)).first;
   }
 
   @override

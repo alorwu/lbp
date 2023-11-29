@@ -6,37 +6,37 @@ part 'quality_of_life.g.dart';
 @HiveType(typeId: 3)
 class QoL {
   @HiveField(0)
-  String generalHealth;
+  String? generalHealth;
 
   @HiveField(1)
-  String qualityOfLife;
+  String? qualityOfLife;
 
   @HiveField(2)
-  String physicalHealth;
+  String? physicalHealth;
 
   @HiveField(3)
-  String mentalHealth;
+  String? mentalHealth;
 
   @HiveField(4)
-  String socialSatisfaction;
+  String? socialSatisfaction;
 
   @HiveField(5)
-  String carryOutSocialActivities;
+  String? carryOutSocialActivities;
 
   @HiveField(6)
-  String carryOutPhysicalActivities;
+  String? carryOutPhysicalActivities;
 
   @HiveField(7)
-  String emotionalProblems;
+  String? emotionalProblems;
 
   @HiveField(8)
-  String fatigue;
+  String? fatigue;
 
   @HiveField(9)
-  String pain;
+  String? pain;
 
   @HiveField(10)
-  DateTime dateTaken;
+  DateTime? dateTaken;
 
   QoL({
     this.generalHealth,

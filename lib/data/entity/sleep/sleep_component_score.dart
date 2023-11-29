@@ -6,31 +6,31 @@ part 'sleep_component_score.g.dart';
 @HiveType(typeId: 4)
 class SleepComponentScores {
   @HiveField(0)
-  int sleepQuality;
+  int? sleepQuality;
 
   @HiveField(1)
-  int sleepLatency;
+  int? sleepLatency;
 
   @HiveField(2)
-  int sleepDuration;
+  int? sleepDuration;
 
   @HiveField(3)
-  int sleepEfficiency;
+  int? sleepEfficiency;
 
   @HiveField(4)
-  int sleepDisturbance;
+  int? sleepDisturbance;
 
   @HiveField(5)
-  int sleepMedication;
+  int? sleepMedication;
 
   @HiveField(6)
-  int dayTimeDysfunction;
+  int? dayTimeDysfunction;
 
   @HiveField(7)
-  int pSQIScore;
+  int? pSQIScore;
 
   @HiveField(8)
-  DateTime dateTaken;
+  DateTime? dateTaken;
 
   SleepComponentScores({
     this.sleepQuality,

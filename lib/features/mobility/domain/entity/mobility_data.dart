@@ -1,14 +1,23 @@
 
-class MobilityData {
-  final DateTime date;
-  final int numberOfStops;
-  final int numberOfMoves;
-  final int numberOfSignificantPlaces;
+import 'package:hive/hive.dart';
+part 'mobility_data.g.dart';
 
-  MobilityData(
+@HiveType(typeId: 8)
+class MobilityData {
+  @HiveField(0)
+  final DateTime? date;
+  @HiveField(1)
+  final int? stepsTaken;
+
+  MobilityData({
     this.date,
-    this.numberOfStops,
-    this.numberOfMoves,
-    this.numberOfSignificantPlaces
-  );
+    this.stepsTaken,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date,
+      'stepsTaken': stepsTaken,
+    };
+  }
 }

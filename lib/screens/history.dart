@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:mobility_features/mobility_features.dart';
 
 import '../data/entity/daily/daily_q.dart';
 import '../data/entity/qol/quality_of_life.dart';
@@ -16,9 +15,6 @@ import 'questionnaires/quality_of_life_questionnaire.dart';
 
 
 class SurveyHistoryScreen extends StatefulWidget {
-  final MobilityContext context;
-  final String steps, status;
-  const SurveyHistoryScreen(this.context, this.steps, this.status);
 
   @override
   SurveyHistoryState createState() => SurveyHistoryState();
@@ -29,17 +25,15 @@ const DATE_FORMAT_DAY_TIME = "hh:mm";
 const DATE_FORMAT_AM_PM = " a";
 
 class SurveyHistoryState extends State<SurveyHistoryScreen> {
-  Box<DailyQ> dailyRecords;
-  Box<QoL> qolRecords;
-  Box<SleepComponentScores> sleepComponentScores;
-  Box<QoLScore> qolScores;
-  MobilityContext _mobilityContext;
+  Box<DailyQ>? dailyRecords;
+  Box<QoL>? qolRecords;
+  Box<SleepComponentScores>? sleepComponentScores;
+  Box<QoLScore>? qolScores;
 
   @override
   initState() {
     super.initState();
     initBoxes();
-    _mobilityContext = widget.context;
   }
 
   initBoxes() async {
@@ -219,34 +213,34 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
               SizedBox(
                 height: 20.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.only(
-                            left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        primary: Colors.blue),
-                    onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  QualityOfLifeQuestionnaire()))
-                    },
-                    child: Text(
-                      "Start quality of life survey",
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     ElevatedButton(
+              //       style: ElevatedButton.styleFrom(
+              //           padding: EdgeInsets.only(
+              //               left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(20.0),
+              //           ),
+              //           primary: Colors.blue),
+              //       onPressed: () => {
+              //         Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (context) =>
+              //                     QualityOfLifeQuestionnaire()))
+              //       },
+              //       child: Text(
+              //         "Start quality of life survey",
+              //         style: TextStyle(
+              //             fontSize: 18.0,
+              //             fontWeight: FontWeight.normal,
+              //             color: Colors.white),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
@@ -311,33 +305,33 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
               SizedBox(
                 height: 20.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.only(
-                            left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        primary: Colors.blue),
-                    onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SleepQuestionnaire()))
-                    },
-                    child: Text(
-                      "Take sleep quality survey",
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     ElevatedButton(
+              //       style: ElevatedButton.styleFrom(
+              //           padding: EdgeInsets.only(
+              //               left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(20.0),
+              //           ),
+              //           primary: Colors.blue),
+              //       onPressed: () => {
+              //         Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (context) => SleepQuestionnaire()))
+              //       },
+              //       child: Text(
+              //         "Take sleep quality survey",
+              //         style: TextStyle(
+              //             fontSize: 18.0,
+              //             fontWeight: FontWeight.normal,
+              //             color: Colors.white),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
@@ -361,7 +355,7 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  DateFormat(DATE_FORMAT_DAY).format(data.dateTaken),
+                  DateFormat(DATE_FORMAT_DAY).format(data.dateTaken!),
                   style: TextStyle(color: Colors.white54),
                 ),
               ],
@@ -388,14 +382,14 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
                     text: TextSpan(children: [
                   TextSpan(
                       text: DateFormat(DATE_FORMAT_DAY_TIME)
-                          .format(data.sleepTime),
+                          .format(data.sleepTime!),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w300)),
                   TextSpan(
                       text:
-                          DateFormat(DATE_FORMAT_AM_PM).format(data.sleepTime),
+                          DateFormat(DATE_FORMAT_AM_PM).format(data.sleepTime!),
                       style: TextStyle(
                           color: Colors.white54,
                           fontSize: 14.0,
@@ -435,14 +429,14 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
                     text: TextSpan(children: [
                   TextSpan(
                       text: DateFormat(DATE_FORMAT_DAY_TIME)
-                          .format(data.wakeupTime),
+                          .format(data.wakeupTime!),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w300)),
                   TextSpan(
                       text:
-                          DateFormat(DATE_FORMAT_AM_PM).format(data.wakeupTime),
+                          DateFormat(DATE_FORMAT_AM_PM).format(data.wakeupTime!),
                       style: TextStyle(
                           color: Colors.white54,
                           fontSize: 14.0,
@@ -459,86 +453,44 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
                 ])),
               ],
             ),
-
             SizedBox(height: 15.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Distance travelled",
+                  "Pain intensity",
                   style: TextStyle(color: Colors.white54),
                 ),
-                Text("Places visited", style: TextStyle(color: Colors.white54))
-              ],
-            ),
-            _mobilityContext != null ?
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: _mobilityContext.distanceTravelled.toString(),
-                            style: TextStyle(color: Colors.white, fontSize: 16.0)),
-                        TextSpan(
-                            text: " km",
-                            style: TextStyle(color: Colors.white54, fontSize: 16.0))
-                      ])),
-                  Text(
-                    _mobilityContext.numberOfSignificantPlaces.toString(),
-                    style: TextStyle(color: Colors.white, fontSize: 16.0)
-                  ),
-                ],
-              )
-            : Container(),
-            SizedBox(height: 15.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Steps taken",
-                  style: TextStyle(color: Colors.white54),
-                ),
-                Text("Current status", style: TextStyle(color: Colors.white54))
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    widget.steps,
-                    style: TextStyle(color: Colors.white, fontSize: 16.0)
-                ),
-                Row(
-                  children: <Widget>[
-                    Icon(widget.status == 'walking'
-                        ? Icons.directions_walk
-                        : widget.status == 'stopped'
-                            ? Icons.accessibility_new
-                            : Icons.error),
-                    SizedBox(width: 10),
-                    Text(
-                        widget.status,
-                        style: TextStyle(color: Colors.white, fontSize: 16.0)
-                    ),
-                  ],
-                )
+                RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: data.painIntensity.toString(),
+                          style: TextStyle(color: Colors.white, fontSize: 16.0)),
+                      TextSpan(
+                          text: "/10",
+                          style: TextStyle(color: Colors.white54, fontSize: 16.0))
+                    ])),
               ],
-            )
+            ),
+            SizedBox(height: 15.0),
           ],
         ),
       ),
     );
   }
 
-  Widget dailySurvey(Box<DailyQ> list) {
+  Widget dailySurvey(Box<DailyQ>? list) {
     if (list != null && list.isNotEmpty) {
       return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, listIndex) {
-            return dailyCard(listIndex, list.getAt(listIndex));
+            return dailyCard(listIndex, list.getAt(listIndex)!);
           });
     } else
       return emptyDailyCard();
@@ -560,7 +512,7 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  DateFormat(DATE_FORMAT_DAY).format(score.dateTaken),
+                  DateFormat(DATE_FORMAT_DAY).format(score.dateTaken!),
                   style: TextStyle(color: Colors.white54),
                 ),
               ],
@@ -617,18 +569,18 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
     );
   }
 
-  Widget qualityOfLifeSurvey(Box<QoLScore> qolScores) {
+  Widget qualityOfLifeSurvey(Box<QoLScore>? qolScores) {
     if (qolScores != null && qolScores.isNotEmpty) {
       return ListView.builder(
           itemCount: qolScores.length,
           itemBuilder: (context, listIndex) {
-            return qolScoreCard(listIndex, qolScores.getAt(listIndex));
+            return qolScoreCard(listIndex, qolScores.getAt(listIndex)!);
           });
     } else
       return emptyQoLCard();
   }
 
-  Widget pSQISurvey(Box<SleepComponentScores> scores) {
+  Widget pSQISurvey(Box<SleepComponentScores>? scores) {
     if (scores != null && scores.isNotEmpty) {
       return SingleChildScrollView(
         child: ValueListenableBuilder(
@@ -669,8 +621,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget sleepLatencyPlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.sleepLatency.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.sleepLatency!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -685,8 +637,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget sleepDurationPlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.sleepDuration.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.sleepDuration!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -701,8 +653,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget sleepQualityPlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.sleepQuality.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.sleepQuality!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -717,8 +669,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget sleepDisturbancePlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.sleepDisturbance.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.sleepDisturbance!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -733,8 +685,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget sleepEfficiencyPlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.sleepEfficiency.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.sleepEfficiency!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -749,8 +701,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget sleepMedicationPlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.sleepMedication.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.sleepMedication!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -765,8 +717,8 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
   Widget dayTimeDysfunctionPlot(Iterable<SleepComponentScores> scores) {
     List<FlSpot> spots = [];
     for (var score in scores) {
-      var date = int.parse(DateFormat("MM").format(score.dateTaken));
-      spots.add(FlSpot(date.toDouble(), score.dayTimeDysfunction.toDouble()));
+      var date = int.parse(DateFormat("MM").format(score.dateTaken!));
+      spots.add(FlSpot(date.toDouble(), score.dayTimeDysfunction!.toDouble()));
     }
 
     return ComponentScoresLineChart(
@@ -780,9 +732,7 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text('Your history'),
@@ -790,26 +740,19 @@ class SurveyHistoryState extends State<SurveyHistoryScreen> {
           elevation: 0.0,
           // systemOverlayStyle: SystemUiOverlayStyle.dark,
           brightness: Brightness.dark,
-          bottom: TabBar(
-            indicatorColor: Colors.white,
-            indicatorSize: TabBarIndicatorSize.label,
-            tabs: [
-              Padding(padding: EdgeInsets.all(5), child: Text("Daily data")),
-              Padding(
-                  padding: EdgeInsets.all(5), child: Text("Quality of life")),
-              Padding(padding: EdgeInsets.all(5), child: Text("Monthly sleep")),
-            ],
-          ),
+          // bottom: TabBar(
+          //   indicatorColor: Colors.white,
+          //   indicatorSize: TabBarIndicatorSize.label,
+          //   tabs: [
+          //     Padding(padding: EdgeInsets.all(5), child: Text("Daily data")),
+          //     // Padding(
+          //     //     padding: EdgeInsets.all(5), child: Text("Quality of life")),
+          //     // Padding(padding: EdgeInsets.all(5), child: Text("Monthly sleep")),
+          //   ],
+          // ),
         ),
         backgroundColor: Colors.black,
-        body: TabBarView(
-          children: [
-            dailySurvey(dailyRecords),
-            qualityOfLifeSurvey(qolScores),
-            pSQISurvey(sleepComponentScores),
-          ],
-        ),
-      ),
-    );
+        body: dailySurvey(dailyRecords),
+      );
   }
 }

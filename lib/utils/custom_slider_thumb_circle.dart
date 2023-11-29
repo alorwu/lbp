@@ -6,7 +6,7 @@ class CustomSliderThumbCircle extends SliderComponentShape {
   final int max;
 
   const CustomSliderThumbCircle({
-    @required this.thumbRadius,
+    required this.thumbRadius,
     this.min = 0,
     this.max = 10,
   });
@@ -20,16 +20,16 @@ class CustomSliderThumbCircle extends SliderComponentShape {
   void paint(
       PaintingContext context,
       Offset center, {
-        Animation<double> activationAnimation,
-        Animation<double> enableAnimation,
-        bool isDiscrete,
-        TextPainter labelPainter,
-        RenderBox parentBox,
-        SliderThemeData sliderTheme,
-        TextDirection textDirection,
-        double value,
-        double textScaleFactor,
-        Size sizeWithOverflow,
+        Animation<double>? activationAnimation,
+        Animation<double>? enableAnimation,
+        bool? isDiscrete,
+        TextPainter? labelPainter,
+        RenderBox? parentBox,
+        SliderThemeData? sliderTheme,
+        TextDirection? textDirection,
+        required double value,
+        double? textScaleFactor,
+        Size? sizeWithOverflow,
       }) {
     final Canvas canvas = context.canvas;
 

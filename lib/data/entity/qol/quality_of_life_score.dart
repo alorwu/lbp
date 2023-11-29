@@ -6,13 +6,13 @@ part 'quality_of_life_score.g.dart';
 @HiveType(typeId: 5)
 class QoLScore {
   @HiveField(0)
-  int physicalHealth;
+  int? physicalHealth;
 
   @HiveField(1)
-  int mentalHealth;
+  int? mentalHealth;
 
   @HiveField(2)
-  DateTime dateTaken;
+  DateTime? dateTaken;
 
   QoLScore({
     this.physicalHealth,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,15 +8,16 @@ import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lbp/features/mobility/domain/entity/mobility_data.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/entity/daily/daily_q.dart';
-import '../../env/.env.dart';
 import '../../domain/entity/questionnaires/daily/question.dart';
 import '../../domain/entity/questionnaires/daily/questionnaire.dart';
 import '../../domain/entity/remote/DailySurvey.dart';
+import '../../env/.env.dart';
 import '../../utils/custom_slider_thumb_circle.dart';
 import '../../utils/preferences.dart';
 
@@ -27,7 +29,7 @@ class QuestionnairePage extends StatefulWidget {
   final fullWidth;
 
   QuestionnairePage(
-      {Key key,
+      {Key? key,
       this.sliderHeight = 48,
       this.max = 10,
       this.min = 0,
@@ -40,10 +42,10 @@ class QuestionnairePage extends StatefulWidget {
 
 class _QuestionnairePageState extends State<QuestionnairePage> {
   Questionnaire questionnaire = Questionnaire();
-  DateTime timePickerValue;
-  String selectedValue;
-  String notes;
-  GSheets gSheets;
+  DateTime? timePickerValue;
+  String? selectedValue;
+  String? notes;
+  late GSheets gSheets;
 
   ButtonState submitButtonState = ButtonState.idle;
 
@@ -96,8 +98,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   decorator: DotsDecorator(
                     size: Size.square(12),
                     activeSize: Size(15, 15),
-                    activeColor: Colors.white70, //Theme.of(context).primaryColor,
-                    color: Colors.black54 //Theme.of(context).disabledColor,
+                    activeColor: Colors.white70,
+                    color: Colors.black54,
                   ),
                 ),
               ),
@@ -116,7 +118,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   padding: EdgeInsets.all(10.0),
                   child: Center(
                     child: Text(
-                      questionnaire.getQuestion().question,
+                      questionnaire.getQuestion().question!,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white, fontSize: 18.0),
                     ),
@@ -286,7 +288,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               value: "${list[index]}",
               groupValue: question.data,
               activeColor: Colors.white,
-              onChanged: (String value) {
+              onChanged: (String? value) {
                 setState(() {
                   question.data = value;
                 });
@@ -317,8 +319,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 helperText: "No answer is wrong. Write freely.",
                 helperStyle: TextStyle(color: Colors.white),
               ),
+              autocorrect: false,
               keyboardType: TextInputType.text,
-              maxLines: 12,
+              enableSuggestions: false,
+              maxLines: 6,
               onChanged: (String value) {
                 setState(() {
                   questionnaire.getQuestion().data = value;
@@ -336,7 +340,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         children: <Widget>[
           questionnaire.getQuestion().data != null
               ? Text(
-            DateFormat("hh:mm a").format(DateTime.parse(questionnaire.getQuestion().data)),
+            DateFormat("hh:mm a").format(DateTime.parse(questionnaire.getQuestion().data!)),
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -374,7 +378,16 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                     questionnaire.getQuestion().data = DateFormat("yyyy-MM-dd HH:mm").format(value);
                   });
                 },
-                initialDateTime: DateTime.now(),
+                  initialDateTime: questionnaire.questionNumber() == 0
+                    ? DateTime(
+                        DateTime.now().year,
+                        DateTime.now().month,
+                        DateTime.now().day,
+                        21,
+                        0,
+                        0)
+                    : DateTime(DateTime.now().year, DateTime.now().month,
+                        DateTime.now().day, 06, 0, 0), //DateTime.now(),
               ),
             );
           }
@@ -421,7 +434,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                               min: this.widget.min,
                               max: this.widget.max,
                             ),
-                            // overlayColor: Colors.white.withOpacity(.4),
                             activeTickMarkColor: Colors.blue,
                             inactiveTickMarkColor: Colors.white,
                           ),
@@ -493,7 +505,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               value: '${index + 1}',
               groupValue: question.data,
               activeColor: Colors.white,
-              onChanged: (String value) {
+              onChanged: (String? value) {
                 setState(() {
                   question.data = value;
                 });
@@ -517,12 +529,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       values.insert(1, id);
       values.add(DateTime.now().toString());
 
-      saveDataLocally(values);
-
-      final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
+      final ss = await gSheets.spreadsheet(environment['spreadsheetId'] as String);
       var sheet = ss.worksheetByTitle('daily_survey');
       sheet ??= await ss.addWorksheet('daily_survey');
-
+      saveDataLocally(values);
       try {
 
         var dailyQ = DailyQ(
@@ -533,7 +543,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
             qualityOfSleep: int.parse(values[5]),
             painIntensity: int.parse(values[6]),
             painAffectSleep: values[7],
-            notes: values[8]);
+            notes: values[8],
+        );
         values.add(dailyQ.sleepPeriod.toString());
 
         var surveyData = DailySurvey(
@@ -544,13 +555,11 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           painIntensity: int.parse(values[6]),
           painSleepRelationship: values[7],
           notes: values[8],
-          sleepDuration: dailyQ.sleepPeriod.toString(),
+          sleepDuration: dailyQ.sleepPeriod[0].toString() + "." + dailyQ.sleepPeriod[1].toString(),
           dateTaken: DateTime.now(),
-          userId: id
+          userId: id,
         );
         saveDailySurveyToRemoteDb(surveyData);
-
-
 
         var result = await sheet.values.appendRow(values);
         if (result) {
@@ -603,9 +612,17 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           qualityOfSleep: int.parse(values[5]),
           painIntensity: int.parse(values[6]),
           painAffectSleep: values[7],
-          notes: values[8]);
+          notes: values[8],
+      );
       Box<DailyQ> box = Hive.box("dailyBox");
       await box.put(DateFormat("yyyy-MM-dd").format(DateTime.now()), dailyQ);
+    }
+
+    MobilityData? getYesterdayMobilityData() {
+      final df = new DateFormat("dd-MM-yyyy");
+      final key = df.format(DateTime.now().subtract(Duration(days: 1)));
+      Box<MobilityData> box = Hive.box("mobility_data");
+      return box.values.firstWhereOrNull((element) => df.format(element.date!) == key);
     }
 
   Future<http.Response> saveDailySurveyToRemoteDb(DailySurvey survey) async {

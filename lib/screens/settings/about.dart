@@ -25,7 +25,7 @@ class AboutScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                        "Do you have low back pain and trouble sleeping? The Sleep Better with Back Pain app is part of international research that will ultimately help you and people just like you to sleep better."),
+                        "Do you have low back pain and trouble sleeping? The LBP app is part of international research that will ultimately help you and people just like you to sleep better."),
                   ),
                   Padding(
                       padding: EdgeInsets.all(10.0),

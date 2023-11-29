@@ -25,7 +25,7 @@ class SleepQuestionnaire extends StatefulWidget {
   final fullWidth;
 
   SleepQuestionnaire(
-      {Key key,
+      {Key? key,
       this.sliderHeight = 48,
       this.max = 10,
       this.min = 0,
@@ -38,10 +38,10 @@ class SleepQuestionnaire extends StatefulWidget {
 
 class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   PSQIQuestionnaire questionnaire = PSQIQuestionnaire();
-  GSheets gSheets;
+  late GSheets gSheets;
 
   ButtonState submitButtonState = ButtonState.idle;
-  String appId;
+  String? appId;
 
   @override
   initState() {
@@ -119,7 +119,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
                 padding: EdgeInsets.all(10.0),
                 child: Center(
                   child: Text(
-                    questionnaire.getPSQIQuestion().question,
+                    questionnaire.getPSQIQuestion().question!,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white, fontSize: 18.0),
                   ),
@@ -244,7 +244,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     }
   }
 
-  Widget answerWidget(PSQIQuestion question) {
+  Widget? answerWidget(PSQIQuestion question) {
     switch (question.type) {
       case "likert":
         return comboWidget(question);
@@ -265,7 +265,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   }
 
   Widget bedTime(PSQIQuestion question) {
-    List<String> time;
+    late List<String> time;
     switch (question.subtitle) {
       case 'BED TIME':
         time = [
@@ -369,7 +369,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
                   ))
               .toList();
         },
-        onSelected: (value) {
+        onSelected: (dynamic value) {
           setState(() {
             question.data = value;
           });
@@ -441,11 +441,11 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
           return list
               .map((value) => PopupMenuItem(
                     value: value,
-                    child: Text(value, overflow: TextOverflow.clip),
+                    child: Text(value!, overflow: TextOverflow.clip),
                   ))
               .toList();
         },
-        onSelected: (value) {
+        onSelected: (dynamic value) {
           setState(() {
             question.data = value;
           });
@@ -475,7 +475,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
 
     saveLocally();
 
-    final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
+    final ss = await gSheets.spreadsheet(environment['spreadsheetId'] as String);
     var sheet = ss.worksheetByTitle('monthly_sleep_survey');
     sheet ??= await ss.addWorksheet('monthly_sleep_survey');
 
@@ -529,7 +529,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   }
 
   void saveLocally() async {
-    List<String> values = [];
+    List<String?> values = [];
     questionnaire.getPSQIQuestions().forEach((e) => values.add(e.data));
     var psqi = PSQI(
       timeToBed: values[0],
@@ -568,12 +568,12 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
 
   void calculateSleepComponentScore(PSQI psqi) async {
     int dayTimeDysfunctionComponent = calculateDayTimeDysfunction(psqi);
-    int sleepMedicationComponent = weekMonthDefault(psqi.medicineToSleep);
+    int sleepMedicationComponent = weekMonthDefault(psqi.medicineToSleep!);
     int sleepDisturbanceComponent = sleepDisturbance(psqi);
     int sleepEfficiencyComponent = sleepEfficiency(psqi);
-    int sleepDurationComponent = sleepDuration(psqi.hoursSlept);
+    int sleepDurationComponent = sleepDuration(psqi.hoursSlept!);
     int sleepLatencyComponent = sleepLatency(psqi);
-    int sleepQualityComponent = sleepQuality(psqi.sleepQuality);
+    int sleepQualityComponent = sleepQuality(psqi.sleepQuality!);
 
     int pSQIScore = dayTimeDysfunctionComponent +
         sleepMedicationComponent +
@@ -621,7 +621,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
 
   int calculateDayTimeDysfunction(PSQI pSQI) {
     int q8 = -1;
-    switch (pSQI.troubleStayingAwake.trim()) {
+    switch (pSQI.troubleStayingAwake!.trim()) {
       case "Never":
         q8 = 0;
         break;
@@ -636,7 +636,7 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
     }
 
     int q9 = -1;
-    switch (pSQI.troubleStayingAwake.trim()) {
+    switch (pSQI.troubleStayingAwake!.trim()) {
       case "No problem at all":
         q8 = 0;
         break;
@@ -675,15 +675,15 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   }
 
   int sleepDisturbance(PSQI pSQI) {
-    int q5b = weekMonthDefault(pSQI.wakeUpNightOrMorning);
-    int q5c = weekMonthDefault(pSQI.bathroomUse);
-    int q5d = weekMonthDefault(pSQI.cannotBreatheComfortably);
-    int q5e = weekMonthDefault(pSQI.coughOrSnoreLoudly);
-    int q5f = weekMonthDefault(pSQI.feelCold);
-    int q5g = weekMonthDefault(pSQI.feelHot);
-    int q5h = weekMonthDefault(pSQI.badDreams);
-    int q5i = weekMonthDefault(pSQI.havePain);
-    int q5j = weekMonthDefault(pSQI.troubleSleepingDueToOtherReason);
+    int q5b = weekMonthDefault(pSQI.wakeUpNightOrMorning!);
+    int q5c = weekMonthDefault(pSQI.bathroomUse!);
+    int q5d = weekMonthDefault(pSQI.cannotBreatheComfortably!);
+    int q5e = weekMonthDefault(pSQI.coughOrSnoreLoudly!);
+    int q5f = weekMonthDefault(pSQI.feelCold!);
+    int q5g = weekMonthDefault(pSQI.feelHot!);
+    int q5h = weekMonthDefault(pSQI.badDreams!);
+    int q5i = weekMonthDefault(pSQI.havePain!);
+    int q5j = weekMonthDefault(pSQI.troubleSleepingDueToOtherReason!);
     int sum = q5b + q5c + q5d + q5e + q5f + q5g + q5h + q5i + q5j;
 
     if (sum == 0)
@@ -697,9 +697,9 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   }
 
   int sleepEfficiency(PSQI pSQI) {
-    int hoursSlept = int.parse(pSQI.hoursSlept.substring(0, 2).trim());
-    int getUpTime = int.parse(pSQI.wakeUpTime.substring(0, 2).trim());
-    int bedTime = int.parse(pSQI.timeToBed.substring(0, 2).trim());
+    int hoursSlept = int.parse(pSQI.hoursSlept!.substring(0, 2).trim());
+    int getUpTime = int.parse(pSQI.wakeUpTime!.substring(0, 2).trim());
+    int bedTime = int.parse(pSQI.timeToBed!.substring(0, 2).trim());
     int hoursInBed;
     if ((bedTime - getUpTime) > 0) {
       hoursInBed = 24 - (bedTime - getUpTime);
@@ -730,9 +730,9 @@ class _SleepQuestionnaireState extends State<SleepQuestionnaire> {
   }
 
   int sleepLatency(PSQI psqi) {
-    int q5a = weekMonthDefault(psqi.sleepIn30Mins);
+    int q5a = weekMonthDefault(psqi.sleepIn30Mins!);
     int q2 = 0;
-    switch (psqi.timeToSleep.trim()) {
+    switch (psqi.timeToSleep!.trim()) {
       case "≤15 minutes":
         q2 = 0;
         break;

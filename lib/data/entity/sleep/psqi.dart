@@ -5,61 +5,61 @@ part 'psqi.g.dart';
 @HiveType(typeId: 2)
 class PSQI {
   @HiveField(0)
-  String timeToBed;
+  String? timeToBed;
 
   @HiveField(1)
-  String timeToSleep;
+  String? timeToSleep;
 
   @HiveField(2)
-  String wakeUpTime;
+  String? wakeUpTime;
 
   @HiveField(3)
-  String hoursSlept;
+  String? hoursSlept;
 
   @HiveField(4)
-  String sleepIn30Mins;
+  String? sleepIn30Mins;
 
   @HiveField(5)
-  String wakeUpNightOrMorning;
+  String? wakeUpNightOrMorning;
 
   @HiveField(6)
-  String bathroomUse;
+  String? bathroomUse;
 
   @HiveField(7)
-  String cannotBreatheComfortably;
+  String? cannotBreatheComfortably;
 
   @HiveField(8)
-  String coughOrSnoreLoudly;
+  String? coughOrSnoreLoudly;
 
   @HiveField(9)
-  String feelCold;
+  String? feelCold;
 
   @HiveField(10)
-  String feelHot;
+  String? feelHot;
 
   @HiveField(11)
-  String badDreams;
+  String? badDreams;
 
   @HiveField(12)
-  String havePain;
+  String? havePain;
 
   @HiveField(13)
-  String otherReasonsUnableToSleep;
+  String? otherReasonsUnableToSleep;
 
   @HiveField(14)
-  String troubleSleepingDueToOtherReason;
+  String? troubleSleepingDueToOtherReason;
 
   @HiveField(15)
-  String sleepQuality;
+  String? sleepQuality;
 
   @HiveField(16)
-  String medicineToSleep;
+  String? medicineToSleep;
 
   @HiveField(17)
-  String troubleStayingAwake;
+  String? troubleStayingAwake;
 
   @HiveField(18)
-  String enthusiasm;
+  String? enthusiasm;
 
   // @HiveField(19)
   // String partnerOrRoommate;
@@ -83,7 +83,7 @@ class PSQI {
   // String numberOfTimesOfRestlessness;
 
   @HiveField(19)
-  DateTime dateTaken;
+  DateTime? dateTaken;
 
   PSQI({
     this.timeToBed,

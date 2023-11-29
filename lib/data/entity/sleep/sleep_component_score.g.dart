@@ -17,15 +17,15 @@ class SleepComponentScoresAdapter extends TypeAdapter<SleepComponentScores> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SleepComponentScores(
-      sleepQuality: fields[0] as int,
-      sleepLatency: fields[1] as int,
-      sleepDuration: fields[2] as int,
-      sleepEfficiency: fields[3] as int,
-      sleepDisturbance: fields[4] as int,
-      sleepMedication: fields[5] as int,
-      dayTimeDysfunction: fields[6] as int,
-      pSQIScore: fields[7] as int,
-      dateTaken: fields[8] as DateTime,
+      sleepQuality: fields[0] as int?,
+      sleepLatency: fields[1] as int?,
+      sleepDuration: fields[2] as int?,
+      sleepEfficiency: fields[3] as int?,
+      sleepDisturbance: fields[4] as int?,
+      sleepMedication: fields[5] as int?,
+      dayTimeDysfunction: fields[6] as int?,
+      pSQIScore: fields[7] as int?,
+      dateTaken: fields[8] as DateTime?,
     );
   }
 

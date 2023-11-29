@@ -1,25 +1,25 @@
 
 class OneSignalPushNotification {
-  String googleDeliveredPriority;
-  int googleSentTime;
-  int googleTtl;
-  String googleOriginalPriority;
-  // String custom;
-  String pri;
-  String vis;
-  String from;
-  String alert;
-  String title;
-  String googleMessageId;
-  String googleCSenderId;
-  int androidNotificationId = 0;
+  String? googleDeliveredPriority;
+  int? googleSentTime;
+  int? googleTtl;
+  String? googleOriginalPriority;
+  String? custom;
+  String? pri;
+  String? vis;
+  String? from;
+  String? alert;
+  String? title;
+  String? googleMessageId;
+  String? googleCSenderId;
+  int? androidNotificationId;
 
   OneSignalPushNotification(
       {this.googleDeliveredPriority,
         this.googleSentTime,
         this.googleTtl,
         this.googleOriginalPriority,
-        // this.custom,
+        this.custom,
         this.pri,
         this.vis,
         this.from,
@@ -35,7 +35,7 @@ class OneSignalPushNotification {
     googleSentTime = json['google.sent_time'];
     googleTtl = json['google.ttl'];
     googleOriginalPriority = json['google.original_priority'];
-    // custom = json['custom'];
+    custom = json['custom'];
     pri = json['pri'];
     vis = json['vis'];
     from = json['from'];
@@ -43,7 +43,7 @@ class OneSignalPushNotification {
     title = json['title'];
     googleMessageId = json['google.message_id'];
     googleCSenderId = json['google.c.sender.id'];
-    androidNotificationId = json['androidNotificationId'] != null ? json['androidNotificationId'] : 0;
+    androidNotificationId = json['androidNotificationId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,7 +52,7 @@ class OneSignalPushNotification {
     data['google.sent_time'] = this.googleSentTime;
     data['google.ttl'] = this.googleTtl;
     data['google.original_priority'] = this.googleOriginalPriority;
-    // data['custom'] = this.custom;
+    data['custom'] = this.custom;
     data['pri'] = this.pri;
     data['vis'] = this.vis;
     data['from'] = this.from;

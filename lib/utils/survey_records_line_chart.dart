@@ -11,10 +11,10 @@ class ComponentScoresLineChart extends StatelessWidget {
     this.toolTip,
   });
 
-  final String title;
-  final List spots;
-  final Color backgroundColor;
-  final String toolTip;
+  final String? title;
+  final List? spots;
+  final Color? backgroundColor;
+  final String? toolTip;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class ComponentScoresLineChart extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: backgroundColor.darken(),
+          color: backgroundColor!.darken(),
         ),
         child: Stack(
           children: <Widget>[
@@ -39,7 +39,7 @@ class ComponentScoresLineChart extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: 16.0),
                       child: Text(
-                        title,
+                        title!,
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: 16,
@@ -125,7 +125,7 @@ class ComponentScoresLineChart extends StatelessWidget {
 
   List<LineChartBarData> get lineBarsData => [ lineChartBarData ];
 
-  SideTitles leftTitles({GetTitleFunction getTitles}) => SideTitles(
+  SideTitles leftTitles({GetTitleFunction? getTitles}) => SideTitles(
         getTitles: getTitles,
         showTitles: true,
         margin: 8,
@@ -184,7 +184,7 @@ class ComponentScoresLineChart extends StatelessWidget {
   FlBorderData get borderData => FlBorderData(
         show: true,
         border: Border(
-          bottom: BorderSide(color: backgroundColor.darken(20), width: 4),
+          bottom: BorderSide(color: backgroundColor!.darken(20), width: 4),
           left: BorderSide(color: Colors.transparent),
           right: BorderSide(color: Colors.transparent),
           top: BorderSide(color: Colors.transparent),
@@ -193,11 +193,11 @@ class ComponentScoresLineChart extends StatelessWidget {
 
   LineChartBarData get lineChartBarData => LineChartBarData(
         isCurved: true,
-        colors: [backgroundColor],
+        colors: [backgroundColor!],
         barWidth: 6,
         isStrokeCapRound: true,
         dotData: FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
-        spots: this.spots
+        spots: this.spots as List<FlSpot>?
       );
 }

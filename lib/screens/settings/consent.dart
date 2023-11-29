@@ -21,17 +21,17 @@ class ConsentScreen extends StatelessWidget {
             children: <Widget>[
               Text("USER AGREEMENT", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w800)),
               SizedBox(height: 5),
-              Text("Last updated 05.12.2021"),
+              Text("Last updated: May 19, 2022"),
               SizedBox(height: 25),
 
               Text("Research Consent", style: TextStyle(fontWeight: FontWeight.w500)),
               SizedBox(height: 5),
-              Text("This user agreement document is part of the process of informed consent. By continuing to use this app, the user consents to their data being collected, stored and processed for the purposes of research. If you would like more detail about something mentioned here, or information not included here, please ask. Please take the time to read this carefully and to understand any accompanying information."),
+              Text("This user agreement document is part of the process of informed consent. By continuing to use this app, the user consents to their data being collected, stored and processed for the purposes of research. Further, by participating in the daily auction, the user consents to their data being shared with a third party should the user win an auction. Only the unit of data that the user sells during the auction (should they win the auction) will be shared with the third party. The third-party could be in the form of 1) the government, 2) an academic researcher, or 3) a for-proffit company. If you would like more detail about something mentioned here, or information not included here, please ask. Please take the time to read this carefully and to understand any accompanying information."),
               SizedBox(height: 15),
 
               Text("Research Project Title", style: TextStyle(fontWeight: FontWeight.w500)),
               SizedBox(height: 5),
-              Text("Understanding the Relationship Between Sleep and Low Back Pain"),
+              Text("Understanding the Relationship Between Sleep and Low Back Pain and the monetary value attached to such data"),
               SizedBox(height: 15),
 
               Text("Researchers", style: TextStyle(fontWeight: FontWeight.w500)),
@@ -46,9 +46,8 @@ class ConsentScreen extends StatelessWidget {
 
               Text("Data Collection", style: TextStyle(fontWeight: FontWeight.w500)),
               SizedBox(height: 5),
-              Text('''This study will is a continuous one, thus it may never end. Data you enter in the app will be collected for analysis. No personal information is collected about you. All data is collected anonymously. Your data will not be shared with third parties. 
-                  We will collect data from you through a daily in-app questionnaire, and two separate in-app monthly questionnaires, as well as during the onboarding process. Periodically, we may send in-app messages with a link to an online survey where we may collect 
-                  additional information from you. All this is done anonymously. You cannot be identified personally in any way. The data will be stored remotely and securely using cloud services.'''),
+              Text('''This study will last for a period of 14 days from the day the user installs the application. Data you enter in the app will be collected for analysis. No personal information is collected about you. All data is collected anonymously. Your data will not be shared with third parties except the unit of data you willingly sell during an auction (only if you win the auction). 
+              We will collect data from you through a daily in-app questionnaire, and the daily auction should you partake in it. All this is done anonymously. You cannot be identified personally in any way. The data will be stored remotely and securely using cloud services.'''),
               SizedBox(height: 15),
 
               Text("Data Archiving/Destruction", style: TextStyle(fontWeight: FontWeight.w500)),

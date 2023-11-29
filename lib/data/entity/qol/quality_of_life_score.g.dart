@@ -17,9 +17,9 @@ class QoLScoreAdapter extends TypeAdapter<QoLScore> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return QoLScore(
-      physicalHealth: fields[0] as int,
-      mentalHealth: fields[1] as int,
-      dateTaken: fields[2] as DateTime,
+      physicalHealth: fields[0] as int?,
+      mentalHealth: fields[1] as int?,
+      dateTaken: fields[2] as DateTime?,
     );
   }
 

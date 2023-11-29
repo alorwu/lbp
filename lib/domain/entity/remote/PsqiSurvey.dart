@@ -1,15 +1,15 @@
 
 class PsqiSurvey {
-  int sleepQualityComponent;
-  int sleepLatencyComponent;
-  int sleepDurationComponent;
-  int sleepEfficiencyComponent;
-  int sleepDisturbanceComponent;
-  int sleepMedicationComponent;
-  int dayTimeDysfunctionComponent;
-  int psqiScore;
-  DateTime dateTaken;
-  String userId;
+  int? sleepQualityComponent;
+  int? sleepLatencyComponent;
+  int? sleepDurationComponent;
+  int? sleepEfficiencyComponent;
+  int? sleepDisturbanceComponent;
+  int? sleepMedicationComponent;
+  int? dayTimeDysfunctionComponent;
+  int? psqiScore;
+  DateTime? dateTaken;
+  String? userId;
 
   PsqiSurvey({
     this.sleepQualityComponent,
@@ -34,7 +34,7 @@ class PsqiSurvey {
       'sleepMedicationComponent': sleepMedicationComponent,
       'dayTimeDysfunctionComponent': dayTimeDysfunctionComponent,
       'psqiScore': psqiScore,
-      'dateTaken': dateTaken.toIso8601String(),
+      'dateTaken': dateTaken!.toIso8601String(),
       'userId': userId
     };
   }

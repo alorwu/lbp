@@ -12,9 +12,9 @@ class RssFeedScreen extends StatefulWidget {
 
 class RssFeedState extends State<RssFeedScreen> {
   static const FEED_URL = "https://zapier.com/engine/rss/714473/lbp-cc"; //"https://hnrss.org/jobs";
-  RssFeed _feed;
+  RssFeed? _feed;
 
-  GlobalKey<RefreshIndicatorState> _refreshKey;
+  GlobalKey<RefreshIndicatorState>? _refreshKey;
 
   updateFeed(feed) {
     setState(() {
@@ -59,7 +59,7 @@ class RssFeedState extends State<RssFeedScreen> {
   }
 
   isFeedEmpty() {
-    return null == _feed || null == _feed.items;
+    return null == _feed || null == _feed!.items;
   }
 
   body() {
@@ -94,16 +94,16 @@ class RssFeedState extends State<RssFeedScreen> {
             flex: 3,
             child: Container(
               child: ListView.separated(
-                itemCount: _feed.items.length,
+                itemCount: _feed!.items!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final item = _feed.items[index];
+                  final item = _feed!.items![index];
                   return Container(
                     child: ListTile(
                       title: title(item.title),
                       subtitle: subtitle(item.description),
                       trailing: rightIcon(),
                       contentPadding: EdgeInsets.all(10.0),
-                      onTap: () => openFeed(item.link),
+                      onTap: () => openFeed(item.link!),
                     ),
                   );
                 },

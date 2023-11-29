@@ -1,26 +1,25 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-
 
 import '../env/.env.dart';
 import '../features/user/data/entity/user_dto.dart';
 import '../screens/settings/consent.dart';
 import '../screens/settings/privacy_policy.dart';
 import '../utils/preferences.dart';
-import '../utils/custom_slider_thumb_circle.dart';
 
 
 class OnBoarding extends StatefulWidget {
@@ -34,20 +33,20 @@ class OnBoardingState extends State<OnBoarding> {
   TextEditingController genderController = TextEditingController();
   TextEditingController durationController = TextEditingController();
 
-  String appId;
-  String oneSignalId;
+  String? appId;
+  String? userToken;
 
-  String diagnosedOfLbp;
-  String username;
-  String gender;
-  String employment;
-  String exercise;
-  String academic;
-  String lbpTreatment;
-  String hasHadBackSurgery;
-  String hasHadLowBackPain;
-  String sciatica;
-  String painIntensity;
+  String? diagnosedOfLbp;
+  String? username;
+  String? gender;
+  String? employment;
+  String? exercise;
+  String? academic;
+  String? lbpTreatment;
+  String? hasHadBackSurgery;
+  String? hasHadLowBackPain;
+  String? sciatica;
+  String? painIntensity;
   double activeLifeStyleLevel = -1;
 
   ButtonState submitButtonState = ButtonState.idle;
@@ -57,7 +56,7 @@ class OnBoardingState extends State<OnBoarding> {
   var min = 0;
   var fullWidth = false;
 
-  var consentCheck = false;
+  bool? consentCheck = false;
   var diagnosedOfLbpByDoctor = ["No", "Yes"];
   var defaultNotificationTimeString = "07:00";
 
@@ -77,590 +76,638 @@ class OnBoardingState extends State<OnBoarding> {
   }''';
 
 
-  GSheets gSheets;
+  late GSheets gSheets;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    initOneSignalPlatformState();
     getId();
-    getOneSignalId();
+    getUserToken();
     // gSheets = GSheets(environment['credentials']);
     gSheets = GSheets(credentials);
   }
 
-  Future<void> initOneSignalPlatformState() async {
-    OneSignal.shared.setAppId(environment['onesignal_app_id']);
-  }
-
-  Widget sliderWidget() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: (sliderHeight),
-            decoration: new BoxDecoration(
-              borderRadius: new BorderRadius.all(
-                Radius.circular((sliderHeight * .3)),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(1.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    '$min',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: sliderHeight * .3,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(
-                    width: sliderHeight * .1,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.blue.withOpacity(1),
-                          trackHeight: 4.0,
-                          thumbShape: CustomSliderThumbCircle(
-                            thumbRadius: sliderHeight * .4,
-                            min: min,
-                            max: max,
-                          ),
-                          activeTickMarkColor: Colors.blue,
-                          inactiveTickMarkColor: Colors.blue,
-                        ),
-                        child: Slider(
-                            value: sliderValue,
-                            min: 0,
-                            max: 10,
-                            divisions: 10,
-                            onChanged: (double value) {
-                              setState(() {
-                                sliderValue = value;
-                                activeLifeStyleLevel = value;
-                              });
-                            }),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '$max',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: sliderHeight * .3,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(1.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Not at all active',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: sliderHeight * .3,
-                    color: Colors.black,
-                  ),
-                ),
-                Text(
-                  'Extremely active',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: sliderHeight * .3,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ]);
-  }
+  // Widget sliderWidget() {
+  //   return Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: <Widget>[
+  //         Container(
+  //           width: double.infinity,
+  //           height: (sliderHeight),
+  //           decoration: new BoxDecoration(
+  //             borderRadius: new BorderRadius.all(
+  //               Radius.circular((sliderHeight * .3)),
+  //             ),
+  //           ),
+  //           child: Padding(
+  //             padding: EdgeInsets.all(1.0),
+  //             child: Row(
+  //               children: <Widget>[
+  //                 Text(
+  //                   '$min',
+  //                   textAlign: TextAlign.center,
+  //                   style: TextStyle(
+  //                     fontSize: sliderHeight * .3,
+  //                     fontWeight: FontWeight.w700,
+  //                     color: Colors.black,
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   width: sliderHeight * .1,
+  //                 ),
+  //                 Expanded(
+  //                   child: Center(
+  //                     child: SliderTheme(
+  //                       data: SliderTheme.of(context).copyWith(
+  //                         activeTrackColor: Colors.blue.withOpacity(1),
+  //                         trackHeight: 4.0,
+  //                         thumbShape: CustomSliderThumbCircle(
+  //                           thumbRadius: sliderHeight * .4,
+  //                           min: min,
+  //                           max: max,
+  //                         ),
+  //                         activeTickMarkColor: Colors.blue,
+  //                         inactiveTickMarkColor: Colors.blue,
+  //                       ),
+  //                       child: Slider(
+  //                           value: sliderValue,
+  //                           min: 0,
+  //                           max: 10,
+  //                           divisions: 10,
+  //                           onChanged: (double value) {
+  //                             setState(() {
+  //                               sliderValue = value;
+  //                               activeLifeStyleLevel = value;
+  //                             });
+  //                           }),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   '$max',
+  //                   textAlign: TextAlign.center,
+  //                   style: TextStyle(
+  //                     fontSize: sliderHeight * .3,
+  //                     fontWeight: FontWeight.w700,
+  //                     color: Colors.black,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.all(1.0),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Text(
+  //                 'Not at all active',
+  //                 textAlign: TextAlign.center,
+  //                 style: TextStyle(
+  //                   fontSize: sliderHeight * .3,
+  //                   color: Colors.black,
+  //                 ),
+  //               ),
+  //               Text(
+  //                 'Extremely active',
+  //                 textAlign: TextAlign.center,
+  //                 style: TextStyle(
+  //                   fontSize: sliderHeight * .3,
+  //                   color: Colors.black,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ]);
+  // }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Getting Started'),
-        backgroundColor: Color(0xff000000),
-        elevation: 0.0,
-        brightness: Brightness.dark,
-      ),
-      body: Builder(
-        builder: (context) => Padding(
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   title: Text('Getting Started'),
+      //   backgroundColor: Color(0xff000000),
+      //   elevation: 0.0,
+      //   brightness: Brightness.dark,
+      // ),
+      body: Padding(
           padding: EdgeInsets.all(15.0),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: ListView(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "Let's get acquainted!",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Divider(),
-                  SizedBox(height: 20),
-                  Text("Enter your nickname", style: TextStyle(color: Colors.blue)),
-                  TextFormField(
-                    focusNode: new FocusNode(),
-                    decoration: InputDecoration(
-                      hintText: "e.g. Murvin",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    keyboardType: TextInputType.text,
-                    controller: nicknameController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter a nickname';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  Text("How old are you (in years)?", style: TextStyle(color: Colors.blue)),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "e.g. 24",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    keyboardType: TextInputType.number,
-                    controller: ageController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter an age';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  Text("What is your gender?", style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["Male", "Female", "Other", "Do not disclose"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value, overflow: TextOverflow.clip),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        gender = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a gender';
-                      }
-                      return null;
-                    },
-                    value: gender,
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("What is your employment status?", style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["Full-time work", "Part-time work", "Retired",
-                      "Unemployed", "I do not wish to disclose"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        employment = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select one';
-                      }
-                      return null;
-                    },
-                    value: employment,
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("What is your highest academic qualification?",
-                      style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["Master's degree or higher", "Bachelor's degree",
-                      "High school", "International master's degree",
-                      "Vocational degree", "Dual qualification",
-                      "Primary school", "I do not wish to disclose"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        academic = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select one';
-                      }
-                      return null;
-                    },
-                    value: academic,
-                  ),
-                  SizedBox(height: 20.0),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "How active is your lifestyle in general?",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        SizedBox(height: 5.0),
-                        sliderWidget(),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("Have you previously experienced lower back pain?", style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["No", "Yes, it is chronic or it renews easily",
-                      "Yes, but it is not chronic or it does not renew easily"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value, overflow: TextOverflow.clip),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        hasHadLowBackPain = value;
-                      });
-                    },
-                    isExpanded: true,
-                    itemHeight: 50.0,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select one';
-                      }
-                      return null;
-                    },
-                    value: hasHadLowBackPain,
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("Have you had or do you have sciatica?", style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["No", "Yes, it is chronic or it renews easily",
-                      "Yes, but it is not chronic or it does not renew easily"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        sciatica = value;
-                      });
-                    },
-                    isExpanded: true,
-                    itemHeight: 50.0,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select one';
-                      }
-                      return null;
-                    },
-                    value: sciatica,
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("Are you experiencing back pain right now? How intense is it?", style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["0 - no recognizable pain", "1", "2", "3", "4", "5",
-                      "6", "7", "8", "9", "10 - unbearable pain"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        painIntensity = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select one';
-                      }
-                      return null;
-                    },
-                    value: painIntensity,
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("Has your back ever been surgically operated?", style: TextStyle(color: Colors.blue)),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      hintText: "Choose one",
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
-                    items: ["No", "Yes"]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String value) {
-                      setState(() {
-                        hasHadBackSurgery = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select one';
-                      }
-                      return null;
-                    },
-                    value: hasHadBackSurgery,
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("How long have you had Low Back Pain? (in years)",
-                      style: TextStyle(color: Colors.blue)),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "e.g. 10",
-                      hintStyle: TextStyle(color: Colors.grey)
-                    ),
-                    focusNode: new FocusNode(),
-                    keyboardType: TextInputType.number,
-                    controller: durationController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return "Tell us how long you've had low back pain";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20.0),
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Have you been clinically diagnosed with Low Back Pain by a doctor?',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        radioWidget(),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  Text("In your own words please describe how you treat and maintain your lower back in your everyday life.",
-                      style: TextStyle(color: Colors.blue)),
-                  SizedBox(height: 10.0),
-                  TextFormField(
-                    decoration: new InputDecoration(
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 1.0)
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      hintStyle: TextStyle(color: Colors.grey),
-                      hintText: "Enter text here",
-                      helperText: "No answer is wrong. Write freely.",
-                      helperStyle: TextStyle(color: Colors.grey),
-                      errorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                      focusedErrorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(250.0),
+                      child: Image.asset(
+                        'images/logo.png',
+                        height: 140.0,
+                        width: 140.0,
+                        fit: BoxFit.fill,
                       ),
                     ),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 6,
-                    onChanged: (String value) {
-                      setState(() {
-                        lbpTreatment = value;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 20.0),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Row(
-                      children: <Widget>[
-                        Checkbox(
-                          value: this.consentCheck,
-                          onChanged: (bool value) {
-                            setState(() {
-                              this.consentCheck = value;
-                            });
-                          },
-                        ),
-                        Expanded(
+                ),
+                SizedBox(height: 40),
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: Row(
+                    children: <Widget>[
+                      Checkbox(
+                        value: this.consentCheck,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            this.consentCheck = value;
+                          });
+                        },
+                      ),
+                      Expanded(
                           child: RichText(
-                            text: TextSpan(
-                              style: TextStyle(color: Colors.grey),
-                              children: <TextSpan>[
-                                TextSpan(text: "I have read and agree to the terms and conditions as outlined in the "),
-                                TextSpan(
-                                  text: "user consent agreement ",
-                                  style: TextStyle(color: Colors.blue),
-                                  recognizer: TapGestureRecognizer()..onTap = () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
-                                  }
-                                ),
-                                TextSpan(text: "and "),
-                                TextSpan(
-                                    text: "privacy policy.",
-                                    style: TextStyle(color: Colors.blue),
-                                    recognizer: TapGestureRecognizer()..onTap = () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
-                                    }
-                                )
-                              ]
-                            )
+                              text: TextSpan(
+                                  style: TextStyle(color: Colors.grey, fontSize: 16.0),
+                                  children: <TextSpan>[
+                                    TextSpan(text: "I have read and agree to the terms and conditions as outlined in the "),
+                                    TextSpan(
+                                        text: "user consent agreement ",
+                                        style: TextStyle(color: Colors.blue),
+                                        recognizer: TapGestureRecognizer()..onTap = () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
+                                        }
+                                    ),
+                                    TextSpan(text: "and "),
+                                    TextSpan(
+                                        text: "privacy policy.",
+                                        style: TextStyle(color: Colors.blue),
+                                        recognizer: TapGestureRecognizer()..onTap = () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
+                                        }
+                                    )
+                                  ]
+                              )
                           )
-                        ),
-                          ],
-                    ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 20.0),
-                  Container(
+                ),
+                SizedBox(height: 50.0),
+                consentCheck == true
+                ? Container(
                     height: 50,
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ProgressButton.icon(
                       iconedButtons: {
                         ButtonState.idle: IconedButton(
-                            text: "Submit",
-                            icon: Icon(Icons.send, color: Colors.white),
-                            color: Colors.green
-                        ),
+                            text: "Get started",
+                            icon: Icon(Icons.thumb_up, color: Colors.white),
+                            color: Colors.blue),
                         ButtonState.loading: IconedButton(
-                            text: "Submitting...",
-                            color: Colors.green
-                        ),
+                            text: "Submitting...", color: Colors.blue),
                         ButtonState.fail: IconedButton(
                             text: "Failed",
-                            icon: Icon(Icons.cancel,color: Colors.white),
-                            color: Colors.red.shade500
-                        ),
+                            icon: Icon(Icons.cancel, color: Colors.white),
+                            color: Colors.red.shade500),
                         ButtonState.success: IconedButton(
                             text: "Success",
-                            icon: Icon(Icons.check_circle,color: Colors.white,),
-                            color: Colors.green
-                        )
+                            icon: Icon(
+                              Icons.check_circle,
+                              color: Colors.white,
+                            ),
+                            color: Colors.green)
                       },
                       progressIndicatorSize: 20.0,
                       onPressed: () async {
-                        if (this.consentCheck) {
-                          validateAndSend();
-                        }
+                        await getUserToken();
+                        sendData(context);
                       },
                       state: submitButtonState,
                     ),
-                  ),
-                ],
-              ),
+                  )
+                : Container(),
+          ],
             ),
-          ),
-        ),
       ),
+          // Form(
+          //   key: _formKey,
+          //   child: SingleChildScrollView(
+          //     child: ListView(
+          //       shrinkWrap: true,
+          //       physics: NeverScrollableScrollPhysics(),
+          //       children: <Widget>[
+          //         Container(
+          //           alignment: Alignment.center,
+          //           padding: EdgeInsets.all(10.0),
+          //           child: Text(
+          //             "Let's get acquainted!",
+          //             style: TextStyle(
+          //               color: Colors.blue,
+          //               fontWeight: FontWeight.w500,
+          //               fontSize: 20,
+          //             ),
+          //             textAlign: TextAlign.center,
+          //           ),
+          //         ),
+          //         SizedBox(height: 10),
+          //         Divider(),
+          //         SizedBox(height: 20),
+          //         // Text("Enter your nickname", style: TextStyle(color: Colors.blue)),
+          //         // TextFormField(
+          //         //   focusNode: new FocusNode(),
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "e.g. Murvin",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   keyboardType: TextInputType.text,
+          //         //   controller: nicknameController,
+          //         //   validator: (value) {
+          //         //     if (value!.isEmpty) {
+          //         //       return 'Please enter a nickname';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         // ),
+          //         // SizedBox(height: 20),
+          //         // Text("How old are you (in years)?", style: TextStyle(color: Colors.blue)),
+          //         // TextFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "e.g. 24",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   keyboardType: TextInputType.number,
+          //         //   maxLength: 2,
+          //         //   controller: ageController,
+          //         //   validator: (value) {
+          //         //     if (value!.isEmpty) {
+          //         //       return 'Please enter an age';
+          //         //     }
+          //         //     if (int.parse(value) < 18) {
+          //         //       return 'Persons 18 and above only';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         // ),
+          //         // SizedBox(height: 20),
+          //         // Text("What is your gender?", style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["Male", "Female", "Other", "Do not disclose"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value, overflow: TextOverflow.clip),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       gender = value;
+          //         //     });
+          //         //   },
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select a gender';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: gender,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("What is your employment status?", style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["Full-time work", "Part-time work", "Retired",
+          //         //     "Unemployed", "I do not wish to disclose"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       employment = value;
+          //         //     });
+          //         //   },
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select one';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: employment,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("What is your highest academic qualification?",
+          //         //     style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["Master's degree or higher", "Bachelor's degree",
+          //         //     "High school", "International master's degree",
+          //         //     "Vocational degree", "Dual qualification",
+          //         //     "Primary school", "I do not wish to disclose"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       academic = value;
+          //         //     });
+          //         //   },
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select one';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: academic,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Container(
+          //         //   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          //         //   child: Column(
+          //         //     children: <Widget>[
+          //         //       Text(
+          //         //         "How active is your lifestyle in general?",
+          //         //         style: TextStyle(color: Colors.blue),
+          //         //       ),
+          //         //       SizedBox(height: 5.0),
+          //         //       sliderWidget(),
+          //         //     ],
+          //         //   ),
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("Have you previously experienced lower back pain?", style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["No", "Yes, it is chronic or it renews easily",
+          //         //     "Yes, but it is not chronic or it does not renew easily"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value, overflow: TextOverflow.clip),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       hasHadLowBackPain = value;
+          //         //     });
+          //         //   },
+          //         //   isExpanded: true,
+          //         //   itemHeight: 50.0,
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select one';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: hasHadLowBackPain,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("Have you had or do you have sciatica?", style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["No", "Yes, it is chronic or it renews easily",
+          //         //     "Yes, but it is not chronic or it does not renew easily"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       sciatica = value;
+          //         //     });
+          //         //   },
+          //         //   isExpanded: true,
+          //         //   itemHeight: 50.0,
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select one';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: sciatica,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("Are you experiencing back pain right now? How intense is it?", style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["0 - no recognizable pain", "1", "2", "3", "4", "5",
+          //         //     "6", "7", "8", "9", "10 - unbearable pain"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       painIntensity = value;
+          //         //     });
+          //         //   },
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select one';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: painIntensity,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("Has your back ever been surgically operated?", style: TextStyle(color: Colors.blue)),
+          //         // DropdownButtonFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "Choose one",
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //   ),
+          //         //   items: ["No", "Yes"]
+          //         //       .map<DropdownMenuItem<String>>((String value) {
+          //         //     return DropdownMenuItem<String>(
+          //         //       value: value,
+          //         //       child: Text(value),
+          //         //     );
+          //         //   }).toList(),
+          //         //   onChanged: (String? value) {
+          //         //     setState(() {
+          //         //       hasHadBackSurgery = value;
+          //         //     });
+          //         //   },
+          //         //   validator: (dynamic value) {
+          //         //     if (value == null) {
+          //         //       return 'Please select one';
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         //   value: hasHadBackSurgery,
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("How long have you had Low Back Pain? (in years)",
+          //         //     style: TextStyle(color: Colors.blue)),
+          //         // TextFormField(
+          //         //   decoration: InputDecoration(
+          //         //     hintText: "e.g. 10",
+          //         //     hintStyle: TextStyle(color: Colors.grey)
+          //         //   ),
+          //         //   focusNode: new FocusNode(),
+          //         //   keyboardType: TextInputType.number,
+          //         //   controller: durationController,
+          //         //   validator: (value) {
+          //         //     if (value!.isEmpty) {
+          //         //       return "Tell us how long you've had low back pain";
+          //         //     }
+          //         //     return null;
+          //         //   },
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Container(
+          //         //   child: Column(
+          //         //     children: <Widget>[
+          //         //       Text(
+          //         //         'Have you been clinically diagnosed with Low Back Pain by a doctor?',
+          //         //         style: TextStyle(color: Colors.blue),
+          //         //       ),
+          //         //       radioWidget(),
+          //         //     ],
+          //         //   ),
+          //         // ),
+          //         // SizedBox(height: 20.0),
+          //         // Text("In your own words please describe how you treat and maintain your lower back in your everyday life.",
+          //         //     style: TextStyle(color: Colors.blue)),
+          //         // SizedBox(height: 10.0),
+          //         // TextFormField(
+          //         //   decoration: new InputDecoration(
+          //         //     enabledBorder: const OutlineInputBorder(
+          //         //         borderSide: const BorderSide(color: Colors.grey, width: 1.0)
+          //         //     ),
+          //         //     focusedBorder: const OutlineInputBorder(
+          //         //       borderSide: BorderSide(color: Colors.grey),
+          //         //     ),
+          //         //     hintStyle: TextStyle(color: Colors.grey),
+          //         //     hintText: "Enter text here",
+          //         //     helperText: "No answer is wrong. Write freely.",
+          //         //     helperStyle: TextStyle(color: Colors.grey),
+          //         //     errorBorder: const OutlineInputBorder(
+          //         //       borderSide: BorderSide(color: Colors.red),
+          //         //     ),
+          //         //     focusedErrorBorder: const OutlineInputBorder(
+          //         //       borderSide: BorderSide(color: Colors.grey),
+          //         //     ),
+          //         //   ),
+          //         //   keyboardType: TextInputType.multiline,
+          //         //   maxLines: 6,
+          //         //   onChanged: (String value) {
+          //         //     setState(() {
+          //         //       lbpTreatment = value;
+          //         //     });
+          //         //   },
+          //         // ),
+          //         SizedBox(height: 20.0),
+          //         Container(
+          //           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          //           child: Row(
+          //             children: <Widget>[
+          //               Checkbox(
+          //                 value: this.consentCheck,
+          //                 onChanged: (bool? value) {
+          //                   setState(() {
+          //                     this.consentCheck = value;
+          //                   });
+          //                 },
+          //               ),
+          //               Expanded(
+          //                 child: RichText(
+          //                   text: TextSpan(
+          //                     style: TextStyle(color: Colors.grey),
+          //                     children: <TextSpan>[
+          //                       TextSpan(text: "I have read and agree to the terms and conditions as outlined in the "),
+          //                       TextSpan(
+          //                         text: "user consent agreement ",
+          //                         style: TextStyle(color: Colors.blue),
+          //                         recognizer: TapGestureRecognizer()..onTap = () {
+          //                           Navigator.push(context, MaterialPageRoute(builder: (context) => ConsentScreen()));
+          //                         }
+          //                       ),
+          //                       TextSpan(text: "and "),
+          //                       TextSpan(
+          //                           text: "privacy policy.",
+          //                           style: TextStyle(color: Colors.blue),
+          //                           recognizer: TapGestureRecognizer()..onTap = () {
+          //                             Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyDisclaimerScreen()));
+          //                           }
+          //                       )
+          //                     ]
+          //                   )
+          //                 )
+          //               ),
+          //                 ],
+          //           ),
+          //         ),
+          //         SizedBox(height: 20.0),
+          //         Container(
+          //           height: 50,
+          //           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          //           child: ProgressButton.icon(
+          //             iconedButtons: {
+          //               ButtonState.idle: IconedButton(
+          //                   text: "Submit",
+          //                   icon: Icon(Icons.send, color: Colors.white),
+          //                   color: Colors.green
+          //               ),
+          //               ButtonState.loading: IconedButton(
+          //                   text: "Submitting...",
+          //                   color: Colors.green
+          //               ),
+          //               ButtonState.fail: IconedButton(
+          //                   text: "Failed",
+          //                   icon: Icon(Icons.cancel,color: Colors.white),
+          //                   color: Colors.red.shade500
+          //               ),
+          //               ButtonState.success: IconedButton(
+          //                   text: "Success",
+          //                   icon: Icon(Icons.check_circle,color: Colors.white,),
+          //                   color: Colors.green
+          //               )
+          //             },
+          //             progressIndicatorSize: 20.0,
+          //             onPressed: () async {
+          //               if (this.consentCheck!) {
+          //                 validateAndSend();
+          //               }
+          //             },
+          //             state: submitButtonState,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
     );
-  }
-
-  Widget radioWidget() {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: 2,
-        itemBuilder: (BuildContext context, index) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-                unselectedWidgetColor: Colors.grey,),
-            child: RadioListTile(
-              title: Text(
-                  '${index == 0 ? diagnosedOfLbpByDoctor[index] : diagnosedOfLbpByDoctor[index]}',
-                  style: TextStyle(color: Colors.black),
-              ),
-              value: "${diagnosedOfLbpByDoctor[index]}",
-              groupValue: "$diagnosedOfLbp",
-              activeColor: Colors.blue,
-              onChanged: (String value) {
-                setState(() {
-                  diagnosedOfLbp = value;
-                });
-              },
-            ),
-          );
-        });
-  }
-
-  validateAndSend() {
-      if (activeLifeStyleLevel < 0) {
-        // If user doesn't touch slider, use default of 0
-        setState(() {
-          activeLifeStyleLevel = 0.0;
-        });
-        // showSnackBar('Please select an answer on how active is your lifestyle', context);
-      }
-      if (diagnosedOfLbp == null || diagnosedOfLbp == "null") {
-        showSnackBar('Please select an answer on whether you have been clinically diagnosed of back pain', context);
-      } else if (_formKey.currentState.validate()) {
-        sendData(context);
-      }
   }
 
   showSnackBar(String message, BuildContext context) {
@@ -676,101 +723,53 @@ class OnBoardingState extends State<OnBoarding> {
       submitButtonState = ButtonState.loading;
     });
 
-    // final ss = await gSheets.spreadsheet(environment['spreadsheetId']);
-    final ss = await gSheets
-        .spreadsheet('1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
-    var sheet = ss.worksheetByTitle('onboarding_q');
-    sheet ??= await ss.addWorksheet('onboarding_q');
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var id = prefs.getString("app_id");
     prefs.setString('segment', '07:00');
     var segment = getSegment(defaultNotificationTimeString.substring(0,2));
     var user = User(
-      deviceId: appId,
-      oneSignalId: oneSignalId,
-      nickname: nicknameController.value.text,
-      age: int.parse(ageController.value.text),
-      gender: gender,
-      employment: employment,
-      academic: academic,
-      activeLifeStyleLevel: activeLifeStyleLevel,
-      hasHadLowBackPain: hasHadLowBackPain,
-      sciatica: sciatica,
-      painIntensity: painIntensity,
-      hasHadBackSurgery: hasHadBackSurgery,
-      hasHadLbpFor: durationController.value.text,
-      diagnosedOfLbp: diagnosedOfLbp == 0 ? "No" : "Yes",
-      lbpTreatment: lbpTreatment,
+      id: appId,
+      token: userToken,
+      nickname: null,
       date: DateTime.now().toIso8601String(),
       segment: segment,
     );
 
-    saveDataLocally(user);
+    var registeredUser = await registerUser(user);
+    user.nickname = registeredUser.nickname;
+    await saveDataLocally(user);
+    sendDataToGoogleSheets(registeredUser.nickname, appId);
+    sendDataToGoogleSheets(user.nickname, appId); // remove after
 
-    List values = [];
-    values.add(appId);
-    values.add(oneSignalId);
-    values.add(nicknameController.value.text);
-    values.add(ageController.value.text);
-    values.add(gender);
-    values.add(employment);
-    values.add(academic);
-    values.add(activeLifeStyleLevel);
-    values.add(hasHadLowBackPain);
-    values.add(sciatica);
-    values.add(painIntensity);
-    values.add(hasHadBackSurgery);
-    values.add(durationController.value.text);
-    values.add(diagnosedOfLbp);
-    values.add(lbpTreatment);
-    values.add(DateTime.now().toString());
-    try {
+    await Preferences.updateOnboarding(false);
+    await Preferences.saveNotificationTime(defaultNotificationTimeString);
 
-      var result = await sheet.values.appendRow(values);
-      if (result) {
-        await registerUser(user);
-        await Preferences.updateOnboarding(false);
-        await Preferences.saveNotificationTime(defaultNotificationTimeString);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(
-              content: Text(
-                  "Your notification time has been set to 07:00. You can change this in the settings screen later.",
-                  style: TextStyle(color: Colors.white)),
-            ))
-            .closed
-            .then((value) {
-          Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(
+          content: Text(
+              "Your notification time has been set to 07:00. You can change this in the settings screen later.",
+              style: TextStyle(color: Colors.white)),
+        ))
+        .closed
+        .then((value) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, 'testerinformation', (route) => false);
           setState(() {
             submitButtonState = ButtonState.success;
           });
         });
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(
-              content: Text(
-                  "Unable to save data. Check your internet connection and try again.",
-                  style: TextStyle(color: Colors.red)),
-            ))
-            .closed
-            .then((value) {
-          setState(() {
-            submitButtonState = ButtonState.fail;
-          });
-        });
-      }
-    } catch (exp) {
-      setState(() {
-        submitButtonState = ButtonState.fail;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("An error occurred. Please try again.",
-            style: TextStyle(color: Colors.red)),
-      ));
-    }
   }
 
-  Future<String> getId() async {
+  Future<void> sendDataToGoogleSheets(String? testerId, String? appId) async {
+    List values = [appId, testerId, DateTime.now().toString()];
+
+    final ss = await gSheets
+        .spreadsheet('1b5AmPGPqgUASo_BrNBUnWVn0e2BYOc7t8VSqllOc6MQ');
+    var sheet = ss.worksheetByTitle('user_info');
+    sheet ??= await ss.addWorksheet('user_info');
+    sheet.values.appendRow(values);
+  }
+
+  Future<String?> getId() async {
     var deviceInfo = DeviceInfoPlugin();
     var id;
     if (Platform.isIOS) {
@@ -792,17 +791,13 @@ class OnBoardingState extends State<OnBoarding> {
     return id;
   }
 
-  Future<void> getOneSignalId() async {
-    String oSignalId =
-    await OneSignal.shared.getDeviceState().then((value) => value.userId);
-    if(oneSignalId == null) {
-      getOneSignalId();
-    }
-    setState(() {
-      oneSignalId = oSignalId;
-    });
+  Future<void> getUserToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("one_signal_id", oneSignalId);
+    var token = prefs.getString("token");
+
+    setState(() {
+      userToken = token;
+    });
   }
 
   String getSegment(String segmentString) {
@@ -811,21 +806,47 @@ class OnBoardingState extends State<OnBoarding> {
     return DateFormat("HH").format(d);
   }
 
-  Future<http.Response> registerUser(User user) async {
-    print("User id: ${user.deviceId}");
-    print("User onesignal: ${user.oneSignalId}");
-    print(user.toJson());
-    return http.post(
+  Future<User> registerUser(User user) async {
+    final response = await http.post(
       Uri.parse('${environment['remote_url']}/api/users'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(user.toJson())
     );
+    return if(!response.statusCode.toString().startsWith("2"))
+       showDialog(context, user);
+    else User.fromJson(jsonDecode(response.body));
   }
 
-  void saveDataLocally(User user) async {
+  Future<void> saveDataLocally(User user) async {
     Box<User> box = Hive.box("userBox");
     await box.put("user", user);
+  }
+
+  showDialog(BuildContext context, User user) {
+    showCupertinoDialog<void>(
+        context: context,
+        builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: Text("Could not save data"),
+              content: Text(
+                  "There was an error saving your data."),
+              actions: [
+                CupertinoDialogAction(
+                    child: Text("Dismiss"),
+                    onPressed: () {
+                      setState(() {
+                        submitButtonState = ButtonState.idle;
+                      });
+                      Navigator.of(context).pop();
+                    }),
+                CupertinoDialogAction(
+                    child: Text("Try again"),
+                    onPressed: () {
+                      registerUser(user);
+                    }),
+              ],
+            ));
   }
 }
